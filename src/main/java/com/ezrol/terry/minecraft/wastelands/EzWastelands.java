@@ -29,6 +29,7 @@ package com.ezrol.terry.minecraft.wastelands;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.WorldType;
+import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -39,15 +40,29 @@ import cpw.mods.fml.common.registry.GameRegistry;
 @Mod(modid = EzWastelands.MODID, version = EzWastelands.VERSION, name = EzWastelands.NAME)
 public class EzWastelands {
 	public static final String MODID = "ezwastelands";
-	public static final String VERSION = "0.0.2";
+	public static final String VERSION = "0.0.3";
 	public static final String NAME = "EzWastelands";
 
 	public static Block wastelandBlock;
 	public static WorldType wastelandsWorldType;
 
+	private static boolean wastelandBlockGravity = false;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		wastelandBlock = new WastelandBlock(Material.ground);
+		Configuration cfg = new Configuration(
+				event.getSuggestedConfigurationFile());
+
+		cfg.load();
+		wastelandBlockGravity = cfg.getBoolean("hasGravity", "wastelandblock",
+				wastelandBlockGravity,
+				"If set to true the wasteland blocks will fall like sand");
+		cfg.save();
+		if (wastelandBlockGravity) {
+			wastelandBlock = new FallingWastelandBlock(Material.ground);
+		} else {
+			wastelandBlock = new WastelandBlock(Material.ground);
+		}
 		GameRegistry.registerBlock(wastelandBlock, "ezwastelandblock");
 
 	}

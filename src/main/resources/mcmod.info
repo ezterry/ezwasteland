@@ -3,7 +3,7 @@
   "modid": "ezwastelands",
   "name": "EzWastelands",
   "description": "EzTerry's Wastelands terrain generator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
