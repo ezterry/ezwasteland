@@ -26,49 +26,30 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
+import java.util.List;
+
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraft.world.chunk.IChunkProvider;
 
-public class WastelandsWorldType extends WorldType {
-
-	public WastelandsWorldType() {
-		super("ezwastelands");
+public class WastelandChunkManager extends WorldChunkManager {
+	private boolean forceAllBiomes = false;
+	
+	public WastelandChunkManager(World world)
+	{
+		super(world);
 	}
-
-	@Override
-	public boolean hasVoidParticles(boolean flag) {
-		return false;
+	public void setAllBiomesViable(){
+		forceAllBiomes = true;
 	}
-
-	@Override
-	public double voidFadeMagnitude() {
-		return 1.0d;
-	}
-
-	@Override
-	public float getCloudHeight() {
-		return 200.0f;
-	}
-
-	@Override
-	public IChunkProvider getChunkGenerator(World world, String generatorOptions) {
-		return (new WastelandChunkProvider(world, world.getSeed()));
-	}
-
-	@Override
-	public double getHorizon(World world) {
-		return 50.0D;
-	}
-
-	@Override
-	public int getMinimumSpawnHeight(World world) {
-		return 50;
+	public void unsetAllBiomesViable(){
+		forceAllBiomes = false;
 	}
 	
 	@Override
-	public WorldChunkManager getChunkManager(World world) {
-		return new WastelandChunkManager(world);
+	public boolean areBiomesViable(int p_76940_1_, int p_76940_2_, int p_76940_3_, List p_76940_4_){
+		/*We just assume all biomes are viable*/
+		if(forceAllBiomes)
+			return true;
+		return super.areBiomesViable(p_76940_1_,p_76940_2_,p_76940_3_,p_76940_4_);
 	}
 }

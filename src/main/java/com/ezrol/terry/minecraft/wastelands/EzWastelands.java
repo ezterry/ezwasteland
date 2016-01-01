@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Terrence Ezrol (ezterry)
+ * Copyright (c) 2015-2016, Terrence Ezrol (ezterry)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,6 +47,8 @@ public class EzWastelands {
 	public static WorldType wastelandsWorldType;
 
 	private static boolean wastelandBlockGravity = false;
+	public static int villageRate = 0;
+	public static boolean modTriggers = false;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -57,6 +59,8 @@ public class EzWastelands {
 		wastelandBlockGravity = cfg.getBoolean("hasGravity", "wastelandblock",
 				wastelandBlockGravity,
 				"If set to true the wasteland blocks will fall like sand");
+		villageRate = cfg.getInt("village rate", "structures", villageRate, 0, 100, "Frequency villages spawn");
+		modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers, "Trigger 3rd party mod generation");
 		cfg.save();
 		if (wastelandBlockGravity) {
 			wastelandBlock = new FallingWastelandBlock(Material.ground);
