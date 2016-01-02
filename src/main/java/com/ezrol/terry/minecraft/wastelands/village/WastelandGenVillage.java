@@ -53,9 +53,10 @@ public class WastelandGenVillage extends MapGenVillage {
 		if (region_x % 2 == 0 || region_z % 2 == 0) {
 			return false;
 		}
-		Random r = new Random((region_x) * worldSeed + (region_z) + worldSeed
+		Random r = new Random((region_x) * worldSeed + (region_z * 5737) + worldSeed
 				+ (long) 10);
-		if (r.nextInt(300) <= EzWastelands.villageRate) {
+		//787 = prime near 800 for better random numbers
+		if (r.nextInt(787) <= EzWastelands.villageRate) {
 			// this region has a village, now determine if the chunk has one
 			if (chunk_x == (region_x << 2) + r.nextInt(3)) {
 				if (chunk_z == (region_z << 2) + r.nextInt(3)) {
