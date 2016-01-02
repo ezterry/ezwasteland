@@ -56,6 +56,7 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	private int[] pillars = new int[25 * 3];
 	private int[] domes = new int[25 * 3 * 4];
 	private int[] shallow = new int[25 * 4];
+	private int[] localvariation = new int[25 * 3];
 
 	private boolean structuresEnabled = true;
 
@@ -83,6 +84,7 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		 */
 		int base = 52;
 		int offset = 0;
+		long variation = 0;
 		double dist;
 
 		// a string indicating out "region" x/y this is not perfect around the
@@ -112,21 +114,21 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 					domes[(pos * 12) + 1] = r.nextInt(64)
 							+ ((cz + (z >> 6)) * 64); // z
 					domes[(pos * 12) + 2] = r.nextInt(5); // y
-					domes[(pos * 12) + 3] = r.nextInt(16) + 2; // y
+					domes[(pos * 12) + 3] = r.nextInt(16) + 2; // breadth
 					// dome 2 (larger) location
 					domes[(pos * 12) + 4] = r.nextInt(64)
 							+ ((cx + (x >> 6)) * 64); // x
 					domes[(pos * 12) + 5] = r.nextInt(64)
 							+ ((cz + (z >> 6)) * 64); // z
 					domes[(pos * 12) + 6] = r.nextInt(7); // y
-					domes[(pos * 12) + 7] = r.nextInt(27) + 4; // y
+					domes[(pos * 12) + 7] = r.nextInt(27) + 4; // breadth
 					// dome 3 (medium) location
 					domes[(pos * 12) + 8] = r.nextInt(64)
 							+ ((cx + (x >> 6)) * 64); // x
 					domes[(pos * 12) + 9] = r.nextInt(64)
 							+ ((cz + (z >> 6)) * 64); // z
 					domes[(pos * 12) + 10] = r.nextInt(6); // y
-					domes[(pos * 12) + 11] = r.nextInt(20) + 3; // y
+					domes[(pos * 12) + 11] = r.nextInt(20) + 3; // breadth
 
 					// shallow location
 					shallow[(pos * 4) + 0] = r.nextInt(64)
@@ -134,7 +136,17 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 					shallow[(pos * 4) + 1] = r.nextInt(64)
 							+ ((cz + (z >> 6)) * 64); // z
 					shallow[(pos * 4) + 2] = r.nextInt(4); // y
-					shallow[(pos * 4) + 3] = r.nextInt(32) + 10; // y
+					shallow[(pos * 4) + 3] = r.nextInt(32) + 10; // breadth
+
+					if (EzWastelands.terainVariation > 0) {
+						localvariation[(pos * 3) + 0] = r.nextInt(64)
+								+ ((cx + (x >> 6)) * 64); // x
+						localvariation[(pos * 3) + 1] = r.nextInt(64)
+								+ ((cz + (z >> 6)) * 64); // z
+						localvariation[(pos * 3) + 2] = r
+								.nextInt(EzWastelands.terainVariation); // distance
+					}
+
 					pos += 1;
 				}
 			}
@@ -192,8 +204,31 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 				}
 			}
 		}
+		if (EzWastelands.terainVariation > 0) {
+			int weight;
+			int total_weight = 0;
+			for (int i = 0; i < 25; i++) {
 
-		return (base + offset);
+				dist = Math.sqrt((x - localvariation[(i * 3) + 0])
+						* (x - localvariation[(i * 3) + 0])
+						+ (z - localvariation[(i * 3) + 1])
+						* (z - localvariation[(i * 3) + 1]));
+				weight = 110 - ((int) dist);
+				if (weight <= 0) {
+					continue;
+				}
+				total_weight += weight;
+				variation += ((long) weight)
+						* ((long) localvariation[(i * 3) + 2]);
+			}
+			if (total_weight > 0) {
+				variation = variation / ((long) total_weight);
+			} else {
+				variation = 0;
+			}
+
+		}
+		return (base + ((int) variation) + offset);
 	}
 
 	@Override

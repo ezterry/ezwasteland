@@ -49,6 +49,7 @@ public class EzWastelands {
 	private static boolean wastelandBlockGravity = false;
 	public static int villageRate = 0;
 	public static boolean modTriggers = false;
+	public static int terainVariation = 0;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -63,6 +64,9 @@ public class EzWastelands {
 				100, "Frequency villages spawn");
 		modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers,
 				"Trigger 3rd party mod generation");
+		terainVariation = cfg.getInt("variation", "terrain ", terainVariation,
+				0, 20, "The ground level variation in blocks");
+
 		cfg.save();
 		if (wastelandBlockGravity) {
 			wastelandBlock = new FallingWastelandBlock(Material.ground);
