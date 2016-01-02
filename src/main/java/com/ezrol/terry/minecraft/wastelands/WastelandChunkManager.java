@@ -33,23 +33,26 @@ import net.minecraft.world.biome.WorldChunkManager;
 
 public class WastelandChunkManager extends WorldChunkManager {
 	private boolean forceAllBiomes = false;
-	
-	public WastelandChunkManager(World world)
-	{
+
+	public WastelandChunkManager(World world) {
 		super(world);
 	}
-	public void setAllBiomesViable(){
+
+	public void setAllBiomesViable() {
 		forceAllBiomes = true;
 	}
-	public void unsetAllBiomesViable(){
+
+	public void unsetAllBiomesViable() {
 		forceAllBiomes = false;
 	}
-	
+
 	@Override
-	public boolean areBiomesViable(int p_76940_1_, int p_76940_2_, int p_76940_3_, List p_76940_4_){
-		/*We just assume all biomes are viable*/
-		if(forceAllBiomes)
+	public boolean areBiomesViable(int p_76940_1_, int p_76940_2_,
+			int p_76940_3_, List p_76940_4_) {
+		/* We just assume all biomes are viable */
+		if (forceAllBiomes)
 			return true;
-		return super.areBiomesViable(p_76940_1_,p_76940_2_,p_76940_3_,p_76940_4_);
+		return super.areBiomesViable(p_76940_1_, p_76940_2_, p_76940_3_,
+				p_76940_4_);
 	}
 }

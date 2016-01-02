@@ -30,13 +30,10 @@ import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILL
 
 import java.util.Random;
 
-import com.ezrol.terry.minecraft.wastelands.village.WastelandGenVillage;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -45,6 +42,8 @@ import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+
+import com.ezrol.terry.minecraft.wastelands.village.WastelandGenVillage;
 
 public class WastelandChunkProvider extends ChunkProviderGenerate {
 	private BiomeGenBase[] mockGeneratedBiomes;
@@ -57,9 +56,9 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	private int[] pillars = new int[25 * 3];
 	private int[] domes = new int[25 * 3 * 4];
 	private int[] shallow = new int[25 * 4];
-	
-	private boolean structuresEnabled=true;
-	
+
+	private boolean structuresEnabled = true;
+
 	private MapGenVillage villageGenerator;
 
 	public WastelandChunkProvider(World dim, long seed) {
@@ -67,10 +66,11 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		localWorldObj = dim;
 		worldSeed = seed;
 		regionCache = "";
-		
+
 		villageGenerator = new WastelandGenVillage(seed);
-		villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
-		structuresEnabled=dim.getWorldInfo().isMapFeaturesEnabled();
+		villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(
+				villageGenerator, VILLAGE);
+		structuresEnabled = dim.getWorldInfo().isMapFeaturesEnabled();
 	}
 
 	private int getCordOffset(int x, int z) {
@@ -97,8 +97,8 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 			int pos = 0;
 			for (int cx = -2; cx <= 2; cx++) {
 				for (int cz = -2; cz <= 2; cz++) {
-					Random r = new Random(((cx * 64 + x) >> 6)
-							* worldSeed + ((cz * 64 + z) >> 6) + worldSeed);
+					Random r = new Random(((cx * 64 + x) >> 6) * worldSeed
+							+ ((cz * 64 + z) >> 6) + worldSeed);
 					// get pillar location
 					pillars[(pos * 3) + 0] = r.nextInt(64)
 							+ ((cx + (x >> 6)) * 64); // x
@@ -195,7 +195,7 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 
 		return (base + offset);
 	}
-	
+
 	@Override
 	public void replaceBlocksForBiome(int p_147422_1_, int p_147422_2_,
 			Block[] p_147422_3_, byte[] p_147422_4_, BiomeGenBase[] p_147422_5_) {
@@ -258,52 +258,56 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		for (int l = 0; l < abyte.length; ++l) {
 			abyte[l] = (byte) abiomegenbase[l].biomeID;
 		}
-		
-		if (this.structuresEnabled){
-			this.villageGenerator.func_151539_a(this, this.localWorldObj, p_x, p_z, (Block[]) null);
+
+		if (this.structuresEnabled) {
+			this.villageGenerator.func_151539_a(this, this.localWorldObj, p_x,
+					p_z, (Block[]) null);
 		}
 		chunk.generateSkylightMap();
-		
-		//villages?
+
+		// villages?
 		return chunk;
 	}
 
 	@Override
-	public void populate(IChunkProvider p_73153_1_, int chunk_x,
-			int chunk_z) {
+	public void populate(IChunkProvider p_73153_1_, int chunk_x, int chunk_z) {
 		// Possible future structure population
 		int region_x = (chunk_x >> 2);
 		int region_z = (chunk_z >> 2);
-		Random r = new Random((region_x)
-				* worldSeed + (region_z) + worldSeed + (long)10);
-		Random r2 = new Random((chunk_x)
-				* worldSeed + (chunk_z) + worldSeed + region_x);
-		
+		Random r = new Random((region_x) * worldSeed + (region_z) + worldSeed
+				+ (long) 10);
+		Random r2 = new Random((chunk_x) * worldSeed + (chunk_z) + worldSeed
+				+ region_x);
+
 		boolean flag = false;
-		
-		if(EzWastelands.modTriggers){
-			MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(p_73153_1_, this.localWorldObj, r2, chunk_x, chunk_z, flag));
+
+		if (EzWastelands.modTriggers) {
+			MinecraftForge.EVENT_BUS
+					.post(new PopulateChunkEvent.Pre(p_73153_1_,
+							this.localWorldObj, r2, chunk_x, chunk_z, flag));
 		}
-		if (this.structuresEnabled)
-        {
-			flag=this.villageGenerator.generateStructuresInChunk(this.localWorldObj, r, chunk_x, chunk_z);
-        }
-		if(EzWastelands.modTriggers){
-			MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(p_73153_1_, this.localWorldObj, r2, chunk_x, chunk_z, flag));
+		if (this.structuresEnabled) {
+			flag = this.villageGenerator.generateStructuresInChunk(
+					this.localWorldObj, r, chunk_x, chunk_z);
+		}
+		if (EzWastelands.modTriggers) {
+			MinecraftForge.EVENT_BUS
+					.post(new PopulateChunkEvent.Post(p_73153_1_,
+							this.localWorldObj, r2, chunk_x, chunk_z, flag));
 		}
 	}
-	
+
 	@Override
-	public void recreateStructures(int chunk_x, int chunk_z){
+	public void recreateStructures(int chunk_x, int chunk_z) {
 		int region_x = (chunk_x >> 2);
 		int region_z = (chunk_z >> 2);
-		Random r = new Random((region_x)
-				* worldSeed + (region_z) + worldSeed + (long)10);
-		Random r2 = new Random((chunk_x)
-				* worldSeed + (chunk_z) + worldSeed + region_x);
-		if (this.structuresEnabled)
-        {
-			this.villageGenerator.func_151539_a(this, this.localWorldObj, chunk_x, chunk_z, (Block[])null);
-        }
+		Random r = new Random((region_x) * worldSeed + (region_z) + worldSeed
+				+ (long) 10);
+		Random r2 = new Random((chunk_x) * worldSeed + (chunk_z) + worldSeed
+				+ region_x);
+		if (this.structuresEnabled) {
+			this.villageGenerator.func_151539_a(this, this.localWorldObj,
+					chunk_x, chunk_z, (Block[]) null);
+		}
 	}
 }

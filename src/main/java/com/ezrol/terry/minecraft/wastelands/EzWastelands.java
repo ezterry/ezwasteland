@@ -59,8 +59,10 @@ public class EzWastelands {
 		wastelandBlockGravity = cfg.getBoolean("hasGravity", "wastelandblock",
 				wastelandBlockGravity,
 				"If set to true the wasteland blocks will fall like sand");
-		villageRate = cfg.getInt("village rate", "structures", villageRate, 0, 100, "Frequency villages spawn");
-		modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers, "Trigger 3rd party mod generation");
+		villageRate = cfg.getInt("village rate", "structures", villageRate, 0,
+				100, "Frequency villages spawn");
+		modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers,
+				"Trigger 3rd party mod generation");
 		cfg.save();
 		if (wastelandBlockGravity) {
 			wastelandBlock = new FallingWastelandBlock(Material.ground);

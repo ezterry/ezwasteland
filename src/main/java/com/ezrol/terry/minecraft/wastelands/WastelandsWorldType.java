@@ -66,7 +66,7 @@ public class WastelandsWorldType extends WorldType {
 	public int getMinimumSpawnHeight(World world) {
 		return 50;
 	}
-	
+
 	@Override
 	public WorldChunkManager getChunkManager(World world) {
 		return new WastelandChunkManager(world);

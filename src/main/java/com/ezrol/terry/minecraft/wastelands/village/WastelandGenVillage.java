@@ -26,77 +26,74 @@
 
 package com.ezrol.terry.minecraft.wastelands.village;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
+
+import net.minecraft.world.World;
+import net.minecraft.world.biome.WorldChunkManager;
+import net.minecraft.world.gen.structure.MapGenVillage;
+import net.minecraft.world.gen.structure.StructureStart;
 
 import com.ezrol.terry.minecraft.wastelands.EzWastelands;
 import com.ezrol.terry.minecraft.wastelands.WastelandChunkManager;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraft.world.gen.structure.MapGenVillage;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureStart;
-import net.minecraft.world.gen.structure.StructureVillagePieces;
-
 public class WastelandGenVillage extends MapGenVillage {
 	private long worldSeed;
-	
-	public WastelandGenVillage(long seed){
+
+	public WastelandGenVillage(long seed) {
 		super();
-		worldSeed=seed;
+		worldSeed = seed;
 	}
-	
+
 	@Override
-	protected boolean canSpawnStructureAtCoords(int chunk_x, int chunk_z){
+	protected boolean canSpawnStructureAtCoords(int chunk_x, int chunk_z) {
 		/* Generate the minecraft villages if enabled */
-		
+
 		int region_x = (chunk_x >> 2);
 		int region_z = (chunk_z >> 2);
-		if(region_x %2 == 0 || region_z %2 == 0){
+		if (region_x % 2 == 0 || region_z % 2 == 0) {
 			return false;
 		}
-		Random r = new Random((region_x)
-				* worldSeed + (region_z) + worldSeed + (long)10);
-		if(r.nextInt(300)<= EzWastelands.villageRate){
-			//this region has a village, now determine if the chunk has one
-			if(chunk_x == (region_x << 2) + r.nextInt(3)){
-				if(chunk_z == (region_z << 2) + r.nextInt(3)){
-					//this is the chunk
+		Random r = new Random((region_x) * worldSeed + (region_z) + worldSeed
+				+ (long) 10);
+		if (r.nextInt(300) <= EzWastelands.villageRate) {
+			// this region has a village, now determine if the chunk has one
+			if (chunk_x == (region_x << 2) + r.nextInt(3)) {
+				if (chunk_z == (region_z << 2) + r.nextInt(3)) {
+					// this is the chunk
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
-	public String func_143025_a(){
+	public String func_143025_a() {
 		return "WastelandVillage";
 	}
-	
+
 	@Override
-    protected synchronized StructureStart getStructureStart(int chunk_x, int chunk_z)
-    {
+	protected synchronized StructureStart getStructureStart(int chunk_x,
+			int chunk_z) {
 		WorldChunkManager world = this.worldObj.getWorldChunkManager();
 		MapGenVillage.Start village;
-		if(world instanceof WastelandChunkManager){
-			((WastelandChunkManager)world).setAllBiomesViable();
-			village = new MapGenVillage.Start(this.worldObj, this.rand, chunk_x, chunk_z, 0);
-			((WastelandChunkManager)world).unsetAllBiomesViable();
+		if (world instanceof WastelandChunkManager) {
+			((WastelandChunkManager) world).setAllBiomesViable();
+			village = new MapGenVillage.Start(this.worldObj, this.rand,
+					chunk_x, chunk_z, 0);
+			((WastelandChunkManager) world).unsetAllBiomesViable();
+		} else {
+			village = new MapGenVillage.Start(this.worldObj, this.rand,
+					chunk_x, chunk_z, 0);
 		}
-		else{
-        	village = new MapGenVillage.Start(this.worldObj, this.rand, chunk_x, chunk_z, 0);
-		}
-        
-        return village;
-    }
-	
+
+		return village;
+	}
+
 	@Override
-	public synchronized boolean generateStructuresInChunk(World p_75051_1_, Random p_75051_2_, int p_75051_3_, int p_75051_4_)
-	{
-		return super.generateStructuresInChunk(p_75051_1_, p_75051_2_, p_75051_3_, p_75051_4_);
+	public synchronized boolean generateStructuresInChunk(World p_75051_1_,
+			Random p_75051_2_, int p_75051_3_, int p_75051_4_) {
+		return super.generateStructuresInChunk(p_75051_1_, p_75051_2_,
+				p_75051_3_, p_75051_4_);
 	}
 }
