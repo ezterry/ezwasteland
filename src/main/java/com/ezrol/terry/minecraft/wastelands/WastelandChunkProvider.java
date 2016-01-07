@@ -26,12 +26,16 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
+import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.STRONGHOLD;
 import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILLAGE;
 
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -39,6 +43,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderGenerate;
+import net.minecraft.world.gen.structure.MapGenStronghold;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -62,6 +67,7 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	private boolean structuresEnabled = true;
 
 	private MapGenVillage villageGenerator;
+	private MapGenStronghold strongholdGenerator;
 
 	public WastelandChunkProvider(World dim, long seed) {
 		super(dim, seed, false, null);
@@ -73,6 +79,16 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(
 				villageGenerator, VILLAGE);
 		structuresEnabled = dim.getWorldInfo().isMapFeaturesEnabled();
+		if (EzWastelands.enableStrongholds) {
+			Map<String, String> args = new Hashtable();
+			;
+			args.put("count", "5");
+			args.put("distance", "48.0");
+			args.put("spread", "5");
+			strongholdGenerator = new MapGenStronghold(args);
+			strongholdGenerator = (MapGenStronghold) TerrainGen
+					.getModdedMapGen(strongholdGenerator, STRONGHOLD);
+		}
 	}
 
 	private int getCordOffset(int x, int z) {
@@ -284,6 +300,10 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		if (this.structuresEnabled) {
 			this.villageGenerator.generate(this, this.localWorldObj, p_x, p_z,
 					chunkprimer);
+			if (EzWastelands.enableStrongholds) {
+				this.strongholdGenerator.generate(this, this.localWorldObj,
+						p_x, p_z, chunkprimer);
+			}
 		}
 
 		Chunk chunk = new Chunk(this.localWorldObj, chunkprimer, p_x, p_z);
@@ -321,6 +341,10 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		if (this.structuresEnabled) {
 			flag = this.villageGenerator.generateStructure(this.localWorldObj,
 					r, chunkCord);
+			if (EzWastelands.enableStrongholds) {
+				this.strongholdGenerator.generateStructure(this.localWorldObj,
+						r2, chunkCord);
+			}
 		}
 		if (EzWastelands.modTriggers) {
 			MinecraftForge.EVENT_BUS
@@ -334,8 +358,23 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		if (this.structuresEnabled) {
 			this.villageGenerator.generate(this, this.localWorldObj, chunk_x,
 					chunk_z, (ChunkPrimer) null);
-
+			if (EzWastelands.enableStrongholds) {
+				this.strongholdGenerator.generate(this, this.localWorldObj,
+						chunk_x, chunk_z, (ChunkPrimer) null);
+			}
 		}
+	}
+
+	// stronghold location (for eyes of ender
+	@Override
+	public BlockPos getStrongholdGen(World worldIn, String structureName,
+			BlockPos position) {
+		if (EzWastelands.enableStrongholds && this.structuresEnabled
+				&& "Stronghold".equals(structureName)) {
+			return this.strongholdGenerator.getClosestStrongholdPos(worldIn,
+					position);
+		}
+		return null;
 	}
 
 	// never generate ocean monuments in the wastelands
