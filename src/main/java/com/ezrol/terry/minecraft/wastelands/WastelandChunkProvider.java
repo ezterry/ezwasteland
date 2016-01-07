@@ -30,7 +30,6 @@ import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILL
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -39,9 +38,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderGenerate;
-import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -67,7 +64,7 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	private MapGenVillage villageGenerator;
 
 	public WastelandChunkProvider(World dim, long seed) {
-		super(dim, seed, false,null);
+		super(dim, seed, false, null);
 		localWorldObj = dim;
 		worldSeed = seed;
 		regionCache = "";
@@ -230,8 +227,8 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 			} else {
 				variation = 0;
 			}
-			//if variations > 20 requested, reduce all height by 10
-			if(EzWastelands.terainVariation > 20){
+			// if variations > 20 requested, reduce all height by 10
+			if (EzWastelands.terainVariation > 20) {
 				variation -= 10;
 			}
 
@@ -240,7 +237,8 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	}
 
 	@Override
-	public void replaceBlocksForBiome(int p_180517_1_, int p_180517_2_, ChunkPrimer p_180517_3_, BiomeGenBase[] p_180517_4_){
+	public void replaceBlocksForBiome(int p_180517_1_, int p_180517_2_,
+			ChunkPrimer p_180517_3_, BiomeGenBase[] p_180517_4_) {
 		// biomes are devoid of features in our generation
 	}
 
@@ -257,7 +255,8 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		int height;
 		IBlockState block;
 		IBlockState bedrock = Blocks.bedrock.getDefaultState();
-		IBlockState wastelandblock = EzWastelands.wastelandBlock.getDefaultState();
+		IBlockState wastelandblock = EzWastelands.wastelandBlock
+				.getDefaultState();
 
 		// loop over the chunk (assume max possible generation height of 96)
 		for (x = 0; x < 16; ++x) {
@@ -283,10 +282,11 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		}
 		// villages?
 		if (this.structuresEnabled) {
-			this.villageGenerator.generate(this, this.localWorldObj, p_x, p_z, chunkprimer);
-        }
-		
-		Chunk chunk = new Chunk(this.localWorldObj,chunkprimer, p_x, p_z);
+			this.villageGenerator.generate(this, this.localWorldObj, p_x, p_z,
+					chunkprimer);
+		}
+
+		Chunk chunk = new Chunk(this.localWorldObj, chunkprimer, p_x, p_z);
 		BiomeGenBase[] abiomegenbase = this.localWorldObj
 				.getWorldChunkManager().loadBlockGeneratorData(
 						(BiomeGenBase[]) null, p_x * 16, p_z * 16, 16, 16);
@@ -297,7 +297,6 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		}
 		chunk.generateSkylightMap();
 
-		
 		return chunk;
 	}
 
@@ -320,8 +319,8 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 							this.localWorldObj, r2, chunk_x, chunk_z, flag));
 		}
 		if (this.structuresEnabled) {
-			flag = this.villageGenerator.generateStructure(
-					this.localWorldObj, r,chunkCord);
+			flag = this.villageGenerator.generateStructure(this.localWorldObj,
+					r, chunkCord);
 		}
 		if (EzWastelands.modTriggers) {
 			MinecraftForge.EVENT_BUS
@@ -329,18 +328,20 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 							this.localWorldObj, r2, chunk_x, chunk_z, flag));
 		}
 	}
-	
+
 	@Override
-	public void recreateStructures(Chunk c, int chunk_x, int chunk_z){
+	public void recreateStructures(Chunk c, int chunk_x, int chunk_z) {
 		if (this.structuresEnabled) {
-			this.villageGenerator.generate(this, this.localWorldObj, chunk_x, chunk_z, (ChunkPrimer)null);
-			
+			this.villageGenerator.generate(this, this.localWorldObj, chunk_x,
+					chunk_z, (ChunkPrimer) null);
+
 		}
 	}
-	
-	//never generate ocean monuments in the wastelands
+
+	// never generate ocean monuments in the wastelands
 	@Override
-	public boolean func_177460_a(IChunkProvider p_177460_1_, Chunk p_177460_2_, int p_177460_3_, int p_177460_4_){
+	public boolean func_177460_a(IChunkProvider p_177460_1_, Chunk p_177460_2_,
+			int p_177460_3_, int p_177460_4_) {
 		return false;
 	}
 }

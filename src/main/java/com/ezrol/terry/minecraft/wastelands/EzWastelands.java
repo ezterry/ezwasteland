@@ -71,7 +71,8 @@ public class EzWastelands {
 				"Trigger 3rd party mod generation");
 		terainVariation = cfg.getInt("variation", "terrain ", terainVariation,
 				0, 30, "The ground level variation in blocks");
-		System.out.println("terainVariation = " + String.valueOf(terainVariation));
+		System.out.println("terainVariation = "
+				+ String.valueOf(terainVariation));
 		cfg.save();
 		if (wastelandBlockGravity) {
 			wastelandBlock = new FallingWastelandBlock(Material.ground);
@@ -85,13 +86,17 @@ public class EzWastelands {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		System.out.println("Where are we?");
-		if(event.getSide() == Side.CLIENT)
-		{
-			//set up item renderer?
+		if (event.getSide() == Side.CLIENT) {
+			// set up item renderer?
 			RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-			renderItem.getItemModelMesher().register(Item.getItemFromBlock(wastelandBlock), 0, new ModelResourceLocation(MODID + ":" + "ezwastelandblock"));
-    	}
-    }
+			renderItem.getItemModelMesher()
+					.register(
+							Item.getItemFromBlock(wastelandBlock),
+							0,
+							new ModelResourceLocation(MODID + ":"
+									+ "ezwastelandblock"));
+		}
+	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {

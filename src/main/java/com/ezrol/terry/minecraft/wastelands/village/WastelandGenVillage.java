@@ -28,7 +28,6 @@ package com.ezrol.terry.minecraft.wastelands.village;
 
 import java.util.Random;
 
-import net.minecraft.world.World;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.gen.structure.StructureStart;
@@ -53,9 +52,9 @@ public class WastelandGenVillage extends MapGenVillage {
 		if (region_x % 2 == 0 || region_z % 2 == 0) {
 			return false;
 		}
-		Random r = new Random((region_x) * worldSeed + (region_z * 5737) + worldSeed
-				+ (long) 10);
-		//787 = prime near 800 for better random numbers
+		Random r = new Random((region_x) * worldSeed + (region_z * 5737)
+				+ worldSeed + (long) 10);
+		// 787 = prime near 800 for better random numbers
 		if (r.nextInt(787) <= EzWastelands.villageRate) {
 			// this region has a village, now determine if the chunk has one
 			if (chunk_x == (region_x << 2) + r.nextInt(3)) {
