@@ -28,14 +28,19 @@ package com.ezrol.terry.minecraft.wastelands;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.common.config.Configuration;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = EzWastelands.MODID, version = EzWastelands.VERSION, name = EzWastelands.NAME)
 public class EzWastelands {
@@ -65,8 +70,8 @@ public class EzWastelands {
 		modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers,
 				"Trigger 3rd party mod generation");
 		terainVariation = cfg.getInt("variation", "terrain ", terainVariation,
-				0, 20, "The ground level variation in blocks");
-
+				0, 30, "The ground level variation in blocks");
+		System.out.println("terainVariation = " + String.valueOf(terainVariation));
 		cfg.save();
 		if (wastelandBlockGravity) {
 			wastelandBlock = new FallingWastelandBlock(Material.ground);
@@ -80,8 +85,13 @@ public class EzWastelands {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		System.out.println("Where are we?");
-
-	}
+		if(event.getSide() == Side.CLIENT)
+		{
+			//set up item renderer?
+			RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+			renderItem.getItemModelMesher().register(Item.getItemFromBlock(wastelandBlock), 0, new ModelResourceLocation(MODID + ":" + "ezwastelandblock"));
+    	}
+    }
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {

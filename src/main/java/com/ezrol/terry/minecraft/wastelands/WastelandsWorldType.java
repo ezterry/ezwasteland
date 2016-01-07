@@ -38,11 +38,6 @@ public class WastelandsWorldType extends WorldType {
 	}
 
 	@Override
-	public boolean hasVoidParticles(boolean flag) {
-		return false;
-	}
-
-	@Override
 	public double voidFadeMagnitude() {
 		return 1.0d;
 	}

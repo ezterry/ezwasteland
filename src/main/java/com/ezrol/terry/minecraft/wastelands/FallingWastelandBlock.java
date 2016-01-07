@@ -35,8 +35,7 @@ public class FallingWastelandBlock extends BlockFalling {
 		super(material);
 		this.setHardness((float) 0.7);
 		this.setStepSound(this.soundTypeSand);
-		this.setBlockName("ezwastelandblock");
-		this.setBlockTextureName("ezwastelands:ezwastelandblock");
+		this.setUnlocalizedName("ezwastelandblock");
 		this.setCreativeTab(CreativeTabs.tabBlock);
 		this.setHarvestLevel("shovel", 0);
 	}

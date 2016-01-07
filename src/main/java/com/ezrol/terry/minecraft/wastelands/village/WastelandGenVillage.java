@@ -69,7 +69,7 @@ public class WastelandGenVillage extends MapGenVillage {
 	}
 
 	@Override
-	public String func_143025_a() {
+	public String getStructureName() {
 		return "WastelandVillage";
 	}
 
@@ -91,10 +91,4 @@ public class WastelandGenVillage extends MapGenVillage {
 		return village;
 	}
 
-	@Override
-	public synchronized boolean generateStructuresInChunk(World p_75051_1_,
-			Random p_75051_2_, int p_75051_3_, int p_75051_4_) {
-		return super.generateStructuresInChunk(p_75051_1_, p_75051_2_,
-				p_75051_3_, p_75051_4_);
-	}
 }

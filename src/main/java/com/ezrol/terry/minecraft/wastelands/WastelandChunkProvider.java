@@ -31,13 +31,17 @@ import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILL
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderGenerate;
+import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -63,7 +67,7 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	private MapGenVillage villageGenerator;
 
 	public WastelandChunkProvider(World dim, long seed) {
-		super(dim, seed, false);
+		super(dim, seed, false,null);
 		localWorldObj = dim;
 		worldSeed = seed;
 		regionCache = "";
@@ -226,22 +230,24 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 			} else {
 				variation = 0;
 			}
+			//if variations > 20 requested, reduce all height by 10
+			if(EzWastelands.terainVariation > 20){
+				variation -= 10;
+			}
 
 		}
 		return (base + ((int) variation) + offset);
 	}
 
 	@Override
-	public void replaceBlocksForBiome(int p_147422_1_, int p_147422_2_,
-			Block[] p_147422_3_, byte[] p_147422_4_, BiomeGenBase[] p_147422_5_) {
+	public void replaceBlocksForBiome(int p_180517_1_, int p_180517_2_, ChunkPrimer p_180517_3_, BiomeGenBase[] p_180517_4_){
 		// biomes are devoid of features in our generation
 	}
 
 	@Override
 	public Chunk provideChunk(int p_x, int p_z) {
 		/* calculate the empty chunk */
-
-		Chunk chunk = new Chunk(this.localWorldObj, p_x, p_z);
+		ChunkPrimer chunkprimer = new ChunkPrimer();
 
 		this.mockGeneratedBiomes = this.localWorldObj.getWorldChunkManager()
 				.loadBlockGeneratorData(this.mockGeneratedBiomes, p_x * 16,
@@ -249,42 +255,38 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		int z = 0;
 		int x = 0;
 		int height;
-		Block block;
+		IBlockState block;
+		IBlockState bedrock = Blocks.bedrock.getDefaultState();
+		IBlockState wastelandblock = EzWastelands.wastelandBlock.getDefaultState();
 
 		// loop over the chunk (assume max possible generation height of 96)
 		for (x = 0; x < 16; ++x) {
 			for (z = 0; z < 16; ++z) {
+				height = this.getCordOffset((p_x * 16) + x, (p_z * 16) + z);
 				for (int y = 0; y < 96; ++y) {
-					height = this.getCordOffset((p_x * 16) + x, (p_z * 16) + z);
 					block = null;
 					if (y <= 1) {
-						block = Blocks.bedrock;
+						block = bedrock;
 					}
 					if (y == 1 && (((p_x + x) + (p_z + z)) % 3) == 0) {
-						block = EzWastelands.wastelandBlock;
+						block = wastelandblock;
 					}
 					if (y > 1 && y <= height) {
-						block = EzWastelands.wastelandBlock;
+						block = wastelandblock;
 					}
 
 					if (block != null) {
-						ExtendedBlockStorage extendedblockstorage = chunk
-								.getBlockStorageArray()[y >> 4];
-
-						if (extendedblockstorage == null) {
-							extendedblockstorage = new ExtendedBlockStorage(y,
-									!this.localWorldObj.provider.hasNoSky);
-							chunk.getBlockStorageArray()[y >> 4] = extendedblockstorage;
-						}
-
-						extendedblockstorage.func_150818_a(x, y & 15, z, block);
-						extendedblockstorage.setExtBlockMetadata(x, y & 15, z,
-								0);
+						chunkprimer.setBlockState(x, y, z, block);
 					}
 				}
 			}
 		}
-		chunk.generateSkylightMap();
+		// villages?
+		if (this.structuresEnabled) {
+			this.villageGenerator.generate(this, this.localWorldObj, p_x, p_z, chunkprimer);
+        }
+		
+		Chunk chunk = new Chunk(this.localWorldObj,chunkprimer, p_x, p_z);
 		BiomeGenBase[] abiomegenbase = this.localWorldObj
 				.getWorldChunkManager().loadBlockGeneratorData(
 						(BiomeGenBase[]) null, p_x * 16, p_z * 16, 16, 16);
@@ -293,14 +295,9 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		for (int l = 0; l < abyte.length; ++l) {
 			abyte[l] = (byte) abiomegenbase[l].biomeID;
 		}
-
-		if (this.structuresEnabled) {
-			this.villageGenerator.func_151539_a(this, this.localWorldObj, p_x,
-					p_z, (Block[]) null);
-		}
 		chunk.generateSkylightMap();
 
-		// villages?
+		
 		return chunk;
 	}
 
@@ -315,6 +312,7 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 				+ region_x);
 
 		boolean flag = false;
+		ChunkCoordIntPair chunkCord = new ChunkCoordIntPair(chunk_x, chunk_z);
 
 		if (EzWastelands.modTriggers) {
 			MinecraftForge.EVENT_BUS
@@ -322,8 +320,8 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 							this.localWorldObj, r2, chunk_x, chunk_z, flag));
 		}
 		if (this.structuresEnabled) {
-			flag = this.villageGenerator.generateStructuresInChunk(
-					this.localWorldObj, r, chunk_x, chunk_z);
+			flag = this.villageGenerator.generateStructure(
+					this.localWorldObj, r,chunkCord);
 		}
 		if (EzWastelands.modTriggers) {
 			MinecraftForge.EVENT_BUS
@@ -331,18 +329,18 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 							this.localWorldObj, r2, chunk_x, chunk_z, flag));
 		}
 	}
-
+	
 	@Override
-	public void recreateStructures(int chunk_x, int chunk_z) {
-		int region_x = (chunk_x >> 2);
-		int region_z = (chunk_z >> 2);
-		Random r = new Random((region_x) * worldSeed + (region_z) + worldSeed
-				+ (long) 10);
-		Random r2 = new Random((chunk_x) * worldSeed + (chunk_z) + worldSeed
-				+ region_x);
+	public void recreateStructures(Chunk c, int chunk_x, int chunk_z){
 		if (this.structuresEnabled) {
-			this.villageGenerator.func_151539_a(this, this.localWorldObj,
-					chunk_x, chunk_z, (Block[]) null);
+			this.villageGenerator.generate(this, this.localWorldObj, chunk_x, chunk_z, (ChunkPrimer)null);
+			
 		}
+	}
+	
+	//never generate ocean monuments in the wastelands
+	@Override
+	public boolean func_177460_a(IChunkProvider p_177460_1_, Chunk p_177460_2_, int p_177460_3_, int p_177460_4_){
+		return false;
 	}
 }

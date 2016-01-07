@@ -5,3 +5,8 @@
 /.project
 /.settings
 /bin/*
+/run/*
+/build/*
+ezwasteland_Client.launch
+ezwasteland_Server.launch
+/test/*
