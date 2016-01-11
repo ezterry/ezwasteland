@@ -26,18 +26,23 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
+import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.STRONGHOLD;
 import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILLAGE;
 
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderGenerate;
+import net.minecraft.world.gen.structure.MapGenStronghold;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -61,6 +66,7 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	private boolean structuresEnabled = true;
 
 	private MapGenVillage villageGenerator;
+	private MapGenStronghold strongholdGenerator;
 
 	public WastelandChunkProvider(World dim, long seed) {
 		super(dim, seed, false);
@@ -72,6 +78,15 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(
 				villageGenerator, VILLAGE);
 		structuresEnabled = dim.getWorldInfo().isMapFeaturesEnabled();
+		if (EzWastelands.enableStrongholds) {
+			Map<String, String> args = new Hashtable();
+			args.put("count", "5");
+			args.put("distance", "48.0");
+			args.put("spread", "5");
+			strongholdGenerator = new MapGenStronghold(args);
+			strongholdGenerator = (MapGenStronghold) TerrainGen
+					.getModdedMapGen(strongholdGenerator, STRONGHOLD);
+		}
 	}
 
 	private int getCordOffset(int x, int z) {
@@ -226,7 +241,10 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 			} else {
 				variation = 0;
 			}
-
+			// if variations > 20 requested, reduce all height by 10
+			if (EzWastelands.terainVariation > 20) {
+				variation -= 10;
+			}
 		}
 		return (base + ((int) variation) + offset);
 	}
@@ -254,8 +272,8 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		// loop over the chunk (assume max possible generation height of 96)
 		for (x = 0; x < 16; ++x) {
 			for (z = 0; z < 16; ++z) {
+				height = this.getCordOffset((p_x * 16) + x, (p_z * 16) + z);
 				for (int y = 0; y < 96; ++y) {
-					height = this.getCordOffset((p_x * 16) + x, (p_z * 16) + z);
 					block = null;
 					if (y <= 1) {
 						block = Blocks.bedrock;
@@ -284,23 +302,26 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 				}
 			}
 		}
-		chunk.generateSkylightMap();
+
+		byte[] abyte = chunk.getBiomeArray();
 		BiomeGenBase[] abiomegenbase = this.localWorldObj
 				.getWorldChunkManager().loadBlockGeneratorData(
 						(BiomeGenBase[]) null, p_x * 16, p_z * 16, 16, 16);
-		byte[] abyte = chunk.getBiomeArray();
-
 		for (int l = 0; l < abyte.length; ++l) {
 			abyte[l] = (byte) abiomegenbase[l].biomeID;
 		}
-
+		
+		// villages?
 		if (this.structuresEnabled) {
 			this.villageGenerator.func_151539_a(this, this.localWorldObj, p_x,
 					p_z, (Block[]) null);
+			if (EzWastelands.enableStrongholds) {
+				this.strongholdGenerator.func_151539_a(this,
+						this.localWorldObj, p_x, p_z, (Block[]) null);
+			}
 		}
 		chunk.generateSkylightMap();
 
-		// villages?
 		return chunk;
 	}
 
@@ -324,6 +345,14 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		if (this.structuresEnabled) {
 			flag = this.villageGenerator.generateStructuresInChunk(
 					this.localWorldObj, r, chunk_x, chunk_z);
+			if(flag){
+				//try and fix village lighting
+				this.localWorldObj.getChunkFromChunkCoords(chunk_x,chunk_z).generateSkylightMap();
+			}
+			if (EzWastelands.enableStrongholds) {
+				this.strongholdGenerator.generateStructuresInChunk(
+						this.localWorldObj, r, chunk_x, chunk_z);
+			}
 		}
 		if (EzWastelands.modTriggers) {
 			MinecraftForge.EVENT_BUS
@@ -343,6 +372,22 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		if (this.structuresEnabled) {
 			this.villageGenerator.func_151539_a(this, this.localWorldObj,
 					chunk_x, chunk_z, (Block[]) null);
+			if (EzWastelands.enableStrongholds) {
+				this.strongholdGenerator.func_151539_a(this,
+						this.localWorldObj, chunk_x, chunk_z, (Block[]) null);
+			}
 		}
+	}
+
+	// stronghold location (for eyes of ender
+	@Override
+	public ChunkPosition func_147416_a(World worldIn, String structureName,
+			int cord_x, int cord_y, int cord_z) {
+		if (EzWastelands.enableStrongholds && this.structuresEnabled
+				&& "Stronghold".equals(structureName)) {
+			return this.strongholdGenerator.func_151545_a(worldIn, cord_x,
+					cord_y, cord_z);
+		}
+		return null;
 	}
 }
