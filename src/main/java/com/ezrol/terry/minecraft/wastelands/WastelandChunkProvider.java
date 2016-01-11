@@ -303,14 +303,10 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 			}
 		}
 
-		byte[] abyte = chunk.getBiomeArray();
+		
 		BiomeGenBase[] abiomegenbase = this.localWorldObj
 				.getWorldChunkManager().loadBlockGeneratorData(
 						(BiomeGenBase[]) null, p_x * 16, p_z * 16, 16, 16);
-		for (int l = 0; l < abyte.length; ++l) {
-			abyte[l] = (byte) abiomegenbase[l].biomeID;
-		}
-		
 		// villages?
 		if (this.structuresEnabled) {
 			this.villageGenerator.func_151539_a(this, this.localWorldObj, p_x,
@@ -319,6 +315,11 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 				this.strongholdGenerator.func_151539_a(this,
 						this.localWorldObj, p_x, p_z, (Block[]) null);
 			}
+		}
+		
+		byte[] abyte = chunk.getBiomeArray();
+		for (int l = 0; l < abyte.length; ++l) {
+			abyte[l] = (byte) abiomegenbase[l].biomeID;
 		}
 		chunk.generateSkylightMap();
 
