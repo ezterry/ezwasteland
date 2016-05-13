@@ -28,13 +28,13 @@ package com.ezrol.terry.minecraft.wastelands;
 
 import java.util.List;
 
-import net.minecraft.world.World;
-import net.minecraft.world.biome.WorldChunkManager;
+import net.minecraft.world.biome.BiomeProvider;
+import net.minecraft.world.storage.WorldInfo;
 
-public class WastelandChunkManager extends WorldChunkManager {
+public class WastelandBiomeProvider extends BiomeProvider {
 	private boolean forceAllBiomes = false;
 
-	public WastelandChunkManager(World world) {
+	public WastelandBiomeProvider(WorldInfo world) {
 		super(world);
 	}
 
@@ -47,12 +47,10 @@ public class WastelandChunkManager extends WorldChunkManager {
 	}
 
 	@Override
-	public boolean areBiomesViable(int p_76940_1_, int p_76940_2_,
-			int p_76940_3_, List p_76940_4_) {
+	public boolean areBiomesViable(int p_76940_1_, int p_76940_2_, int p_76940_3_, List p_76940_4_) {
 		/* We just assume all biomes are viable */
 		if (forceAllBiomes)
 			return true;
-		return super.areBiomesViable(p_76940_1_, p_76940_2_, p_76940_3_,
-				p_76940_4_);
+		return super.areBiomesViable(p_76940_1_, p_76940_2_, p_76940_3_, p_76940_4_);
 	}
 }

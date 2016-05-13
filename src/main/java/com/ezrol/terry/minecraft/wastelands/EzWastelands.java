@@ -29,9 +29,9 @@ package com.ezrol.terry.minecraft.wastelands;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -45,7 +45,7 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod(modid = EzWastelands.MODID, version = EzWastelands.VERSION, name = EzWastelands.NAME)
 public class EzWastelands {
 	public static final String MODID = "ezwastelands";
-	public static final String VERSION = "0.9.0";
+	public static final String VERSION = "${version}";
 	public static final String NAME = "EzWastelands";
 
 	public static Block wastelandBlock;
@@ -59,22 +59,18 @@ public class EzWastelands {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		Configuration cfg = new Configuration(
-				event.getSuggestedConfigurationFile());
+		Configuration cfg = new Configuration(event.getSuggestedConfigurationFile());
+		ItemBlock wastelandBlockItm;
 
 		cfg.load();
-		wastelandBlockGravity = cfg.getBoolean("hasGravity", "wastelandblock",
-				wastelandBlockGravity,
+		wastelandBlockGravity = cfg.getBoolean("hasGravity", "wastelandblock", wastelandBlockGravity,
 				"If set to true the wasteland blocks will fall like sand");
-		villageRate = cfg.getInt("village rate", "structures", villageRate, 0,
-				100, "Frequency villages spawn");
-		modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers,
-				"Trigger 3rd party mod generation");
-		enableStrongholds = cfg.getBoolean("strongholds", "structures",
-				enableStrongholds,
+		villageRate = cfg.getInt("village rate", "structures", villageRate, 0, 100, "Frequency villages spawn");
+		modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers, "Trigger 3rd party mod generation");
+		enableStrongholds = cfg.getBoolean("strongholds", "structures", enableStrongholds,
 				"Generate strongholds/endportals in the world");
-		terainVariation = cfg.getInt("variation", "terrain ", terainVariation,
-				0, 30, "The ground level variation in blocks");
+		terainVariation = cfg.getInt("variation", "terrain ", terainVariation, 0, 30,
+				"The ground level variation in blocks");
 
 		cfg.save();
 		if (wastelandBlockGravity) {
@@ -82,7 +78,11 @@ public class EzWastelands {
 		} else {
 			wastelandBlock = new WastelandBlock(Material.ground);
 		}
-		GameRegistry.registerBlock(wastelandBlock, "ezwastelandblock");
+		GameRegistry.register(wastelandBlock);
+		wastelandBlockItm = new ItemBlock(wastelandBlock);
+		wastelandBlockItm.setRegistryName(wastelandBlock.getRegistryName());
+		wastelandBlockItm.setUnlocalizedName(wastelandBlockItm.getRegistryName().toString());
+		GameRegistry.register(wastelandBlockItm);
 
 	}
 
@@ -91,13 +91,9 @@ public class EzWastelands {
 		System.out.println("Where are we?");
 		if (event.getSide() == Side.CLIENT) {
 			// set up item renderer?
-			RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-			renderItem.getItemModelMesher()
-					.register(
-							Item.getItemFromBlock(wastelandBlock),
-							0,
-							new ModelResourceLocation(MODID + ":"
-									+ "ezwastelandblock"));
+			net.minecraft.client.renderer.RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+			renderItem.getItemModelMesher().register(Item.getItemFromBlock(wastelandBlock), 0,
+					new ModelResourceLocation(MODID + ":" + "ezwastelandblock"));
 		}
 	}
 
@@ -109,8 +105,7 @@ public class EzWastelands {
 		System.out.println("World Types:");
 		for (a = 0; a < WorldType.worldTypes.length; a++) {
 			if (WorldType.worldTypes[a] != null)
-				System.out.println(Integer.toString(a + 1) + ": "
-						+ WorldType.worldTypes[a].getWorldTypeName());
+				System.out.println(Integer.toString(a + 1) + ": " + WorldType.worldTypes[a].getWorldTypeName());
 		}
 	}
 }

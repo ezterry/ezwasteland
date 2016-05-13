@@ -1,5 +1,7 @@
 {
     "variants": {
-        "normal": { "model": "ezwastelands:ezwastelandblock" }
+        "normal": [
+        { "model": "ezwastelands:ezwastelandblock" },
+        { "model": "ezwastelands:ezwastelandblock_mirrored" }]
     }
 }

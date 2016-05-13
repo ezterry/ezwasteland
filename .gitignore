@@ -10,3 +10,4 @@
 ezwasteland_Client.launch
 ezwasteland_Server.launch
 /test/*
+/bin/

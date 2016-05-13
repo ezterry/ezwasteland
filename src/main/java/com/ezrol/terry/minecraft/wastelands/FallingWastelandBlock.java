@@ -27,6 +27,7 @@
 package com.ezrol.terry.minecraft.wastelands;
 
 import net.minecraft.block.BlockFalling;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
@@ -34,9 +35,10 @@ public class FallingWastelandBlock extends BlockFalling {
 	public FallingWastelandBlock(Material material) {
 		super(material);
 		this.setHardness((float) 0.7);
-		this.setStepSound(this.soundTypeSand);
-		this.setUnlocalizedName("ezwastelandblock");
+		this.setSoundType(SoundType.SAND);
 		this.setCreativeTab(CreativeTabs.tabBlock);
 		this.setHarvestLevel("shovel", 0);
+		this.setRegistryName("ezwastelandblock");
+		this.setUnlocalizedName(this.getRegistryName().toString());
 	}
 }

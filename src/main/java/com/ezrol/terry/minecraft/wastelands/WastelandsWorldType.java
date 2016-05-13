@@ -28,8 +28,8 @@ package com.ezrol.terry.minecraft.wastelands;
 
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.biome.BiomeProvider;
+import net.minecraft.world.chunk.IChunkGenerator;
 
 public class WastelandsWorldType extends WorldType {
 
@@ -48,8 +48,8 @@ public class WastelandsWorldType extends WorldType {
 	}
 
 	@Override
-	public IChunkProvider getChunkGenerator(World world, String generatorOptions) {
-		return (new WastelandChunkProvider(world, world.getSeed()));
+	public IChunkGenerator getChunkGenerator(World world, String generatorOptions) {
+		return (new WastelandChunkProvider(world, world.getSeed(), generatorOptions));
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class WastelandsWorldType extends WorldType {
 	}
 
 	@Override
-	public WorldChunkManager getChunkManager(World world) {
-		return new WastelandChunkManager(world);
+	public BiomeProvider getBiomeProvider(World world) {
+		return new WastelandBiomeProvider(world.getWorldInfo());
 	}
 }

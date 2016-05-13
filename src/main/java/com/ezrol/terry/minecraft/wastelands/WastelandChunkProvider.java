@@ -33,25 +33,22 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
 
+import com.ezrol.terry.minecraft.wastelands.village.WastelandGenVillage;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderGenerate;
+import net.minecraft.world.gen.ChunkProviderOverworld;
 import net.minecraft.world.gen.structure.MapGenStronghold;
 import net.minecraft.world.gen.structure.MapGenVillage;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 
-import com.ezrol.terry.minecraft.wastelands.village.WastelandGenVillage;
-
-public class WastelandChunkProvider extends ChunkProviderGenerate {
+public class WastelandChunkProvider extends ChunkProviderOverworld {
 	private BiomeGenBase[] mockGeneratedBiomes;
 	private long worldSeed;
 	private World localWorldObj;
@@ -69,25 +66,23 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	private MapGenVillage villageGenerator;
 	private MapGenStronghold strongholdGenerator;
 
-	public WastelandChunkProvider(World dim, long seed) {
+	public WastelandChunkProvider(World dim, long seed, String generatorOptions) {
 		super(dim, seed, false, null);
 		localWorldObj = dim;
 		worldSeed = seed;
 		regionCache = "";
 
 		villageGenerator = new WastelandGenVillage(seed);
-		villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(
-				villageGenerator, VILLAGE);
+		villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
 		structuresEnabled = dim.getWorldInfo().isMapFeaturesEnabled();
 		if (EzWastelands.enableStrongholds) {
 			Map<String, String> args = new Hashtable();
 			;
-			args.put("count", "5");
+			args.put("count", "196");
 			args.put("distance", "48.0");
 			args.put("spread", "5");
 			strongholdGenerator = new MapGenStronghold(args);
-			strongholdGenerator = (MapGenStronghold) TerrainGen
-					.getModdedMapGen(strongholdGenerator, STRONGHOLD);
+			strongholdGenerator = (MapGenStronghold) TerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
 		}
 	}
 
@@ -107,8 +102,7 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		// a string indicating out "region" x/y this is not perfect around the
 		// axis (x=0 or y=0)
 		// a region is 64*64
-		String region = Integer.toString(x >> 6) + "/"
-				+ Integer.toString(z >> 6);
+		String region = Integer.toString(x >> 6) + "/" + Integer.toString(z >> 6);
 		// if this is the last region we calculated don't recalculate
 		if (!region.equals(this.regionCache)) {
 			// cache miss - calculate the features in the 5x5 areas around the
@@ -116,52 +110,38 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 			int pos = 0;
 			for (int cx = -2; cx <= 2; cx++) {
 				for (int cz = -2; cz <= 2; cz++) {
-					Random r = new Random(((cx * 64 + x) >> 6) * worldSeed
-							+ ((cz * 64 + z) >> 6) + worldSeed);
+					Random r = new Random(((cx * 64 + x) >> 6) * worldSeed + ((cz * 64 + z) >> 6) + worldSeed);
 					// get pillar location
-					pillars[(pos * 3) + 0] = r.nextInt(64)
-							+ ((cx + (x >> 6)) * 64); // x
-					pillars[(pos * 3) + 1] = r.nextInt(64)
-							+ ((cz + (z >> 6)) * 64); // z
+					pillars[(pos * 3) + 0] = r.nextInt(64) + ((cx + (x >> 6)) * 64); // x
+					pillars[(pos * 3) + 1] = r.nextInt(64) + ((cz + (z >> 6)) * 64); // z
 					pillars[(pos * 3) + 2] = r.nextInt(5); // y
 
 					// dome 1 (smaller) location
-					domes[(pos * 12) + 0] = r.nextInt(64)
-							+ ((cx + (x >> 6)) * 64); // x
-					domes[(pos * 12) + 1] = r.nextInt(64)
-							+ ((cz + (z >> 6)) * 64); // z
+					domes[(pos * 12) + 0] = r.nextInt(64) + ((cx + (x >> 6)) * 64); // x
+					domes[(pos * 12) + 1] = r.nextInt(64) + ((cz + (z >> 6)) * 64); // z
 					domes[(pos * 12) + 2] = r.nextInt(5); // y
 					domes[(pos * 12) + 3] = r.nextInt(16) + 2; // breadth
 					// dome 2 (larger) location
-					domes[(pos * 12) + 4] = r.nextInt(64)
-							+ ((cx + (x >> 6)) * 64); // x
-					domes[(pos * 12) + 5] = r.nextInt(64)
-							+ ((cz + (z >> 6)) * 64); // z
+					domes[(pos * 12) + 4] = r.nextInt(64) + ((cx + (x >> 6)) * 64); // x
+					domes[(pos * 12) + 5] = r.nextInt(64) + ((cz + (z >> 6)) * 64); // z
 					domes[(pos * 12) + 6] = r.nextInt(7); // y
 					domes[(pos * 12) + 7] = r.nextInt(27) + 4; // breadth
 					// dome 3 (medium) location
-					domes[(pos * 12) + 8] = r.nextInt(64)
-							+ ((cx + (x >> 6)) * 64); // x
-					domes[(pos * 12) + 9] = r.nextInt(64)
-							+ ((cz + (z >> 6)) * 64); // z
+					domes[(pos * 12) + 8] = r.nextInt(64) + ((cx + (x >> 6)) * 64); // x
+					domes[(pos * 12) + 9] = r.nextInt(64) + ((cz + (z >> 6)) * 64); // z
 					domes[(pos * 12) + 10] = r.nextInt(6); // y
 					domes[(pos * 12) + 11] = r.nextInt(20) + 3; // breadth
 
 					// shallow location
-					shallow[(pos * 4) + 0] = r.nextInt(64)
-							+ ((cx + (x >> 6)) * 64); // x
-					shallow[(pos * 4) + 1] = r.nextInt(64)
-							+ ((cz + (z >> 6)) * 64); // z
+					shallow[(pos * 4) + 0] = r.nextInt(64) + ((cx + (x >> 6)) * 64); // x
+					shallow[(pos * 4) + 1] = r.nextInt(64) + ((cz + (z >> 6)) * 64); // z
 					shallow[(pos * 4) + 2] = r.nextInt(4); // y
 					shallow[(pos * 4) + 3] = r.nextInt(32) + 10; // breadth
 
 					if (EzWastelands.terainVariation > 0) {
-						localvariation[(pos * 3) + 0] = r.nextInt(64)
-								+ ((cx + (x >> 6)) * 64); // x
-						localvariation[(pos * 3) + 1] = r.nextInt(64)
-								+ ((cz + (z >> 6)) * 64); // z
-						localvariation[(pos * 3) + 2] = r
-								.nextInt(EzWastelands.terainVariation); // distance
+						localvariation[(pos * 3) + 0] = r.nextInt(64) + ((cx + (x >> 6)) * 64); // x
+						localvariation[(pos * 3) + 1] = r.nextInt(64) + ((cz + (z >> 6)) * 64); // z
+						localvariation[(pos * 3) + 2] = r.nextInt(EzWastelands.terainVariation); // distance
 					}
 
 					pos += 1;
@@ -176,48 +156,48 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 				offset += pillars[(i * 3) + 2];
 			}
 			// dome 1
-			dist = Math.sqrt((x - domes[(i * 12) + 0])
-					* (x - domes[(i * 12) + 0]) + (z - domes[(i * 12) + 1])
-					* (z - domes[(i * 12) + 1]));
+			dist = Math.sqrt((x - domes[(i * 12) + 0]) * (x - domes[(i * 12) + 0])
+					+ (z - domes[(i * 12) + 1]) * (z - domes[(i * 12) + 1]));
 			if (dist < domes[(i * 12) + 3]) {
 				if (dist < 0.09) {
 					offset += domes[(i * 12) + 2];
 				} else {
-					offset += (int) (((-1 * (dist - domes[(i * 12) + 3])) / domes[(i * 12) + 3]) * domes[(i * 12) + 2]) + 0.5;
+					offset += (int) (((-1 * (dist - domes[(i * 12) + 3])) / domes[(i * 12) + 3]) * domes[(i * 12) + 2])
+							+ 0.5;
 				}
 			}
 			// dome 2
-			dist = Math.sqrt((x - domes[(i * 12) + 4])
-					* (x - domes[(i * 12) + 4]) + (z - domes[(i * 12) + 5])
-					* (z - domes[(i * 12) + 5]));
+			dist = Math.sqrt((x - domes[(i * 12) + 4]) * (x - domes[(i * 12) + 4])
+					+ (z - domes[(i * 12) + 5]) * (z - domes[(i * 12) + 5]));
 			if (dist < domes[(i * 12) + 7]) {
 				if (dist < 0.09) {
 					offset += domes[(i * 12) + 6];
 				} else {
-					offset += (int) (((-1 * (dist - domes[(i * 12) + 7])) / domes[(i * 12) + 7]) * domes[(i * 12) + 6]) + 0.5;
+					offset += (int) (((-1 * (dist - domes[(i * 12) + 7])) / domes[(i * 12) + 7]) * domes[(i * 12) + 6])
+							+ 0.5;
 				}
 			}
 			// dome 3
-			dist = Math.sqrt((x - domes[(i * 12) + 8])
-					* (x - domes[(i * 12) + 8]) + (z - domes[(i * 12) + 9])
-					* (z - domes[(i * 12) + 9]));
+			dist = Math.sqrt((x - domes[(i * 12) + 8]) * (x - domes[(i * 12) + 8])
+					+ (z - domes[(i * 12) + 9]) * (z - domes[(i * 12) + 9]));
 			if (dist < domes[(i * 12) + 11]) {
 				if (dist < 0.09) {
 					offset += domes[(i * 12) + 10];
 				} else {
-					offset += (int) (((-1 * (dist - domes[(i * 12) + 11])) / domes[(i * 12) + 11]) * domes[(i * 12) + 10]) + 0.5;
+					offset += (int) (((-1 * (dist - domes[(i * 12) + 11])) / domes[(i * 12) + 11])
+							* domes[(i * 12) + 10]) + 0.5;
 				}
 			}
 
 			// shallow 1
-			dist = Math.sqrt((x - shallow[(i * 4) + 0])
-					* (x - shallow[(i * 4) + 0]) + (z - shallow[(i * 4) + 1])
-					* (z - shallow[(i * 4) + 1]));
+			dist = Math.sqrt((x - shallow[(i * 4) + 0]) * (x - shallow[(i * 4) + 0])
+					+ (z - shallow[(i * 4) + 1]) * (z - shallow[(i * 4) + 1]));
 			if (dist < shallow[(i * 4) + 3]) {
 				if (dist < 0.09) {
 					offset -= shallow[(i * 4) + 2];
 				} else {
-					offset -= (int) (((-1 * (dist - shallow[(i * 4) + 3])) / shallow[(i * 4) + 3]) * shallow[(i * 4) + 2]) + 0.5;
+					offset -= (int) (((-1 * (dist - shallow[(i * 4) + 3])) / shallow[(i * 4) + 3])
+							* shallow[(i * 4) + 2]) + 0.5;
 				}
 			}
 		}
@@ -226,17 +206,14 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 			int total_weight = 0;
 			for (int i = 0; i < 25; i++) {
 
-				dist = Math.sqrt((x - localvariation[(i * 3) + 0])
-						* (x - localvariation[(i * 3) + 0])
-						+ (z - localvariation[(i * 3) + 1])
-						* (z - localvariation[(i * 3) + 1]));
+				dist = Math.sqrt((x - localvariation[(i * 3) + 0]) * (x - localvariation[(i * 3) + 0])
+						+ (z - localvariation[(i * 3) + 1]) * (z - localvariation[(i * 3) + 1]));
 				weight = 110 - ((int) dist);
 				if (weight <= 0) {
 					continue;
 				}
 				total_weight += weight;
-				variation += ((long) weight)
-						* ((long) localvariation[(i * 3) + 2]);
+				variation += ((long) weight) * ((long) localvariation[(i * 3) + 2]);
 			}
 			if (total_weight > 0) {
 				variation = variation / ((long) total_weight);
@@ -253,8 +230,8 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	}
 
 	@Override
-	public void replaceBlocksForBiome(int p_180517_1_, int p_180517_2_,
-			ChunkPrimer p_180517_3_, BiomeGenBase[] p_180517_4_) {
+	public void replaceBiomeBlocks(int p_180517_1_, int p_180517_2_, ChunkPrimer p_180517_3_,
+			BiomeGenBase[] p_180517_4_) {
 		// biomes are devoid of features in our generation
 	}
 
@@ -263,16 +240,15 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		/* calculate the empty chunk */
 		ChunkPrimer chunkprimer = new ChunkPrimer();
 
-		this.mockGeneratedBiomes = this.localWorldObj.getWorldChunkManager()
-				.loadBlockGeneratorData(this.mockGeneratedBiomes, p_x * 16,
-						p_z * 16, 16, 16);
+		this.mockGeneratedBiomes = this.localWorldObj.getBiomeProvider()
+				.loadBlockGeneratorData(this.mockGeneratedBiomes, p_x * 16, p_z * 16, 16, 16);
+
 		int z = 0;
 		int x = 0;
 		int height;
 		IBlockState block;
 		IBlockState bedrock = Blocks.bedrock.getDefaultState();
-		IBlockState wastelandblock = EzWastelands.wastelandBlock
-				.getDefaultState();
+		IBlockState wastelandblock = EzWastelands.wastelandBlock.getDefaultState();
 
 		// loop over the chunk (assume max possible generation height of 96)
 		for (x = 0; x < 16; ++x) {
@@ -298,22 +274,17 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 		}
 		// villages?
 		if (this.structuresEnabled) {
-			this.villageGenerator.generate(this, this.localWorldObj, p_x, p_z,
-					chunkprimer);
+			this.villageGenerator.generate(this.localWorldObj, p_x, p_z, chunkprimer);
 			if (EzWastelands.enableStrongholds) {
-				this.strongholdGenerator.generate(this, this.localWorldObj,
-						p_x, p_z, chunkprimer);
+				this.strongholdGenerator.generate(this.localWorldObj, p_x, p_z, chunkprimer);
 			}
 		}
 
 		Chunk chunk = new Chunk(this.localWorldObj, chunkprimer, p_x, p_z);
-		BiomeGenBase[] abiomegenbase = this.localWorldObj
-				.getWorldChunkManager().loadBlockGeneratorData(
-						(BiomeGenBase[]) null, p_x * 16, p_z * 16, 16, 16);
 		byte[] abyte = chunk.getBiomeArray();
 
-		for (int l = 0; l < abyte.length; ++l) {
-			abyte[l] = (byte) abiomegenbase[l].biomeID;
+		for (int i = 0; i < abyte.length; ++i) {
+			abyte[i] = (byte) BiomeGenBase.getIdForBiome(this.mockGeneratedBiomes[i]);
 		}
 		chunk.generateSkylightMap();
 
@@ -321,66 +292,54 @@ public class WastelandChunkProvider extends ChunkProviderGenerate {
 	}
 
 	@Override
-	public void populate(IChunkProvider p_73153_1_, int chunk_x, int chunk_z) {
+	public void populate(int chunk_x, int chunk_z) {
 		// Possible future structure population
 		int region_x = (chunk_x >> 2);
 		int region_z = (chunk_z >> 2);
-		Random r = new Random((region_x) * worldSeed + (region_z) + worldSeed
-				+ (long) 10);
-		Random r2 = new Random((chunk_x) * worldSeed + (chunk_z) + worldSeed
-				+ region_x);
+		Random r = new Random((region_x) * worldSeed + (region_z) + worldSeed + (long) 10);
+		Random r2 = new Random((chunk_x) * worldSeed + (chunk_z) + worldSeed + region_x);
 
 		boolean flag = false;
 		ChunkCoordIntPair chunkCord = new ChunkCoordIntPair(chunk_x, chunk_z);
 
 		if (EzWastelands.modTriggers) {
-			MinecraftForge.EVENT_BUS
-					.post(new PopulateChunkEvent.Pre(p_73153_1_,
-							this.localWorldObj, r2, chunk_x, chunk_z, flag));
+			net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.localWorldObj, chunk_x, chunk_z,
+					flag);
 		}
 		if (this.structuresEnabled) {
-			flag = this.villageGenerator.generateStructure(this.localWorldObj,
-					r, chunkCord);
+			flag = this.villageGenerator.generateStructure(this.localWorldObj, r, chunkCord);
 			if (EzWastelands.enableStrongholds) {
-				this.strongholdGenerator.generateStructure(this.localWorldObj,
-						r2, chunkCord);
+				this.strongholdGenerator.generateStructure(this.localWorldObj, r2, chunkCord);
 			}
 		}
 		if (EzWastelands.modTriggers) {
-			MinecraftForge.EVENT_BUS
-					.post(new PopulateChunkEvent.Post(p_73153_1_,
-							this.localWorldObj, r2, chunk_x, chunk_z, flag));
+			net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, this, this.localWorldObj, chunk_x,
+					chunk_z, flag);
 		}
 	}
 
 	@Override
 	public void recreateStructures(Chunk c, int chunk_x, int chunk_z) {
 		if (this.structuresEnabled) {
-			this.villageGenerator.generate(this, this.localWorldObj, chunk_x,
-					chunk_z, (ChunkPrimer) null);
+			this.villageGenerator.generate(this.localWorldObj, chunk_x, chunk_z, (ChunkPrimer) null);
 			if (EzWastelands.enableStrongholds) {
-				this.strongholdGenerator.generate(this, this.localWorldObj,
-						chunk_x, chunk_z, (ChunkPrimer) null);
+				this.strongholdGenerator.generate(this.localWorldObj, chunk_x, chunk_z, (ChunkPrimer) null);
 			}
 		}
 	}
 
 	// stronghold location (for eyes of ender
 	@Override
-	public BlockPos getStrongholdGen(World worldIn, String structureName,
-			BlockPos position) {
-		if (EzWastelands.enableStrongholds && this.structuresEnabled
-				&& "Stronghold".equals(structureName)) {
-			return this.strongholdGenerator.getClosestStrongholdPos(worldIn,
-					position);
+	public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position) {
+		if (EzWastelands.enableStrongholds && this.structuresEnabled && "Stronghold".equals(structureName)) {
+			return this.strongholdGenerator.getClosestStrongholdPos(worldIn, position);
 		}
 		return null;
 	}
 
 	// never generate ocean monuments in the wastelands
 	@Override
-	public boolean func_177460_a(IChunkProvider p_177460_1_, Chunk p_177460_2_,
-			int p_177460_3_, int p_177460_4_) {
+	public boolean generateStructures(Chunk chunkIn, int x, int z) {
 		return false;
 	}
 }
