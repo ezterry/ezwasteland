@@ -26,6 +26,7 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
+import com.ezrol.terry.minecraft.wastelands.gen.elements.Spires;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -56,6 +57,8 @@ public class EzWastelands {
 	public static boolean modTriggers = false;
 	public static int terainVariation = 0;
 	public static boolean enableStrongholds = false;
+	
+	private static Logger log = new Logger(false);
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -74,9 +77,9 @@ public class EzWastelands {
 
 		cfg.save();
 		if (wastelandBlockGravity) {
-			wastelandBlock = new FallingWastelandBlock(Material.ground);
+			wastelandBlock = new FallingWastelandBlock(Material.GROUND);
 		} else {
-			wastelandBlock = new WastelandBlock(Material.ground);
+			wastelandBlock = new WastelandBlock(Material.GROUND);
 		}
 		GameRegistry.register(wastelandBlock);
 		wastelandBlockItm = new ItemBlock(wastelandBlock);
@@ -86,26 +89,28 @@ public class EzWastelands {
 
 	}
 
+	/*
+	   Load in the wasteland elements to initialize them
+	 */
+	private void initWastelandElements(){
+	    new Spires();
+    }
+
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		System.out.println("Where are we?");
+		log.status("Where are we?");
 		if (event.getSide() == Side.CLIENT) {
 			// set up item renderer?
 			net.minecraft.client.renderer.RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
 			renderItem.getItemModelMesher().register(Item.getItemFromBlock(wastelandBlock), 0,
 					new ModelResourceLocation(MODID + ":" + "ezwastelandblock"));
 		}
+		initWastelandElements();
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		wastelandsWorldType = new WastelandsWorldType();
 		int a;
-
-		System.out.println("World Types:");
-		for (a = 0; a < WorldType.worldTypes.length; a++) {
-			if (WorldType.worldTypes[a] != null)
-				System.out.println(Integer.toString(a + 1) + ": " + WorldType.worldTypes[a].getWorldTypeName());
-		}
 	}
 }

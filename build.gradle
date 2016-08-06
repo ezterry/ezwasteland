@@ -9,15 +9,18 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 /* Build Version */
 
 def mod_vers_part = "1.0"
-def mc_vers_part = "1.9"
+def mc_vers_part = "1.10.2"
 
 
 version = "${mc_vers_part}-${mod_vers_part}"
@@ -25,7 +28,7 @@ group= "com.ezrol.terry.minecraft.wastelands"
 archivesBaseName = "ezwastelands"
 
 minecraft {
-    version = "1.9-12.16.1.1887"
+    version = "1.10.2-12.18.1.2023"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -33,7 +36,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20160315"
+    mappings = "snapshot_20160724"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     replace '${version}', project.version
 }

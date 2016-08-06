@@ -4,7 +4,7 @@
   "name": "EzWastelands",
   "description": "EzTerry's Wastelands terrain generator",
   "version": "${version}",
-  "mcversion": "${mcversion}",
+  "mcversion": "1.10.2",
   "url": "http://www.curse.com/mc-mods/minecraft/237662-ezwastelands",
   "updateUrl": "",
   "authorList": ["EzTerry"],

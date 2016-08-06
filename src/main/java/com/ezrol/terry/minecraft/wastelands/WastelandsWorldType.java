@@ -26,10 +26,14 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
+import com.ezrol.terry.minecraft.wastelands.gen.WastelandChunkProvider;
+
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WastelandsWorldType extends WorldType {
 
@@ -65,5 +69,16 @@ public class WastelandsWorldType extends WorldType {
 	@Override
 	public BiomeProvider getBiomeProvider(World world) {
 		return new WastelandBiomeProvider(world.getWorldInfo());
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void onCustomizeButton(net.minecraft.client.Minecraft mc, net.minecraft.client.gui.GuiCreateWorld guiCreateWorld){
+		
+	}
+	
+	@Override
+	public boolean isCustomizable(){
+		return true;
 	}
 }

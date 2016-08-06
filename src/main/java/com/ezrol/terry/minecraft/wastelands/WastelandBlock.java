@@ -36,7 +36,7 @@ public class WastelandBlock extends Block {
 		super(material);
 		this.setHardness((float) 0.7);
 		this.setSoundType(SoundType.SAND);
-		this.setCreativeTab(CreativeTabs.tabBlock);
+		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 		this.setHarvestLevel("shovel", 0);
 		this.setRegistryName("ezwastelandblock");
 		this.setUnlocalizedName(this.getRegistryName().toString());
