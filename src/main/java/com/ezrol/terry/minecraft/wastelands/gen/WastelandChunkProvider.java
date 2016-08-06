@@ -26,16 +26,8 @@
 
 package com.ezrol.terry.minecraft.wastelands.gen;
 
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.STRONGHOLD;
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILLAGE;
-
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Random;
-
 import com.ezrol.terry.minecraft.wastelands.EzWastelands;
-import com.ezrol.terry.minecraft.wastelands.village.WastelandGenVillage;
-
+import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -45,9 +37,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.ChunkProviderOverworld;
-import net.minecraft.world.gen.structure.MapGenStronghold;
-import net.minecraft.world.gen.structure.MapGenVillage;
-import net.minecraftforge.event.terraingen.TerrainGen;
 
 public class WastelandChunkProvider extends ChunkProviderOverworld {
 	private Biome[] mockGeneratedBiomes;

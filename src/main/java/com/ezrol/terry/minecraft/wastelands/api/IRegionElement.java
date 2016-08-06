@@ -1,7 +1,6 @@
-package com.ezrol.terry.minecraft.wastelands.gen;
+package com.ezrol.terry.minecraft.wastelands.api;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public interface IRegionElement {

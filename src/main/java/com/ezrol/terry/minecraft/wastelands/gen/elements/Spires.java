@@ -1,9 +1,9 @@
 package com.ezrol.terry.minecraft.wastelands.gen.elements;
 
 import com.ezrol.terry.minecraft.wastelands.Logger;
-import com.ezrol.terry.minecraft.wastelands.gen.IRegionElement;
-import com.ezrol.terry.minecraft.wastelands.gen.Param;
-import com.ezrol.terry.minecraft.wastelands.gen.RegionCore;
+import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
+import com.ezrol.terry.minecraft.wastelands.api.Param;
+import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 
 import java.util.ArrayList;
 import java.util.Iterator;

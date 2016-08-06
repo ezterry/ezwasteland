@@ -1,13 +1,10 @@
-package com.ezrol.terry.minecraft.wastelands.gen;
-
-import java.util.List;
-
-import javax.annotation.Nullable;
+package com.ezrol.terry.minecraft.wastelands.api;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
-import com.sun.xml.internal.ws.wsdl.writer.document.ParamType;
+
+import java.util.List;
 
 /** Parameters of the region elements **/
 

@@ -1,4 +1,4 @@
-package com.ezrol.terry.minecraft.wastelands.gen;
+package com.ezrol.terry.minecraft.wastelands.api;
 
 import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.google.gson.JsonElement;
