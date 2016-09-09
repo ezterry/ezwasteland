@@ -29,7 +29,6 @@ package com.ezrol.terry.minecraft.wastelands.gen.elements;
 import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -95,53 +94,53 @@ public class Domes implements IRegionElement {
 
         lst.add(new Param.IntegerParam(
                 "lgmincount",
-                I18n.format("config.ezwastelands.domes.lgmincount.help"),
+                "config.ezwastelands.domes.lgmincount.help",
                 3, 0, 24));
         lst.add(new Param.IntegerParam(
                 "lgmaxcount",
-                I18n.format("config.ezwastelands.domes.lgmaxcount.help"),
+                "config.ezwastelands.domes.lgmaxcount.help",
                 4, 0, 24));
         lst.add(new Param.IntegerParam(
                 "lgradius",
-                I18n.format("config.ezwastelands.domes.lgradius.help"),
+                "config.ezwastelands.domes.lgradius.help",
                 34, 5, 64));
         lst.add(new Param.IntegerParam(
                 "lgheight",
-                I18n.format("config.ezwastelands.domes.lgheight.help"),
+                "config.ezwastelands.domes.lgheight.help",
                 7, 3, 16));
 
         lst.add(new Param.IntegerParam(
                 "midmincount",
-                I18n.format("config.ezwastelands.domes.midmincount.help"),
+                "config.ezwastelands.domes.midmincount.help",
                 2, 0, 24));
         lst.add(new Param.IntegerParam(
                 "midmaxcount",
-                I18n.format("config.ezwastelands.domes.midmaxcount.help"),
+                "config.ezwastelands.domes.midmaxcount.help",
                 3, 0, 24));
         lst.add(new Param.IntegerParam(
                 "midradius",
-                I18n.format("config.ezwastelands.domes.midradius.help"),
+                "config.ezwastelands.domes.midradius.help",
                 23, 4, 48));
         lst.add(new Param.IntegerParam(
                 "midheight",
-                I18n.format("config.ezwastelands.domes.midheight.help"),
+                "config.ezwastelands.domes.midheight.help",
                 8, 3, 16));
 
         lst.add(new Param.IntegerParam(
                 "smmincount",
-                I18n.format("config.ezwastelands.domes.smmincount.help"),
+                "config.ezwastelands.domes.smmincount.help",
                 1, 0, 24));
         lst.add(new Param.IntegerParam(
                 "smmaxcount",
-                I18n.format("config.ezwastelands.domes.smmaxcount.help"),
+                "config.ezwastelands.domes.smmaxcount.help",
                 2, 0, 24));
         lst.add(new Param.IntegerParam(
                 "smradius",
-                I18n.format("config.ezwastelands.domes.smradius.help"),
+                "config.ezwastelands.domes.smradius.help",
                 18, 3, 32));
         lst.add(new Param.IntegerParam(
                 "smheight",
-                I18n.format("config.ezwastelands.domes.smheight.help"),
+                "config.ezwastelands.domes.smheight.help",
                 9, 3, 16));
 
         return lst;

@@ -29,7 +29,6 @@ package com.ezrol.terry.minecraft.wastelands.gen.elements;
 import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -97,9 +96,9 @@ public class TerrainVariation implements IRegionElement {
     public List<Param> getParamTemplate() {
         List<Param> lst = new ArrayList<>();
         lst.add(new Param.IntegerParam(
-                "amplification", I18n.format("config.ezwastelands.terrainvariation.amplification.help"), 30, 0, 48));
+                "amplification", "config.ezwastelands.terrainvariation.amplification.help", 30, 0, 48));
         lst.add(new Param.IntegerParam(
-                "variation", I18n.format("config.ezwastelands.terrainvariation.variation.help"), 1, 1, 5));
+                "variation", "config.ezwastelands.terrainvariation.variation.help", 1, 1, 5));
         return lst;
     }
 

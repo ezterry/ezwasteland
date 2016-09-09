@@ -26,6 +26,7 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
+import com.ezrol.terry.minecraft.wastelands.client.ConfigGui;
 import com.ezrol.terry.minecraft.wastelands.gen.elements.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -34,7 +35,9 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.world.WorldType;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -43,7 +46,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = EzWastelands.MODID, version = EzWastelands.VERSION, name = EzWastelands.NAME)
+@Mod(modid = EzWastelands.MODID, version = EzWastelands.VERSION, name = EzWastelands.NAME,
+        guiFactory = "com.ezrol.terry.minecraft.wastelands.client.GuiFactory")
 public class EzWastelands {
     public static final String MODID = "ezwastelands";
     public static final String VERSION = "${version}";
@@ -51,32 +55,27 @@ public class EzWastelands {
 
     public static Block wastelandBlock;
     public static WorldType wastelandsWorldType;
-    public static int villageRate = 0;
-    public static boolean modTriggers = false;
-    public static int terainVariation = 0;
-    public static boolean enableStrongholds = false;
     private static boolean wastelandBlockGravity = false;
     private static Logger log = new Logger(false);
 
+    private Configuration cfg;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        Configuration cfg = new Configuration(event.getSuggestedConfigurationFile());
+        cfg = new Configuration(event.getSuggestedConfigurationFile());
         ItemBlock wastelandBlockItm;
 
         cfg.load();
-        wastelandBlockGravity = cfg.getBoolean("hasGravity", "wastelandblock", wastelandBlockGravity,
+        Property prop = cfg.get("hasGravity", "wastelandblock", false,
                 "If set to true the wasteland blocks will fall like sand");
-        villageRate = cfg.getInt("village rate", "structures", villageRate, 0, 100, "Frequency villages spawn");
-        modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers, "Trigger 3rd party mod generation");
-        enableStrongholds = cfg.getBoolean("strongholds", "structures", enableStrongholds,
-                "Generate strongholds/endportals in the world");
-        terainVariation = cfg.getInt("variation", "terrain ", terainVariation, 0, 30,
-                "The ground level variation in blocks");
-
+        wastelandBlockGravity = prop.getBoolean();
         cfg.save();
+
         if (wastelandBlockGravity) {
+            log.status("No tunneling now");
             wastelandBlock = new FallingWastelandBlock(Material.GROUND);
         } else {
+            log.status("What is this gravity you speak of");
             wastelandBlock = new WastelandBlock(Material.GROUND);
         }
         GameRegistry.register(wastelandBlock);
@@ -106,6 +105,7 @@ public class EzWastelands {
             net.minecraft.client.renderer.RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
             renderItem.getItemModelMesher().register(Item.getItemFromBlock(wastelandBlock), 0,
                     new ModelResourceLocation(MODID + ":" + "ezwastelandblock"));
+            MinecraftForge.EVENT_BUS.register(new ConfigGui.configFile(cfg));
         }
         initWastelandElements();
     }
@@ -113,6 +113,5 @@ public class EzWastelands {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         wastelandsWorldType = new WastelandsWorldType();
-        int a;
     }
 }

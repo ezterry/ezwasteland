@@ -32,7 +32,6 @@ import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.ezrol.terry.minecraft.wastelands.village.WastelandGenVillage;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -111,22 +110,22 @@ public class RandomOptions implements IRegionElement {
         List<Param> lst = new ArrayList<>();
         lst.add(new Param.BooleanParam(
                 "oceans",
-                I18n.format("config.ezwastelands.randopts.oceans.help"),
+                "config.ezwastelands.randopts.oceans.help",
                 false));
         lst.add(new Param.IntegerParam("globaloffset",
-                I18n.format("config.ezwastelands.randopts.globaloffset.help"),
+                "config.ezwastelands.randopts.globaloffset.help",
                 0, -25, 25));
         lst.add(new Param.BooleanParam("integration",
-                I18n.format("config.ezwastelands.randopts.integration.help"),
+                "config.ezwastelands.randopts.integration.help",
                 true));
         lst.add(new Param.BooleanParam("villages",
-                I18n.format("config.ezwastelands.randopts.villages.help"),
+                "config.ezwastelands.randopts.villages.help",
                 false));
         lst.add(new Param.FloatParam("villagechance",
-                I18n.format("config.ezwastelands.randopts.villagechance.help"),
+                "config.ezwastelands.randopts.villagechance.help",
                 10.0f, 0.0f, 100.0f));
         lst.add(new Param.BooleanParam("strongholds",
-                I18n.format("config.ezwastelands.randopts.strongholds.help"),
+                "config.ezwastelands.randopts.strongholds.help",
                 false));
         return lst;
     }

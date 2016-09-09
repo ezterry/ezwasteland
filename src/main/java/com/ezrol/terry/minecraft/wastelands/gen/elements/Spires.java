@@ -30,7 +30,6 @@ import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -80,8 +79,8 @@ public class Spires implements IRegionElement {
     public List<Param> getParamTemplate() {
         List<Param> lst = new ArrayList<>();
 
-        lst.add(new Param.IntegerParam("count", I18n.format("config.ezwastelands.spire.count.help"), 2, 0, 20));
-        lst.add(new Param.IntegerParam("size", I18n.format("config.ezwastelands.spire.size.help"), 6, 2, 10));
+        lst.add(new Param.IntegerParam("count", "config.ezwastelands.spire.count.help", 2, 0, 20));
+        lst.add(new Param.IntegerParam("size", "config.ezwastelands.spire.size.help", 6, 2, 10));
         return lst;
     }
 

@@ -30,7 +30,6 @@ import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -90,13 +89,13 @@ public class Shallows implements IRegionElement {
         List<Param> lst = new ArrayList<>();
 
         lst.add(new Param.IntegerParam(
-                "mincount", I18n.format("config.ezwastelands.shallows.mincount.help"), 4, 0, 8));
+                "mincount", "config.ezwastelands.shallows.mincount.help", 4, 0, 8));
         lst.add(new Param.IntegerParam(
-                "maxcount", I18n.format("config.ezwastelands.shallows.maxcount.help"), 5, 0, 16));
+                "maxcount", "config.ezwastelands.shallows.maxcount.help", 5, 0, 16));
         lst.add(new Param.IntegerParam(
-                "radius", I18n.format("config.ezwastelands.shallows.radius.help"), 42, 10, 64));
+                "radius", "config.ezwastelands.shallows.radius.help", 42, 10, 64));
         lst.add(new Param.IntegerParam(
-                "depth", I18n.format("config.ezwastelands.shallows.depth.help"), 5, 2, 8));
+                "depth", "config.ezwastelands.shallows.depth.help", 5, 2, 8));
 
         return lst;
     }

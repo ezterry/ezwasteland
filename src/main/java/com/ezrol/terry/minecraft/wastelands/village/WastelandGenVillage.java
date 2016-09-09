@@ -28,7 +28,6 @@ package com.ezrol.terry.minecraft.wastelands.village;
 
 import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.ezrol.terry.minecraft.wastelands.WastelandBiomeProvider;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.gen.structure.StructureStart;
@@ -50,7 +49,7 @@ public class WastelandGenVillage extends MapGenVillage {
         Random r;
         long localSeed;
 
-        localSeed = (region_x << 32) + (region_z * 31);
+        localSeed = (((long) region_x) << 32) + (((long) region_z) * 31);
         localSeed = localSeed ^ worldSeed;
         localSeed += 5147;
 
