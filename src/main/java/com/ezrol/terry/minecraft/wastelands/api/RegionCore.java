@@ -1,3 +1,29 @@
+/*
+ * Copyright (c) 2015-2016, Terrence Ezrol (ezterry)
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package com.ezrol.terry.minecraft.wastelands.api;
 
 import com.ezrol.terry.minecraft.wastelands.Logger;
@@ -5,34 +31,27 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.chunk.IChunkGenerator;
 
 import java.util.*;
 
 public class RegionCore {
-    static private LinkedList<IRegionElement> mainFeatures = new LinkedList<IRegionElement>();
-    static private LinkedList<IRegionElement> overrideFeatures = new LinkedList<IRegionElement>();
+    static private LinkedList<IRegionElement> mainFeatures = new LinkedList<>();
+    static private LinkedList<IRegionElement> overrideFeatures = new LinkedList<>();
     static private Logger log = new Logger(false);
     private Map<String, List<Param>> elementParams = null;
+    //current cached region
     private int cachedX = 0;
     private int cachedZ = 0;
     private Map<String, List<Object>> cachedElements = null;
 
-    /* register a new wasteland element */
-    static public void register(IRegionElement element) {
-        register(element, false);
-    }
-
-    static public void register(IRegionElement element, boolean isOverride) {
-        if (isOverride) {
-            overrideFeatures.add(element);
-        } else {
-            mainFeatures.add(element);
-        }
-    }
-
     public RegionCore(String properties) {
         IRegionElement element;
-        elementParams = new HashMap<String, List<Param>>(mainFeatures.size() + overrideFeatures.size());
+        elementParams = new HashMap<>(mainFeatures.size() + overrideFeatures.size());
 
         //prepare the default parameters
         for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
@@ -46,26 +65,80 @@ public class RegionCore {
         }
     }
 
+    /**
+     * register a new element for world generation
+     * (always creates a non override element to be processed in order they are registered)
+     *
+     * @param element: Your custom IRegionElement
+     */
+    static public void register(IRegionElement element) {
+        register(element, false);
+    }
+
+    /**
+     * register a new element for world generation
+     *
+     * @param element:    Your custom IRegionElement
+     * @param isOverride: Event for override elements are processed after all the non overrides
+     *                    process
+     */
+    static public void register(IRegionElement element, boolean isOverride) {
+        if (isOverride) {
+            overrideFeatures.add(element);
+        } else {
+            mainFeatures.add(element);
+        }
+    }
+
+    /**
+     * The current parameter map
+     *
+     * @return the map of element parameters
+     */
+    public Map<String, List<Param>> getCurrentParamMap() {
+        return (elementParams);
+    }
+
+    /**
+     * From a global X/Z block cord return the local random number generator
+     **/
     private Random regionRandom(int x, int z, long seed) {
+        Random r;
+        long localSeed;
+
         //Cord to 64x64 region
         x = x >> 6;
         z = z >> 6;
-        //return a new random number generator
-        return new Random((long) ((x + seed) << 16 + (z + seed)));
+
+        // generate a local seed from cords/seed
+        localSeed = (((long) x) << 26) + (((long) z) << 2);
+        localSeed = localSeed ^ seed;
+        localSeed += 2791;
+
+        log.info("seed: " + String.valueOf(localSeed) + " @ " + String.valueOf(x) + "x" + String.valueOf(z));
+
+        r = new Random(localSeed);
+        /*
+         * ignore the first random result for near seed issue
+         * http://stackoverflow.com/questions/12282628/why-are-initial-random-numbers-similar-when-using-similar-seeds
+         */
+        r.nextInt();
+        r.nextInt();
+        return r;
     }
 
-    private Map<String, List<Object>> getRegionElements(int x, int z, long seed) {
+    private synchronized Map<String, List<Object>> getRegionElements(int x, int z, long seed) {
         IRegionElement element;
         Random rand;
         List<Object> current;
         String elementName;
 
 
-        if (cachedElements != null && cachedX == x && cachedZ == z) {
+        if (cachedElements != null && cachedX == (x >> 6) && cachedZ == (z >> 6)) {
             return (cachedElements);
         }
 
-        cachedElements = new HashMap<String, List<Object>>(mainFeatures.size() + overrideFeatures.size());
+        cachedElements = new HashMap<>(mainFeatures.size() + overrideFeatures.size());
 
         for (int localX = -128; localX <= 128; localX += 64) {
             for (int localZ = -128; localZ <= 128; localZ += 64) {
@@ -78,7 +151,7 @@ public class RegionCore {
                     if (cachedElements.containsKey(elementName)) {
                         current = cachedElements.get(elementName);
                     } else {
-                        current = new ArrayList<Object>();
+                        current = new ArrayList<>();
                     }
                     current.addAll(element.calcElements(rand, (localX + x) >> 6,
                             (localZ + z) >> 6, elementParams.get(elementName)));
@@ -86,65 +159,101 @@ public class RegionCore {
                 }
             }
         }
-
+        cachedX = (x >> 6);
+        cachedZ = (z >> 6);
         return (cachedElements);
     }
 
-    public int addElementHeight(int currentoffset, int x, int z, long seed){
+    public int addElementHeight(int currentoffset, int x, int z, long seed) {
         IRegionElement element;
         String elementName;
-        Map<String, List<Object>> worldElements = getRegionElements(x,z,seed);
-        Random rand = regionRandom(x, z, seed);
+        Map<String, List<Object>> worldElements = getRegionElements(x, z, seed);
 
         for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
             element = i.next();
             elementName = element.getElementName();
 
-            currentoffset=element.addElementHeight(currentoffset,rand,x,z,this,worldElements.get(elementName));
+            currentoffset = element.addElementHeight(currentoffset, x, z, this, worldElements.get(elementName));
         }
-        return(currentoffset);
+        return (currentoffset);
     }
-    /***
-     * Private iterator to loop mainFeatures then overrideFeatures
-     **/
-    static private class FeatureIterator implements Iterator<IRegionElement> {
-        private boolean main;
-        private Iterator<IRegionElement> par;
 
-        public FeatureIterator() {
-            main = true;
-            par = mainFeatures.iterator();
+    public void postPointFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed) {
+        IRegionElement element;
+        String elementName;
+
+        for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
+            element = i.next();
+            elementName = element.getElementName();
+
+            element.postFill(chunkprimer, height, x, z, worldSeed, elementParams.get(elementName));
         }
+    }
 
-        public boolean hasNext() {
-            if (par.hasNext()) {
-                return true;
+    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos chunkCord, World world,
+                                   boolean structuresEnabled, ChunkPrimer chunkprimer) {
+        IRegionElement element;
+        String elementName;
+
+        for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
+            element = i.next();
+            elementName = element.getElementName();
+
+            element.additionalTriggers(event, gen, chunkCord, world, structuresEnabled, chunkprimer,
+                    elementParams.get(elementName),this);
+        }
+    }
+
+    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, String structureName, BlockPos position) {
+        IRegionElement element;
+        String elementName;
+        BlockPos returnval = null;
+        BlockPos newval;
+
+        for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
+            element = i.next();
+            elementName = element.getElementName();
+
+            newval = element.getStrongholdGen(worldIn, structuresEnabled, structureName, position, elementParams.get(elementName));
+            if (newval != null) {
+                returnval = newval;
             }
-            if (main) {
-                main = false;
-                par = overrideFeatures.iterator();
-                return (par.hasNext());
+        }
+        return returnval;
+    }
+
+    /**
+     * Get the json string of the current configuration
+     *
+     * @return json string
+     */
+    public String getJson() {
+        JsonObject root = new JsonObject();
+        JsonObject elementObj;
+
+        //Map<String, List<Param>> elementParams
+        Iterator<String> elementItr;
+        Iterator<Param> paramIter;
+        List<Param> element;
+        Param p;
+        String key;
+
+        String json;
+
+        for (elementItr = elementParams.keySet().iterator(); elementItr.hasNext(); ) {
+            key = elementItr.next();
+            element = elementParams.get(key);
+            elementObj = new JsonObject();
+
+            for (paramIter = element.iterator(); paramIter.hasNext(); ) {
+                p = paramIter.next();
+                elementObj.add(p.getName(), p.exportJson());
             }
-            return false;
+            root.add(key, elementObj);
         }
-
-        public IRegionElement next() {
-            if (main) {
-                try {
-                    return (par.next());
-                } catch (NoSuchElementException e) {
-                    main = false;
-                    par = overrideFeatures.iterator();
-                }
-            }
-            return (par.next());
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("remove");
-        }
-
+        json = root.toString();
+        json = json.replace("\n", "");
+        return (json);
     }
 
     /**
@@ -195,7 +304,46 @@ public class RegionCore {
         }
     }
 
-    public String getJson() {
-        return "";
+    /***
+     * Private iterator to loop mainFeatures then overrideFeatures
+     **/
+    static private class FeatureIterator implements Iterator<IRegionElement> {
+        private boolean main;
+        private Iterator<IRegionElement> par;
+
+        public FeatureIterator() {
+            main = true;
+            par = mainFeatures.iterator();
+        }
+
+        public boolean hasNext() {
+            if (par.hasNext()) {
+                return true;
+            }
+            if (main) {
+                main = false;
+                par = overrideFeatures.iterator();
+                return (par.hasNext());
+            }
+            return false;
+        }
+
+        public IRegionElement next() {
+            if (main) {
+                try {
+                    return (par.next());
+                } catch (NoSuchElementException e) {
+                    main = false;
+                    par = overrideFeatures.iterator();
+                }
+            }
+            return (par.next());
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("remove");
+        }
+
     }
 }

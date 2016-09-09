@@ -26,7 +26,6 @@
 
 package com.ezrol.terry.minecraft.wastelands.gen.elements;
 
-import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
@@ -42,81 +41,114 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Spire Generating Module
- * Generate vertical spires in the wastelands
+ * Terrain Variation,
+ * Not quite rolling hills, but slow changes to the elevation of the land.
  * <p>
- * Created by ezterry on 8/5/16.
+ * Created by ezterry on 9/6/16.
  */
-public class Spires implements IRegionElement {
-    final static private Logger log = new Logger(false);
+public class TerrainVariation implements IRegionElement {
 
-    public Spires() {
+    public TerrainVariation() {
         RegionCore.register(this);
     }
 
-    public int addElementHeight(int currentOffset, int x, int z, RegionCore core, List<Object> elements) {
-        poi spire;
-        for (Object s : elements) {
-            spire = (poi) s;
+    @Override
+    public int addElementHeight(int currentoffset, int x, int z, RegionCore core, List<Object> elements) {
+        int cnt = elements.size();
+        int weight;
+        int totalWeight = 0;
+        long localVariation = 0;
+        attractors attract;
+        float dist;
+        float distx;
+        float distz;
 
-            if (spire.x == x && spire.z == z) {
-                log.info(String.format("Generating Spire at (%d,%d)", spire.x, spire.z));
-                currentOffset += spire.size;
-            }
+        if (cnt == 0) {
+            return currentoffset;
         }
-        return (currentOffset);
+        for (Object o : elements) {
+            attract = (attractors) o;
+            distx = (x - attract.x);
+            distz = (z - attract.z);
+            dist = (float) Math.sqrt((distx * distx) + (distz * distz));
+
+            weight = 110 - ((int) dist);
+            if (weight <= 0) {
+                continue;
+            }
+            weight = (int) Math.pow((double) weight, 1.2);
+            totalWeight += weight;
+            localVariation += (long) weight * (long) attract.height;
+        }
+        if (totalWeight > 0) {
+            localVariation = localVariation / ((long) totalWeight);
+        } else {
+            localVariation = 0;
+        }
+        return (currentoffset + (int) localVariation);
     }
 
-    /**
-     * element name
-     **/
+    @Override
     public String getElementName() {
-        return ("spire");
+        return "terrainvariation";
     }
 
-    /**
-     * get the clean list of parameters and types
-     **/
+    @Override
     public List<Param> getParamTemplate() {
         List<Param> lst = new ArrayList<>();
-
-        lst.add(new Param.IntegerParam("count", I18n.format("config.ezwastelands.spire.count.help"), 2, 0, 20));
-        lst.add(new Param.IntegerParam("size", I18n.format("config.ezwastelands.spire.size.help"), 6, 2, 10));
+        lst.add(new Param.IntegerParam(
+                "amplification", I18n.format("config.ezwastelands.terrainvariation.amplification.help"), 30, 0, 48));
+        lst.add(new Param.IntegerParam(
+                "variation", I18n.format("config.ezwastelands.terrainvariation.variation.help"), 1, 1, 5));
         return lst;
     }
 
-    /**
-     * calculate a regions elements
-     **/
+    @Override
     public List<Object> calcElements(Random r, int x, int z, List<Param> p) {
-        int count = ((Param.IntegerParam) Param.lookUp(p, "count")).get();
-        int maxSize = ((Param.IntegerParam) Param.lookUp(p, "size")).get();
+        List<Object> elements = new ArrayList<>();
+        int variation = ((Param.IntegerParam) Param.lookUp(p, "variation")).get();
+        int amplification = ((Param.IntegerParam) Param.lookUp(p, "amplification")).get();
+        boolean duplicate;
+        attractors node;
+        attractors testNode;
 
-        List<Object> elements = new ArrayList<>(count * 2);
-        poi spire;
-
-        for (int i = 0; i < count; i++) {
-            spire = new poi();
-            do {
-                int randX = r.nextInt(64);
-                int randZ = r.nextInt(64);
-                spire.x = randX + (x << 6);
-                spire.z = randZ + (z << 6);
-                spire.size = r.nextInt(maxSize);
-            } while (elements.contains(spire));
-
-            elements.add(spire);
+        if (amplification == 0) {
+            //nothing to do
+            return elements;
         }
-        return (elements);
+
+        for (int i = 0; i < variation; i++) {
+            node = new attractors();
+            node.x = r.nextInt(64) + (x << 6);
+            node.z = r.nextInt(64) + (z << 6);
+
+            duplicate = false;
+            for (Object o : elements) {
+                testNode = (attractors) o;
+                if (testNode.x == node.x && testNode.z == node.z) {
+                    duplicate = true;
+                }
+            }
+            if (duplicate) {
+                i--;
+                continue;
+            }
+            node.height = r.nextInt(amplification);
+            elements.add(node);
+        }
+
+        return elements;
     }
 
     @Override
     public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p) {
+
     }
 
     @Override
     public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, World worldobj,
                                    boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core) {
+
     }
 
     @Override
@@ -125,28 +157,9 @@ public class Spires implements IRegionElement {
         return null;
     }
 
-    /**
-     * Point of interest class used internally
-     */
-    private class poi {
+    private class attractors {
         protected int x;
         protected int z;
-        protected int size;
-
-        /**
-         * equals here is a point at the same x,z irrelevant of the size factor
-         *
-         * @param o - object to compare to
-         * @return - true if they are a poi instance with the same x/z
-         */
-        @Override
-        public boolean equals(Object o) {
-            if (o != null && o instanceof poi) {
-                if (((poi) o).x == x && ((poi) o).z == z) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        protected int height;
     }
 }

@@ -26,7 +26,7 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
-import com.ezrol.terry.minecraft.wastelands.gen.elements.Spires;
+import com.ezrol.terry.minecraft.wastelands.gen.elements.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -45,72 +45,74 @@ import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = EzWastelands.MODID, version = EzWastelands.VERSION, name = EzWastelands.NAME)
 public class EzWastelands {
-	public static final String MODID = "ezwastelands";
-	public static final String VERSION = "${version}";
-	public static final String NAME = "EzWastelands";
+    public static final String MODID = "ezwastelands";
+    public static final String VERSION = "${version}";
+    public static final String NAME = "EzWastelands";
 
-	public static Block wastelandBlock;
-	public static WorldType wastelandsWorldType;
+    public static Block wastelandBlock;
+    public static WorldType wastelandsWorldType;
+    public static int villageRate = 0;
+    public static boolean modTriggers = false;
+    public static int terainVariation = 0;
+    public static boolean enableStrongholds = false;
+    private static boolean wastelandBlockGravity = false;
+    private static Logger log = new Logger(false);
 
-	private static boolean wastelandBlockGravity = false;
-	public static int villageRate = 0;
-	public static boolean modTriggers = false;
-	public static int terainVariation = 0;
-	public static boolean enableStrongholds = false;
-	
-	private static Logger log = new Logger(false);
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        Configuration cfg = new Configuration(event.getSuggestedConfigurationFile());
+        ItemBlock wastelandBlockItm;
 
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		Configuration cfg = new Configuration(event.getSuggestedConfigurationFile());
-		ItemBlock wastelandBlockItm;
+        cfg.load();
+        wastelandBlockGravity = cfg.getBoolean("hasGravity", "wastelandblock", wastelandBlockGravity,
+                "If set to true the wasteland blocks will fall like sand");
+        villageRate = cfg.getInt("village rate", "structures", villageRate, 0, 100, "Frequency villages spawn");
+        modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers, "Trigger 3rd party mod generation");
+        enableStrongholds = cfg.getBoolean("strongholds", "structures", enableStrongholds,
+                "Generate strongholds/endportals in the world");
+        terainVariation = cfg.getInt("variation", "terrain ", terainVariation, 0, 30,
+                "The ground level variation in blocks");
 
-		cfg.load();
-		wastelandBlockGravity = cfg.getBoolean("hasGravity", "wastelandblock", wastelandBlockGravity,
-				"If set to true the wasteland blocks will fall like sand");
-		villageRate = cfg.getInt("village rate", "structures", villageRate, 0, 100, "Frequency villages spawn");
-		modTriggers = cfg.getBoolean("mod triggers", "structures", modTriggers, "Trigger 3rd party mod generation");
-		enableStrongholds = cfg.getBoolean("strongholds", "structures", enableStrongholds,
-				"Generate strongholds/endportals in the world");
-		terainVariation = cfg.getInt("variation", "terrain ", terainVariation, 0, 30,
-				"The ground level variation in blocks");
+        cfg.save();
+        if (wastelandBlockGravity) {
+            wastelandBlock = new FallingWastelandBlock(Material.GROUND);
+        } else {
+            wastelandBlock = new WastelandBlock(Material.GROUND);
+        }
+        GameRegistry.register(wastelandBlock);
+        wastelandBlockItm = new ItemBlock(wastelandBlock);
+        wastelandBlockItm.setRegistryName(wastelandBlock.getRegistryName());
+        wastelandBlockItm.setUnlocalizedName(wastelandBlockItm.getRegistryName().toString());
+        GameRegistry.register(wastelandBlockItm);
 
-		cfg.save();
-		if (wastelandBlockGravity) {
-			wastelandBlock = new FallingWastelandBlock(Material.GROUND);
-		} else {
-			wastelandBlock = new WastelandBlock(Material.GROUND);
-		}
-		GameRegistry.register(wastelandBlock);
-		wastelandBlockItm = new ItemBlock(wastelandBlock);
-		wastelandBlockItm.setRegistryName(wastelandBlock.getRegistryName());
-		wastelandBlockItm.setUnlocalizedName(wastelandBlockItm.getRegistryName().toString());
-		GameRegistry.register(wastelandBlockItm);
-
-	}
-
-	/*
-	   Load in the wasteland elements to initialize them
-	 */
-	private void initWastelandElements(){
-	    new Spires();
     }
 
-	@EventHandler
-	public void init(FMLInitializationEvent event) {
-		log.status("Where are we?");
-		if (event.getSide() == Side.CLIENT) {
-			// set up item renderer?
-			net.minecraft.client.renderer.RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-			renderItem.getItemModelMesher().register(Item.getItemFromBlock(wastelandBlock), 0,
-					new ModelResourceLocation(MODID + ":" + "ezwastelandblock"));
-		}
-		initWastelandElements();
-	}
+    /*
+       Load in the wasteland elements to initialize them
+     */
+    private void initWastelandElements() {
+        new Spires();
+        new Domes();
+        new Shallows();
+        new TerrainVariation();
+        new RandomOptions();
+    }
 
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
-		wastelandsWorldType = new WastelandsWorldType();
-		int a;
-	}
+    @EventHandler
+    public void init(FMLInitializationEvent event) {
+        log.status("Where are we?");
+        if (event.getSide() == Side.CLIENT) {
+            // set up item renderer?
+            net.minecraft.client.renderer.RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+            renderItem.getItemModelMesher().register(Item.getItemFromBlock(wastelandBlock), 0,
+                    new ModelResourceLocation(MODID + ":" + "ezwastelandblock"));
+        }
+        initWastelandElements();
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        wastelandsWorldType = new WastelandsWorldType();
+        int a;
+    }
 }

@@ -32,13 +32,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
 public class WastelandBlock extends Block {
-	public WastelandBlock(Material material) {
-		super(material);
-		this.setHardness((float) 0.7);
-		this.setSoundType(SoundType.SAND);
-		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-		this.setHarvestLevel("shovel", 0);
-		this.setRegistryName("ezwastelandblock");
-		this.setUnlocalizedName(this.getRegistryName().toString());
-	}
+    public WastelandBlock(Material material) {
+        super(material);
+        this.setHardness((float) 0.7);
+        this.setSoundType(SoundType.SAND);
+        this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+        this.setHarvestLevel("shovel", 0);
+        this.setRegistryName("ezwastelandblock");
+        this.setUnlocalizedName(this.getRegistryName().toString());
+    }
 }

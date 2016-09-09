@@ -26,64 +26,83 @@
 
 package com.ezrol.terry.minecraft.wastelands.village;
 
-import java.util.Random;
-
-import com.ezrol.terry.minecraft.wastelands.EzWastelands;
+import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.ezrol.terry.minecraft.wastelands.WastelandBiomeProvider;
-
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.gen.structure.StructureStart;
 
+import java.util.Random;
+
 public class WastelandGenVillage extends MapGenVillage {
-	private long worldSeed;
+    static private Logger log = new Logger(false);
+    float rate;
+    private long worldSeed;
 
-	public WastelandGenVillage(long seed) {
-		super();
-		worldSeed = seed;
-	}
+    public WastelandGenVillage(long seed, float villagerate) {
+        super();
+        worldSeed = seed;
+        rate = villagerate;
+    }
 
-	@Override
-	protected boolean canSpawnStructureAtCoords(int chunk_x, int chunk_z) {
-		/* Generate the minecraft villages if enabled */
+    private Random RegionRNG(int region_x, int region_z) {
+        Random r;
+        long localSeed;
 
-		int region_x = (chunk_x >> 2);
-		int region_z = (chunk_z >> 2);
-		if (region_x % 2 == 0 || region_z % 2 == 0) {
-			return false;
-		}
-		Random r = new Random((region_x) * worldSeed + (region_z * 5737) + worldSeed + (long) 10);
-		// 787 = prime near 800 for better random numbers
-		if (r.nextInt(787) <= EzWastelands.villageRate) {
-			// this region has a village, now determine if the chunk has one
-			if (chunk_x == (region_x << 2) + r.nextInt(3)) {
-				if (chunk_z == (region_z << 2) + r.nextInt(3)) {
-					// this is the chunk
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+        localSeed = (region_x << 32) + (region_z * 31);
+        localSeed = localSeed ^ worldSeed;
+        localSeed += 5147;
 
-	@Override
-	public String getStructureName() {
-		return "WastelandVillage";
-	}
+        r = new Random(localSeed);
+        r.nextInt();
+        r.nextInt();
+        return (r);
+    }
 
-	@Override
-	protected synchronized StructureStart getStructureStart(int chunk_x, int chunk_z) {
-		BiomeProvider world = this.worldObj.getBiomeProvider();
-		MapGenVillage.Start village;
-		if (world instanceof WastelandBiomeProvider) {
-			((WastelandBiomeProvider) world).setAllBiomesViable();
-			village = new MapGenVillage.Start(this.worldObj, this.rand, chunk_x, chunk_z, 0);
-			((WastelandBiomeProvider) world).unsetAllBiomesViable();
-		} else {
-			village = new MapGenVillage.Start(this.worldObj, this.rand, chunk_x, chunk_z, 0);
-		}
+    @Override
+    protected boolean canSpawnStructureAtCoords(int chunk_x, int chunk_z) {
+        /* Generate the minecraft villages if enabled */
 
-		return village;
-	}
+        int region_x = (chunk_x >> 2);
+        int region_z = (chunk_z >> 2);
+        boolean valid=false;
+        //only 1 in 4 regions are valid for a potential village
+        if (region_x % 2 == 0 || region_z % 2 == 0) {
+            return false;
+        }
+        Random r = RegionRNG(region_x, region_z);
+        if ((r.nextFloat() * 10000) <= (rate * rate)) {
+            // this region has a village, now determine if the chunk has one
+            if (chunk_x == (region_x << 2) + r.nextInt(3)) {
+                if (chunk_z == (region_z << 2) + r.nextInt(3)) {
+                    // this is the chunk
+                    log.info(String.format("Village to spawn at: %d,%d", chunk_x << 4, chunk_z << 4));
+                    valid = true;
+                }
+            }
+        }
+        return valid;
+    }
+
+    @Override
+    public String getStructureName() {
+        return "WastelandVillage";
+    }
+
+    @Override
+    protected synchronized StructureStart getStructureStart(int chunk_x, int chunk_z) {
+        BiomeProvider world = this.worldObj.getBiomeProvider();
+        MapGenVillage.Start village;
+        if (world instanceof WastelandBiomeProvider) {
+            ((WastelandBiomeProvider) world).setAllBiomesViable();
+            village = new MapGenVillage.Start(this.worldObj, this.rand, chunk_x, chunk_z, 0);
+            ((WastelandBiomeProvider) world).unsetAllBiomesViable();
+        } else {
+            village = new MapGenVillage.Start(this.worldObj, this.rand, chunk_x, chunk_z, 0);
+        }
+
+        return village;
+    }
 
 }

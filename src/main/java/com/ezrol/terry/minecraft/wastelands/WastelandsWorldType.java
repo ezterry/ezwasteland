@@ -26,8 +26,8 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
+import com.ezrol.terry.minecraft.wastelands.client.WastelandCustomization;
 import com.ezrol.terry.minecraft.wastelands.gen.WastelandChunkProvider;
-
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeProvider;
@@ -37,48 +37,49 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WastelandsWorldType extends WorldType {
 
-	public WastelandsWorldType() {
-		super("ezwastelands");
-	}
+    public WastelandsWorldType() {
+        super("ezwastelands");
+    }
 
-	@Override
-	public double voidFadeMagnitude() {
-		return 1.0d;
-	}
+    @Override
+    public double voidFadeMagnitude() {
+        return 1.0d;
+    }
 
-	@Override
-	public float getCloudHeight() {
-		return 200.0f;
-	}
+    @Override
+    public float getCloudHeight() {
+        return 200.0f;
+    }
 
-	@Override
-	public IChunkGenerator getChunkGenerator(World world, String generatorOptions) {
-		return (new WastelandChunkProvider(world, world.getSeed(), generatorOptions));
-	}
+    @Override
+    public IChunkGenerator getChunkGenerator(World world, String generatorOptions) {
+        return (new WastelandChunkProvider(world, world.getSeed(), generatorOptions));
+    }
 
-	@Override
-	public double getHorizon(World world) {
-		return 50.0D;
-	}
+    @Override
+    public double getHorizon(World world) {
+        return 50.0D;
+    }
 
-	@Override
-	public int getMinimumSpawnHeight(World world) {
-		return 50;
-	}
+    @Override
+    public int getMinimumSpawnHeight(World world) {
+        return 50;
+    }
 
-	@Override
-	public BiomeProvider getBiomeProvider(World world) {
-		return new WastelandBiomeProvider(world.getWorldInfo());
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void onCustomizeButton(net.minecraft.client.Minecraft mc, net.minecraft.client.gui.GuiCreateWorld guiCreateWorld){
-		
-	}
-	
-	@Override
-	public boolean isCustomizable(){
-		return true;
-	}
+    @Override
+    public BiomeProvider getBiomeProvider(World world) {
+        return new WastelandBiomeProvider(world.getWorldInfo());
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onCustomizeButton(net.minecraft.client.Minecraft mc, net.minecraft.client.gui.GuiCreateWorld guiCreateWorld) {
+        WastelandCustomization configGui = new WastelandCustomization(guiCreateWorld);
+        mc.displayGuiScreen(configGui);
+    }
+
+    @Override
+    public boolean isCustomizable() {
+        return true;
+    }
 }

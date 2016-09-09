@@ -42,81 +42,108 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Spire Generating Module
- * Generate vertical spires in the wastelands
+ * The Shallows module this is effectively the inverse of a dome, it a depression in the wasteland
  * <p>
- * Created by ezterry on 8/5/16.
+ * Created by ezterry on 9/6/16.
  */
-public class Spires implements IRegionElement {
+public class Shallows implements IRegionElement {
     final static private Logger log = new Logger(false);
 
-    public Spires() {
+    public Shallows() {
         RegionCore.register(this);
     }
 
-    public int addElementHeight(int currentOffset, int x, int z, RegionCore core, List<Object> elements) {
-        poi spire;
-        for (Object s : elements) {
-            spire = (poi) s;
+    @Override
+    public int addElementHeight(int currentoffset, int x, int z, RegionCore core, List<Object> elements) {
+        poi shallow;
+        float dist;
+        float distx;
+        float distz;
+        int offset;
 
-            if (spire.x == x && spire.z == z) {
-                log.info(String.format("Generating Spire at (%d,%d)", spire.x, spire.z));
-                currentOffset += spire.size;
+        for (Object o : elements) {
+            shallow = (poi) o;
+            offset = 0;
+
+            distx = (x - shallow.x);
+            distz = (z - shallow.z);
+            dist = (float) Math.sqrt((distx * distx) + (distz * distz));
+            if ((dist < shallow.radius)) {
+                if (dist < 0.09) {
+                    offset = shallow.depth;
+                } else {
+                    offset = (int) ((((-1 * (dist - shallow.radius)) / shallow.radius) * shallow.depth) + 0.5);
+                }
             }
+            currentoffset = currentoffset - offset;
         }
-        return (currentOffset);
+        return currentoffset;
     }
 
-    /**
-     * element name
-     **/
+    @Override
     public String getElementName() {
-        return ("spire");
+        return "shallows";
     }
 
-    /**
-     * get the clean list of parameters and types
-     **/
+    @Override
     public List<Param> getParamTemplate() {
         List<Param> lst = new ArrayList<>();
 
-        lst.add(new Param.IntegerParam("count", I18n.format("config.ezwastelands.spire.count.help"), 2, 0, 20));
-        lst.add(new Param.IntegerParam("size", I18n.format("config.ezwastelands.spire.size.help"), 6, 2, 10));
+        lst.add(new Param.IntegerParam(
+                "mincount", I18n.format("config.ezwastelands.shallows.mincount.help"), 4, 0, 8));
+        lst.add(new Param.IntegerParam(
+                "maxcount", I18n.format("config.ezwastelands.shallows.maxcount.help"), 5, 0, 16));
+        lst.add(new Param.IntegerParam(
+                "radius", I18n.format("config.ezwastelands.shallows.radius.help"), 42, 10, 64));
+        lst.add(new Param.IntegerParam(
+                "depth", I18n.format("config.ezwastelands.shallows.depth.help"), 5, 2, 8));
+
         return lst;
     }
 
-    /**
-     * calculate a regions elements
-     **/
+    @Override
     public List<Object> calcElements(Random r, int x, int z, List<Param> p) {
-        int count = ((Param.IntegerParam) Param.lookUp(p, "count")).get();
-        int maxSize = ((Param.IntegerParam) Param.lookUp(p, "size")).get();
+        List<Object> elements = new ArrayList<>();
+        poi shallow;
+        int i;
+        int cnt;
+        int radius = ((Param.IntegerParam) Param.lookUp(p, "radius")).get();
+        int depth = ((Param.IntegerParam) Param.lookUp(p, "depth")).get();
 
-        List<Object> elements = new ArrayList<>(count * 2);
-        poi spire;
+        //large domes:
 
-        for (int i = 0; i < count; i++) {
-            spire = new poi();
-            do {
-                int randX = r.nextInt(64);
-                int randZ = r.nextInt(64);
-                spire.x = randX + (x << 6);
-                spire.z = randZ + (z << 6);
-                spire.size = r.nextInt(maxSize);
-            } while (elements.contains(spire));
+        i = ((Param.IntegerParam) Param.lookUp(p, "mincount")).get();
+        cnt = ((Param.IntegerParam) Param.lookUp(p, "maxcount")).get();
 
-            elements.add(spire);
+        if (cnt > i) {
+            cnt = i + r.nextInt(cnt - i);
         }
-        return (elements);
+
+        for (i = 0; i < cnt; i++) {
+            shallow = new poi();
+            shallow.x = r.nextInt(64) + (x << 6);
+            shallow.z = r.nextInt(64) + (z << 6);
+            if (radius <= 10) {
+                shallow.radius = 10;
+            } else {
+                shallow.radius = r.nextInt(radius - 10) + 10;
+            }
+            shallow.depth = r.nextInt(depth);
+            elements.add(shallow);
+            log.info(String.format("Shallow at: %d,%d", shallow.x, shallow.z));
+        }
+        return elements;
     }
 
     @Override
     public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p) {
+
     }
 
     @Override
     public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, World worldobj,
                                    boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core) {
+
     }
 
     @Override
@@ -125,28 +152,10 @@ public class Spires implements IRegionElement {
         return null;
     }
 
-    /**
-     * Point of interest class used internally
-     */
     private class poi {
         protected int x;
         protected int z;
-        protected int size;
-
-        /**
-         * equals here is a point at the same x,z irrelevant of the size factor
-         *
-         * @param o - object to compare to
-         * @return - true if they are a poi instance with the same x/z
-         */
-        @Override
-        public boolean equals(Object o) {
-            if (o != null && o instanceof poi) {
-                if (((poi) o).x == x && ((poi) o).z == z) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        protected int radius;
+        protected int depth;
     }
 }

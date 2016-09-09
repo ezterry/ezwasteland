@@ -26,31 +26,31 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
-import java.util.List;
-
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.storage.WorldInfo;
 
+import java.util.List;
+
 public class WastelandBiomeProvider extends BiomeProvider {
-	private boolean forceAllBiomes = false;
+    private boolean forceAllBiomes = false;
 
-	public WastelandBiomeProvider(WorldInfo world) {
-		super(world);
-	}
+    public WastelandBiomeProvider(WorldInfo world) {
+        super(world);
+    }
 
-	public void setAllBiomesViable() {
-		forceAllBiomes = true;
-	}
+    public void setAllBiomesViable() {
+        forceAllBiomes = true;
+    }
 
-	public void unsetAllBiomesViable() {
-		forceAllBiomes = false;
-	}
+    public void unsetAllBiomesViable() {
+        forceAllBiomes = false;
+    }
 
-	@Override
-	public boolean areBiomesViable(int p_76940_1_, int p_76940_2_, int p_76940_3_, List p_76940_4_) {
-		/* We just assume all biomes are viable */
-		if (forceAllBiomes)
-			return true;
-		return super.areBiomesViable(p_76940_1_, p_76940_2_, p_76940_3_, p_76940_4_);
-	}
+    @Override
+    public boolean areBiomesViable(int p_76940_1_, int p_76940_2_, int p_76940_3_, List p_76940_4_) {
+        /* We just assume all biomes are viable */
+        if (forceAllBiomes)
+            return true;
+        return super.areBiomesViable(p_76940_1_, p_76940_2_, p_76940_3_, p_76940_4_);
+    }
 }
