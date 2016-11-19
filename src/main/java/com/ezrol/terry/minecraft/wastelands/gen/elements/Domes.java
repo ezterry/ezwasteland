@@ -182,10 +182,11 @@ public class Domes implements IRegionElement {
      * @param x - the x region cord
      * @param z - the z region cord
      * @param p - the list of this modules world gen parameters used by the module
+     * @param core - current core object
      * @return - list of the points of interest
      */
     @Override
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p) {
+    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
         List<Object> elements = new ArrayList<>();
         int i;
         int cnt;
@@ -230,7 +231,7 @@ public class Domes implements IRegionElement {
     }
 
     @Override
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p,RegionCore core) {
     }
 
     @Override
@@ -239,8 +240,14 @@ public class Domes implements IRegionElement {
     }
 
     @Override
-    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, String structureName,
-                                     BlockPos position, List<Param> p) {
+    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                     List<Param> p, RegionCore core) {
+        return null;
+    }
+
+    @Override
+    public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                     List<Param> p, RegionCore core) {
         return null;
     }
 

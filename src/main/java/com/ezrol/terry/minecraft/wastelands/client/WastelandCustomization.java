@@ -64,13 +64,13 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
     @Override
     public void initGui() {
 
-        this.done = this.func_189646_b(new GuiButton(DONE_ID, this.width / 2 + 98, this.height - 27, 90, 20,
+        this.done = this.addButton(new GuiButton(DONE_ID, this.width / 2 + 98, this.height - 27, 90, 20,
                 I18n.format("gui.done")));
-        this.presets = this.func_189646_b(new GuiButton(PRESETS_ID, this.width / 2 + 3, this.height - 27, 90, 20,
+        this.presets = this.addButton(new GuiButton(PRESETS_ID, this.width / 2 + 3, this.height - 27, 90, 20,
                 I18n.format("config.ezwastelands.BTNPresets")));
-        this.defaults = this.func_189646_b(new GuiButton(DEFAULTS_ID, this.width / 2 - 187, this.height - 27, 90, 20,
+        this.defaults = this.addButton(new GuiButton(DEFAULTS_ID, this.width / 2 - 187, this.height - 27, 90, 20,
                 I18n.format("config.ezwastelands.BTNDefault")));
-        this.cancel = this.func_189646_b(new GuiButton(CANCEL_ID, this.width / 2 - 92, this.height - 27, 90, 20,
+        this.cancel = this.addButton(new GuiButton(CANCEL_ID, this.width / 2 - 92, this.height - 27, 90, 20,
                 I18n.format("config.ezwastelands.BTNCancel")));
 
         lastMouseUpdate = System.currentTimeMillis();

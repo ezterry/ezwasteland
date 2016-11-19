@@ -4,6 +4,7 @@ generator.ezwastelands=Wastelands
 
 #mod config gui
 sysconfig.ezwastelands.config.title=EzWastelands Global Config
+sysconfig.ezwastelands.wastelandblock.gravity=Wastlandblocks Fall
 
 #world config gui
 config.ezwastelands.WorldConfigGUI=Wasteland Customization

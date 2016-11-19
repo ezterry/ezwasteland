@@ -38,6 +38,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.ChunkProviderOverworld;
 
+import javax.annotation.Nullable;
+
 public class WastelandChunkProvider extends ChunkProviderOverworld {
     private Biome[] mockGeneratedBiomes;
     private boolean structuresEnabled = true;
@@ -54,8 +56,8 @@ public class WastelandChunkProvider extends ChunkProviderOverworld {
     }
 
     @Override
-    public void replaceBiomeBlocks(int p_180517_1_, int p_180517_2_, ChunkPrimer p_180517_3_,
-                                   Biome[] p_180517_4_) {
+    public void replaceBiomeBlocks(int p_180517_1_, int p_180517_2_, ChunkPrimer primer,
+                                   Biome[] biomesIn) {
         // biomes are devoid of features in our generation
     }
 
@@ -125,10 +127,25 @@ public class WastelandChunkProvider extends ChunkProviderOverworld {
         core.additionalTriggers("recreateStructures", this, chunkCord, this.localWorldObj, structuresEnabled, null);
     }
 
-    // stronghold location (for eyes of ender)
+    /**
+     * Gets structure locations
+     * @param worldIn - world objecct
+     * @param structureName - name of the structure we want to find the closes instance of
+     * @param position - position of the structure
+     * @param p_180513_4_ - ?? looks like it determines if its existing, or can generate
+     * @return
+     */
+    @Nullable
     @Override
-    public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position) {
-        return core.getStrongholdGen(worldIn, structuresEnabled, structureName, position);
+    public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position, boolean p_180513_4_)
+    {
+        if(structureName.equals("Stronghold")){
+            return core.getStrongholdGen(worldIn, structuresEnabled, position);
+        }
+        else if(structureName.equals("Village")) {
+            return core.getVillageGen(worldIn, structuresEnabled, position);
+        }
+        return null;
     }
 
     // never generate ocean monuments in the wastelands

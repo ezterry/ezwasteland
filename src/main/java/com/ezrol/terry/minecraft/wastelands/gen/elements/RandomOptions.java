@@ -131,14 +131,14 @@ public class RandomOptions implements IRegionElement {
     }
 
     @Override
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p) {
+    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
         List<Object> placeholder = new ArrayList<>();
         placeholder.add(((Param.IntegerParam) Param.lookUp(p, "globaloffset")).get());
         return placeholder;
     }
 
     @Override
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core) {
         if (((Param.BooleanParam) Param.lookUp(p, "oceans")).get()) {
             IBlockState water = Blocks.WATER.getDefaultState();
 
@@ -213,12 +213,21 @@ public class RandomOptions implements IRegionElement {
     }
 
     @Override
-    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, String structureName,
-                                     BlockPos position, List<Param> p) {
-        if (structuresEnabled && "Stronghold".equals(structureName)) {
-            if (((Param.BooleanParam) Param.lookUp(p, "strongholds")).get()) {
-                return (getStrongholdGen(worldIn).getClosestStrongholdPos(worldIn, position));
-            }
+    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                     List<Param> p, RegionCore core) {
+        if (((Param.BooleanParam) Param.lookUp(p, "strongholds")).get()) {
+            return (getStrongholdGen(worldIn).getClosestStrongholdPos(worldIn, position,false));
+        }
+        return null;
+    }
+
+    @Override
+    public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                  List<Param> p, RegionCore core) {
+        if (((Param.BooleanParam) Param.lookUp(p, "villages")).get()) {
+            float rate = ((Param.FloatParam) Param.lookUp(p, "villagechance")).get();
+            WastelandGenVillage village = getVillageGen(worldIn,rate);
+            return (village.getClosestStrongholdPos(worldIn, position,false));
         }
         return null;
     }

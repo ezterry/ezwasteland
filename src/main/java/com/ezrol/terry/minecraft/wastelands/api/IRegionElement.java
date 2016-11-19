@@ -75,13 +75,14 @@ public interface IRegionElement {
      * Calculate any elements in a region, this can be returned as a list of Objects, these will be concatinated
      * and passed back into addElementHeight().
      *
-     * @param r - a rng for this region
-     * @param x - x region cord (ie 64x block cord)
-     * @param z - z region cord (ie 64x block cord)
-     * @param p - Populated Params from getParamTemplate
+     * @param r    - a rng for this region
+     * @param x    - x region cord (ie 64x block cord)
+     * @param z    - z region cord (ie 64x block cord)
+     * @param p    - Populated Params from getParamTemplate
+     * @param core - the current region core object
      * @return data to include for this region, must be a list, but can be empty
      */
-    List<Object> calcElements(Random r, int x, int z, List<Param> p);
+    List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core);
 
     /**
      * Post filling in wasteland blocks to the result of calling addElementHeight() on all modules this will be called
@@ -93,8 +94,9 @@ public interface IRegionElement {
      * @param z           - z block cord
      * @param worldSeed   - world seed (to allow a custom RNG to be created if required)
      * @param p           - Populated Params from getParamTemplate
+     * @param core        - the current region core object
      */
-    void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p);
+    void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core);
 
     /**
      * A few "event" trigger points for more advanced generation
@@ -114,15 +116,28 @@ public interface IRegionElement {
                             boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core);
 
     /**
-     * Very special case call, to find a generated structure (usually a stronghold for the eye of ender)
+     * Very special case call, to find a generated village (eye of ender)
      *
      * @param worldIn            - World
      * @param structuresEnabled  - if user has structures enabled in world gen advanced options
-     * @param structureName      - structure we are looking for
      * @param position           - Event's triggered location
      * @param p                  - Populated Params from getParamTemplate
+     * @param core               - core object in use
      * @return If it exists return the BlockPos expected, otherwise null.
      */
-    BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, String structureName, BlockPos position,
-                              List<Param> p);
+
+    BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                              List<Param> p, RegionCore core);
+    /**
+     * Very special case call, to find a generated village (/locate?)
+     *
+     * @param worldIn            - World
+     * @param structuresEnabled  - if user has structures enabled in world gen advanced options
+     * @param position           - Event's triggered location
+     * @param p                  - Populated Params from getParamTemplate
+     * @param core               - core object in use
+     * @return If it exists return the BlockPos expected, otherwise null.
+     */
+    BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                              List<Param> p, RegionCore core);
 }

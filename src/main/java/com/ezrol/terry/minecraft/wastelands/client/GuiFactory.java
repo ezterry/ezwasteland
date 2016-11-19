@@ -36,6 +36,7 @@ import java.util.Set;
  * Simple GUI factory to provide access to the config gui
  * Created by ezterry on 9/9/16.
  */
+@SuppressWarnings("unused")
 public class GuiFactory implements IModGuiFactory {
 
     @Override
@@ -52,6 +53,7 @@ public class GuiFactory implements IModGuiFactory {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
         return null;

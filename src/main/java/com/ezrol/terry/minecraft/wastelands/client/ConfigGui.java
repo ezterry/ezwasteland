@@ -45,6 +45,7 @@ import java.util.List;
  * Logic both for the config gui and providing access to
  * Created by ezterry on 9/9/16.
  */
+@SuppressWarnings("unused")
 public class ConfigGui extends GuiConfig {
     private static configFile config = null;
     private static Logger log = new Logger(false);
@@ -61,12 +62,13 @@ public class ConfigGui extends GuiConfig {
             Property prop = config.cfg.get("hasGravity", "wastelandblock", false,
                     "If set to true the wasteland blocks will fall like sand");
             prop.setRequiresMcRestart(true);
-            lst.add(new ConfigElement(prop));
+            lst.add(new gravityElement(prop));
         }
 
         return (lst);
     }
 
+    @SuppressWarnings("unused")
     public static class configFile {
         private Configuration cfg = null;
 
@@ -87,6 +89,19 @@ public class ConfigGui extends GuiConfig {
                     log.status("You must now restart the client");
                 }
             }
+        }
+    }
+
+    @SuppressWarnings("unused,WeakerAccess")
+    private static class gravityElement extends ConfigElement{
+        private final String title;
+        public gravityElement(Property prop){
+            super(prop);
+            title = I18n.format("sysconfig.ezwastelands." + prop.getName() + ".gravity");
+        }
+        @Override
+        public String getName(){
+            return title;
         }
     }
 }

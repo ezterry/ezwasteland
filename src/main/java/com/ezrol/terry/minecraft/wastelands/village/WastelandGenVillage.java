@@ -28,9 +28,12 @@ package com.ezrol.terry.minecraft.wastelands.village;
 
 import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.ezrol.terry.minecraft.wastelands.WastelandBiomeProvider;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
+import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureStart;
+import net.minecraft.world.gen.structure.StructureVillagePieces;
 
 import java.util.Random;
 
@@ -45,11 +48,11 @@ public class WastelandGenVillage extends MapGenVillage {
         rate = villagerate;
     }
 
-    private Random RegionRNG(int region_x, int region_z) {
+    private Random RegionRNG(int regionX, int regionZ) {
         Random r;
         long localSeed;
 
-        localSeed = (((long) region_x) << 32) + (((long) region_z) * 31);
+        localSeed = (((long) regionX) << 32) + (((long) regionZ) * 31);
         localSeed = localSeed ^ worldSeed;
         localSeed += 5147;
 
@@ -60,11 +63,11 @@ public class WastelandGenVillage extends MapGenVillage {
     }
 
     @Override
-    protected boolean canSpawnStructureAtCoords(int chunk_x, int chunk_z) {
+    protected boolean canSpawnStructureAtCoords(int chunkX, int chunkZ) {
         /* Generate the minecraft villages if enabled */
 
-        int region_x = (chunk_x >> 2);
-        int region_z = (chunk_z >> 2);
+        int region_x = (chunkX >> 2);
+        int region_z = (chunkZ >> 2);
         boolean valid=false;
         //only 1 in 4 regions are valid for a potential village
         if (region_x % 2 == 0 || region_z % 2 == 0) {
@@ -73,10 +76,10 @@ public class WastelandGenVillage extends MapGenVillage {
         Random r = RegionRNG(region_x, region_z);
         if ((r.nextFloat() * 10000) <= (rate * rate)) {
             // this region has a village, now determine if the chunk has one
-            if (chunk_x == (region_x << 2) + r.nextInt(3)) {
-                if (chunk_z == (region_z << 2) + r.nextInt(3)) {
+            if (chunkX == (region_x << 2) + r.nextInt(3)) {
+                if (chunkZ == (region_z << 2) + r.nextInt(3)) {
                     // this is the chunk
-                    log.info(String.format("Village to spawn at: %d,%d", chunk_x << 4, chunk_z << 4));
+                    log.info(String.format("Village to spawn at: %d,%d", chunkX << 4, chunkZ << 4));
                     valid = true;
                 }
             }
@@ -90,18 +93,17 @@ public class WastelandGenVillage extends MapGenVillage {
     }
 
     @Override
-    protected synchronized StructureStart getStructureStart(int chunk_x, int chunk_z) {
-        BiomeProvider world = this.worldObj.getBiomeProvider();
+    protected synchronized StructureStart getStructureStart(int chunkX, int chunkZ) {
+        BiomeProvider world = this.world.getBiomeProvider();
         MapGenVillage.Start village;
         if (world instanceof WastelandBiomeProvider) {
             ((WastelandBiomeProvider) world).setAllBiomesViable();
-            village = new MapGenVillage.Start(this.worldObj, this.rand, chunk_x, chunk_z, 0);
+            village = new MapGenVillage.Start(this.world, this.rand, chunkX, chunkZ, 0);
             ((WastelandBiomeProvider) world).unsetAllBiomesViable();
         } else {
-            village = new MapGenVillage.Start(this.worldObj, this.rand, chunk_x, chunk_z, 0);
+            village = new MapGenVillage.Start(this.world, this.rand, chunkX, chunkZ, 0);
         }
 
         return village;
     }
-
 }

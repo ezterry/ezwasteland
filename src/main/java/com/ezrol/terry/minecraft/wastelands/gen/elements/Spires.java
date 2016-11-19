@@ -87,7 +87,7 @@ public class Spires implements IRegionElement {
     /**
      * calculate a regions elements
      **/
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p) {
+    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
         int count = ((Param.IntegerParam) Param.lookUp(p, "count")).get();
         int maxSize = ((Param.IntegerParam) Param.lookUp(p, "size")).get();
 
@@ -110,7 +110,7 @@ public class Spires implements IRegionElement {
     }
 
     @Override
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core) {
     }
 
     @Override
@@ -119,8 +119,14 @@ public class Spires implements IRegionElement {
     }
 
     @Override
-    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, String structureName,
-                                     BlockPos position, List<Param> p) {
+    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                     List<Param> p, RegionCore core) {
+        return null;
+    }
+
+    @Override
+    public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                  List<Param> p, RegionCore core) {
         return null;
     }
 

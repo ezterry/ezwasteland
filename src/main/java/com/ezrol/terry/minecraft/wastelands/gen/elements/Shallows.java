@@ -101,7 +101,7 @@ public class Shallows implements IRegionElement {
     }
 
     @Override
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p) {
+    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
         List<Object> elements = new ArrayList<>();
         poi shallow;
         int i;
@@ -135,7 +135,7 @@ public class Shallows implements IRegionElement {
     }
 
     @Override
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core) {
 
     }
 
@@ -146,8 +146,14 @@ public class Shallows implements IRegionElement {
     }
 
     @Override
-    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, String structureName,
-                                     BlockPos position, List<Param> p) {
+    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                     List<Param> p, RegionCore core) {
+        return null;
+    }
+
+    @Override
+    public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                  List<Param> p, RegionCore core) {
         return null;
     }
 

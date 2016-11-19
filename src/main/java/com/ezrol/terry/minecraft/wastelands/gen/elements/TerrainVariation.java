@@ -103,7 +103,7 @@ public class TerrainVariation implements IRegionElement {
     }
 
     @Override
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p) {
+    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
         List<Object> elements = new ArrayList<>();
         int variation = ((Param.IntegerParam) Param.lookUp(p, "variation")).get();
         int amplification = ((Param.IntegerParam) Param.lookUp(p, "amplification")).get();
@@ -140,7 +140,7 @@ public class TerrainVariation implements IRegionElement {
     }
 
     @Override
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core) {
 
     }
 
@@ -151,8 +151,14 @@ public class TerrainVariation implements IRegionElement {
     }
 
     @Override
-    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, String structureName,
-                                     BlockPos position, List<Param> p) {
+    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                     List<Param> p, RegionCore core) {
+        return null;
+    }
+
+    @Override
+    public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
+                                  List<Param> p, RegionCore core) {
         return null;
     }
 

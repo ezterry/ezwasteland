@@ -39,6 +39,7 @@ import net.minecraft.world.chunk.IChunkGenerator;
 
 import java.util.*;
 
+@SuppressWarnings("WeakerAccess")
 public class RegionCore {
     static private LinkedList<IRegionElement> mainFeatures = new LinkedList<>();
     static private LinkedList<IRegionElement> overrideFeatures = new LinkedList<>();
@@ -154,7 +155,7 @@ public class RegionCore {
                         current = new ArrayList<>();
                     }
                     current.addAll(element.calcElements(rand, (localX + x) >> 6,
-                            (localZ + z) >> 6, elementParams.get(elementName)));
+                            (localZ + z) >> 6, elementParams.get(elementName),this));
                     cachedElements.put(elementName, current);
                 }
             }
@@ -186,7 +187,7 @@ public class RegionCore {
             element = i.next();
             elementName = element.getElementName();
 
-            element.postFill(chunkprimer, height, x, z, worldSeed, elementParams.get(elementName));
+            element.postFill(chunkprimer, height, x, z, worldSeed, elementParams.get(elementName),this);
         }
     }
 
@@ -204,7 +205,7 @@ public class RegionCore {
         }
     }
 
-    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, String structureName, BlockPos position) {
+    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position) {
         IRegionElement element;
         String elementName;
         BlockPos returnval = null;
@@ -214,7 +215,25 @@ public class RegionCore {
             element = i.next();
             elementName = element.getElementName();
 
-            newval = element.getStrongholdGen(worldIn, structuresEnabled, structureName, position, elementParams.get(elementName));
+            newval = element.getStrongholdGen(worldIn,structuresEnabled,position,elementParams.get(elementName),this);
+            if (newval != null) {
+                returnval = newval;
+            }
+        }
+        return returnval;
+    }
+
+    public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position) {
+        IRegionElement element;
+        String elementName;
+        BlockPos returnval = null;
+        BlockPos newval;
+
+        for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
+            element = i.next();
+            elementName = element.getElementName();
+
+            newval = element.getVillageGen(worldIn,structuresEnabled,position,elementParams.get(elementName),this);
             if (newval != null) {
                 returnval = newval;
             }

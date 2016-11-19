@@ -4,12 +4,12 @@
   "name": "EzWastelands",
   "description": "EzTerry's Wastelands terrain generator",
   "version": "${version}",
-  "mcversion": "1.10.2",
+  "mcversion": "1.11",
   "url": "http://www.curse.com/mc-mods/minecraft/237662-ezwastelands",
   "updateUrl": "",
   "authorList": ["EzTerry"],
   "credits": "EzTerry's Wasteland terrain generator for flatlands worlds",
-  "logoFile": "",
+  "logoFile": "ezwastelands.png",
   "screenshots": [],
   "dependencies": []
 }
