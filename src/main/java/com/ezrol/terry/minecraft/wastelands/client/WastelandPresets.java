@@ -236,6 +236,7 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
         private PresetSlotList(Minecraft mc, int width, int height, int topOff, int bottomOff, int slotHight) {
             super(mc, width, height, topOff, bottomOff, slotHight);
             selectionList = new LinkedList<>();
+            selectedJson="";
             selected = -1;
         }
 
