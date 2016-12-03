@@ -19,7 +19,7 @@ targetCompatibility = 1.7
 
 /* Build Version */
 
-def mod_vers_part = "1.1"
+def mod_vers_part = "1.2"
 def mc_vers_part = "1.11"
 
 
