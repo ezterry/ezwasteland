@@ -178,6 +178,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
         String guiTitleLIC;
         List<Param> curParams;
         int nextid = 2000;
+        boolean evencnt;
         GuiPageButtonList.GuiListEntry entry;
 
         paramMap = core.getCurrentParamMap();
@@ -191,13 +192,18 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
             nextid++;
             buttonConfig.add(null);
             //now add each parameter
+            evencnt=true;
             for (Param param:curParams) {
 
                 entry = this.GetGuiButtonForParam(param, curElement, nextid);
                 if (entry != null) {
                     buttonConfig.add(entry);
+                    evencnt = !evencnt;
                 }
                 nextid++;
+            }
+            if(!evencnt){
+                buttonConfig.add(null);
             }
         }
         paramMap.keySet();
