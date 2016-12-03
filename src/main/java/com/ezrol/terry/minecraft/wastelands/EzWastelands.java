@@ -26,6 +26,7 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
+import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.ezrol.terry.minecraft.wastelands.client.ConfigGui;
 import com.ezrol.terry.minecraft.wastelands.gen.elements.*;
 import net.minecraft.block.Block;
@@ -34,6 +35,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -108,6 +110,7 @@ public class EzWastelands {
             MinecraftForge.EVENT_BUS.register(new ConfigGui.configFile(cfg));
         }
         initWastelandElements();
+        RegionCore.registerPreset(new ResourceLocation(MODID, "presets/list.txt"));
     }
 
     @EventHandler

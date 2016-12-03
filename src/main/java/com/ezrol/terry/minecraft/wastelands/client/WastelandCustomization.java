@@ -175,17 +175,14 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
         GuiPageButtonList.GuiListEntry[] finalList;
         List<GuiPageButtonList.GuiListEntry> buttonConfig = new LinkedList<>();
         Map<String, List<Param>> paramMap;
-        String curElement;
         String guiTitleLIC;
         List<Param> curParams;
-        Param param;
         int nextid = 2000;
         GuiPageButtonList.GuiListEntry entry;
 
         paramMap = core.getCurrentParamMap();
 
-        for (Iterator<String> itr = paramMap.keySet().iterator(); itr.hasNext(); ) {
-            curElement = itr.next();
+        for (String curElement : paramMap.keySet()) {
             guiTitleLIC = "config.ezwastelands." + curElement + ".configtitle";
             curParams = paramMap.get(curElement);
 
@@ -194,8 +191,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
             nextid++;
             buttonConfig.add(null);
             //now add each parameter
-            for (Iterator<Param> paramItr = curParams.iterator(); paramItr.hasNext(); ) {
-                param = paramItr.next();
+            for (Param param:curParams) {
 
                 entry = this.GetGuiButtonForParam(param, curElement, nextid);
                 if (entry != null) {
@@ -262,7 +258,12 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
 
     private void attemptToDrawHoverText() {
         //if the mouse is not set lets just skip this
-        if (lastMouseY == 0 || lastMouseY == 0) {
+        if (lastMouseY == 0 || lastMouseX == 0) {
+            return;
+        }
+        if(lastMouseY > this.height-28){
+            //we are over the buttons, don't show hover text
+            lastMouseUpdate = System.currentTimeMillis();
             return;
         }
 

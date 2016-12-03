@@ -31,6 +31,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -44,6 +45,8 @@ public class RegionCore {
     static private LinkedList<IRegionElement> mainFeatures = new LinkedList<>();
     static private LinkedList<IRegionElement> overrideFeatures = new LinkedList<>();
     static private Logger log = new Logger(false);
+    static private LinkedList<ResourceLocation> presets = new LinkedList<>();
+
     private Map<String, List<Param>> elementParams = null;
     //current cached region
     private int cachedX = 0;
@@ -91,6 +94,17 @@ public class RegionCore {
         }
     }
 
+    /**
+     * Add a presets.txt file append to the resources in the presets screen
+     * @param p the location of the presets.txt file to append to the presets screen
+     */
+    static public void registerPreset(ResourceLocation p){
+        presets.add(p);
+    }
+
+    static public List<ResourceLocation> getPresetLocations(){
+        return(Collections.unmodifiableList(presets));
+    }
     /**
      * The current parameter map
      *
@@ -163,6 +177,19 @@ public class RegionCore {
         cachedX = (x >> 6);
         cachedZ = (z >> 6);
         return (cachedElements);
+    }
+
+    /**
+     * A function for the elements to request the parameters at a position (such as in postPointFill)
+     * @param x
+     * @param z
+     * @param e
+     * @param world
+     * @return list of parameters from calcElements
+     */
+    public List<Object> getRegionElements(int x, int z,IRegionElement e, World world) {
+        Map<String, List<Object>> worldElements = getRegionElements(x, z, world.getSeed());
+        return(worldElements.get(e.getElementName()));
     }
 
     public int addElementHeight(int currentoffset, int x, int z, long seed) {
@@ -306,6 +333,10 @@ public class RegionCore {
                 element = i.next();
                 elementName = element.getElementName();
 
+                if(!((JsonObject) tree).has(elementName)){
+                    log.warn(String.format("Missing params for \"%s,\" using defaults",elementName));
+                    continue;
+                }
                 configParams = ((JsonObject) tree).get(elementName);
                 if (!configParams.isJsonObject()) {
                     log.error("Expected JsonObject for " + elementName);

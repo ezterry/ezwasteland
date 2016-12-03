@@ -28,6 +28,7 @@ package com.ezrol.terry.minecraft.wastelands.client;
 
 import com.ezrol.terry.minecraft.wastelands.EzWastelands;
 import com.ezrol.terry.minecraft.wastelands.Logger;
+import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
@@ -87,12 +88,12 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
         }
     }
 
-    private void insertPresets() {
+    private void insertPresets(ResourceLocation r) {
         IResourceManager resourceManager = mc.getResourceManager();
         BufferedReader presetdata;
 
         try {
-            IResource presetlist = resourceManager.getResource(new ResourceLocation(EzWastelands.MODID, "presets/list.txt"));
+            IResource presetlist = resourceManager.getResource(r);
             presetdata = new BufferedReader(new InputStreamReader(presetlist.getInputStream(), "UTF-8"));
         } catch (IOException e) {
             log.error("Could not resource for presets");
@@ -141,8 +142,9 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
 
         listGUI = new PresetSlotList(this.mc, this.width, this.height, 80, this.height - 32, 36);
 
-
-        insertPresets();
+        for(ResourceLocation p : RegionCore.getPresetLocations()) {
+            insertPresets(p);
+        }
 
         this.buttonList.add(new GuiButton(SELECT_BTN_ID, this.width / 2 - 155, this.height - 28, 150, 20, I18n.format("config.ezwastelands.BTNSelect")));
         this.buttonList.add(new GuiButton(CANCEL_BTN_ID, this.width / 2 + 5, this.height - 28, 150, 20, I18n.format("config.ezwastelands.BTNCancel")));

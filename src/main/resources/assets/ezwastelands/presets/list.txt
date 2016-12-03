@@ -1,5 +1,4 @@
 #Classic (pre mc1.10 ezWastelands generation) .. or as close as the new code can get
-
 presets.ezwastelands.classic.name
 ezwastelands:presets/classic.png
 {"terrainvariation":{"amplification":0,"variation":1},"randopts":{"oceans":false,"globaloffset":0,"integration":false,"villages":false,"villagechance":10.0,"strongholds":false},"domes":{"lgmincount":1,"lgmaxcount":1,"lgradius":31,"lgheight":7,"midmincount":1,"midmaxcount":1,"midradius":23,"midheight":6,"smmincount":1,"smmaxcount":1,"smradius":18,"smheight":5},"shallows":{"mincount":1,"maxcount":1,"radius":42,"depth":4},"spire":{"count":1,"size":5}}
