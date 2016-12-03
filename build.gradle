@@ -14,8 +14,8 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
 
 /* Build Version */
 
