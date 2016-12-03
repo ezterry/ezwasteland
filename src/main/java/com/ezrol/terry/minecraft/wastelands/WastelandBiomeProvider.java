@@ -26,6 +26,7 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.storage.WorldInfo;
 
@@ -46,11 +47,15 @@ public class WastelandBiomeProvider extends BiomeProvider {
         forceAllBiomes = false;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
-    public boolean areBiomesViable(int p_76940_1_, int p_76940_2_, int p_76940_3_, List p_76940_4_) {
+    public boolean areBiomesViable(int p_76940_1_, int p_76940_2_, int p_76940_3_, List<Biome> p_76940_4_) {
         /* We just assume all biomes are viable */
-        if (forceAllBiomes)
-            return true;
-        return super.areBiomesViable(p_76940_1_, p_76940_2_, p_76940_3_, p_76940_4_);
+
+        //noinspection SimplifiableIfStatement
+        if(!forceAllBiomes){
+            return(super.areBiomesViable(p_76940_1_, p_76940_2_, p_76940_3_, p_76940_4_));
+        }
+        return (true);
     }
 }

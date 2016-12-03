@@ -48,6 +48,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+@SuppressWarnings("unused,WeakerAccess")
 @Mod(modid = EzWastelands.MODID, version = EzWastelands.VERSION, name = EzWastelands.NAME,
         guiFactory = "com.ezrol.terry.minecraft.wastelands.client.GuiFactory")
 public class EzWastelands {
@@ -57,6 +58,7 @@ public class EzWastelands {
 
     public static Block wastelandBlock;
     public static WorldType wastelandsWorldType;
+    @SuppressWarnings("FieldCanBeLocal")
     private static boolean wastelandBlockGravity = false;
     private static Logger log = new Logger(false);
 

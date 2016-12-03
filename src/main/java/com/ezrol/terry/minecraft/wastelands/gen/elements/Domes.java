@@ -259,9 +259,9 @@ public class Domes implements IRegionElement {
      * height - the height of the dome
      */
     private class poi {
-        protected int x;
-        protected int z;
-        protected int radius;
-        protected int height;
+        private int x;
+        private int z;
+        private int radius;
+        private int height;
     }
 }

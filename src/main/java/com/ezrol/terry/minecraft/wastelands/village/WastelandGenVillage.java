@@ -28,18 +28,15 @@ package com.ezrol.terry.minecraft.wastelands.village;
 
 import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.ezrol.terry.minecraft.wastelands.WastelandBiomeProvider;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
-import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureStart;
-import net.minecraft.world.gen.structure.StructureVillagePieces;
 
 import java.util.Random;
 
 public class WastelandGenVillage extends MapGenVillage {
     static private Logger log = new Logger(false);
-    float rate;
+    private float rate;
     private long worldSeed;
 
     public WastelandGenVillage(long seed, float villagerate) {
@@ -87,11 +84,13 @@ public class WastelandGenVillage extends MapGenVillage {
         return valid;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public String getStructureName() {
         return "WastelandVillage";
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     protected synchronized StructureStart getStructureStart(int chunkX, int chunkZ) {
         BiomeProvider world = this.world.getBiomeProvider();

@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
 
 
+@SuppressWarnings("unused")
 public class Logger {
     //set to true to output all debug messages, will be forced to true after a critical error
     static private boolean GlobalDebugMode = false;

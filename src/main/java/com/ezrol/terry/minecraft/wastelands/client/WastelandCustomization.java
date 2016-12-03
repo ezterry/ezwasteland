@@ -40,15 +40,11 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
     private static final int DEFAULTS_ID = 901;
     private static final int PRESETS_ID = 902;
     private static final int CANCEL_ID = 903;
-    static private Logger log = new Logger(false);
-    private GuiCreateWorld parent;
+    static private final Logger log = new Logger(false);
+    private final GuiCreateWorld parent;
+    private final Map<Integer, Param> idMap = new HashMap<>();
     private RegionCore core;
-    private Map<Integer, Param> idMap = new HashMap<>();
     private GuiPageButtonList list;
-    private GuiButton done;
-    private GuiButton presets;
-    private GuiButton defaults;
-    private GuiButton cancel;
     //The last position of the mouse
     //and last time it was updated (for hover events)
     private int lastMouseX;
@@ -64,13 +60,13 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
     @Override
     public void initGui() {
 
-        this.done = this.addButton(new GuiButton(DONE_ID, this.width / 2 + 98, this.height - 27, 90, 20,
+        this.addButton(new GuiButton(DONE_ID, this.width / 2 + 98, this.height - 27, 90, 20,
                 I18n.format("gui.done")));
-        this.presets = this.addButton(new GuiButton(PRESETS_ID, this.width / 2 + 3, this.height - 27, 90, 20,
+        this.addButton(new GuiButton(PRESETS_ID, this.width / 2 + 3, this.height - 27, 90, 20,
                 I18n.format("config.ezwastelands.BTNPresets")));
-        this.defaults = this.addButton(new GuiButton(DEFAULTS_ID, this.width / 2 - 187, this.height - 27, 90, 20,
+        this.addButton(new GuiButton(DEFAULTS_ID, this.width / 2 - 187, this.height - 27, 90, 20,
                 I18n.format("config.ezwastelands.BTNDefault")));
-        this.cancel = this.addButton(new GuiButton(CANCEL_ID, this.width / 2 - 92, this.height - 27, 90, 20,
+        this.addButton(new GuiButton(CANCEL_ID, this.width / 2 - 92, this.height - 27, 90, 20,
                 I18n.format("config.ezwastelands.BTNCancel")));
 
         lastMouseUpdate = System.currentTimeMillis();
@@ -111,6 +107,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
         }
     }
 
+    @SuppressWarnings("NullableProblems")
     public void setEntryValue(int id, String value) {
         if (idMap.containsKey(id)) {
             Param p = idMap.get(id);
@@ -120,7 +117,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
         }
     }
 
-
+    @SuppressWarnings("NullableProblems")
     public String getText(int id, String name, float value) {
         if (idMap.containsKey(id)) {
             Param p = idMap.get(id);
@@ -136,7 +133,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
     }
 
     private GuiPageButtonList.GuiListEntry GetGuiButtonForParam(Param p, String elementName, Integer nextId) {
-        String feildLIC = "config.ezwastelands." + elementName + "." + p.getName() + ".name";
+        String fieldLIC = "config.ezwastelands." + elementName + "." + p.getName() + ".name";
         GuiPageButtonList.GuiListEntry entry = null;
 
         switch (p.getType()) {
@@ -144,18 +141,18 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
                 //we need an integer field
                 Param.IntegerParam intParam = (Param.IntegerParam) p;
 
-                entry = new GuiPageButtonList.GuiSlideEntry(nextId, I18n.format(feildLIC), true, this,
+                entry = new GuiPageButtonList.GuiSlideEntry(nextId, I18n.format(fieldLIC), true, this,
                         (float) intParam.getMin(), (float) intParam.getMax(), (float) intParam.get());
                 break;
             case FLOAT:
                 //we need a float field
                 Param.FloatParam floatParam = (Param.FloatParam) p;
-                entry = new GuiPageButtonList.GuiSlideEntry(nextId, I18n.format(feildLIC), true, this,
+                entry = new GuiPageButtonList.GuiSlideEntry(nextId, I18n.format(fieldLIC), true, this,
                         floatParam.getMin(), floatParam.getMax(), floatParam.get());
                 break;
             case BOOLEAN:
                 //we need a boolean field
-                entry = new GuiPageButtonList.GuiButtonEntry(nextId, I18n.format(I18n.format(feildLIC)), true,
+                entry = new GuiPageButtonList.GuiButtonEntry(nextId, I18n.format(I18n.format(fieldLIC)), true,
                         ((Param.BooleanParam) p).get());
                 break;
             case STRING:
@@ -192,8 +189,8 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
             nextid++;
             buttonConfig.add(null);
             //now add each parameter
-            evencnt=true;
-            for (Param param:curParams) {
+            evencnt = true;
+            for (Param param : curParams) {
 
                 entry = this.GetGuiButtonForParam(param, curElement, nextid);
                 if (entry != null) {
@@ -202,7 +199,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
                 }
                 nextid++;
             }
-            if(!evencnt){
+            if (!evencnt) {
                 buttonConfig.add(null);
             }
         }
@@ -240,7 +237,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
         }
     }
 
-    public void updateFromJson(String json) {
+    void updateFromJson(String json) {
         int pos = list.getAmountScrolled();
         core = new RegionCore(json);
         reloadList();
@@ -267,7 +264,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
         if (lastMouseY == 0 || lastMouseX == 0) {
             return;
         }
-        if(lastMouseY > this.height-28){
+        if (lastMouseY > this.height - 28) {
             //we are over the buttons, don't show hover text
             lastMouseUpdate = System.currentTimeMillis();
             return;

@@ -36,6 +36,7 @@ import java.util.List;
  * Parameters of the region elements
  **/
 
+@SuppressWarnings("WeakerAccess,unused")
 public class Param {
     protected ParamTypes type;
     private String name;
@@ -60,9 +61,7 @@ public class Param {
      * returns null if not found
      */
     public static Param lookUp(List<Param> lst, String name) {
-        Param entry;
-        for (int i = 0; i < lst.size(); i++) {
-            entry = lst.get(i);
+        for (Param entry : lst) {
             if (entry.getName().equals(name)) {
                 return (entry);
             }

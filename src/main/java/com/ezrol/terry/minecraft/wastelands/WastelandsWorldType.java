@@ -51,6 +51,7 @@ public class WastelandsWorldType extends WorldType {
         return 200.0f;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public IChunkGenerator getChunkGenerator(World world, String generatorOptions) {
         return (new WastelandChunkProvider(world, world.getSeed(), generatorOptions));
@@ -61,16 +62,19 @@ public class WastelandsWorldType extends WorldType {
         return 50.0D;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public int getMinimumSpawnHeight(World world) {
         return 50;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public BiomeProvider getBiomeProvider(World world) {
         return new WastelandBiomeProvider(world.getWorldInfo());
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     @SideOnly(Side.CLIENT)
     public void onCustomizeButton(net.minecraft.client.Minecraft mc, net.minecraft.client.gui.GuiCreateWorld guiCreateWorld) {

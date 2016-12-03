@@ -38,14 +38,12 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.ChunkProviderOverworld;
 
-import javax.annotation.Nullable;
-
 public class WastelandChunkProvider extends ChunkProviderOverworld {
+    private final long worldSeed;
+    private final World localWorldObj;
+    private final RegionCore core;
     private Biome[] mockGeneratedBiomes;
     private boolean structuresEnabled = true;
-    private long worldSeed;
-    private World localWorldObj;
-    private RegionCore core;
 
     public WastelandChunkProvider(World dim, long seed, String generatorOptions) {
         super(dim, seed, false, null);
@@ -55,12 +53,14 @@ public class WastelandChunkProvider extends ChunkProviderOverworld {
         core = new RegionCore(generatorOptions);
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public void replaceBiomeBlocks(int p_180517_1_, int p_180517_2_, ChunkPrimer primer,
                                    Biome[] biomesIn) {
         // biomes are devoid of features in our generation
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public synchronized Chunk provideChunk(int p_x, int p_z) {
         /* calculate the empty chunk */
@@ -73,17 +73,14 @@ public class WastelandChunkProvider extends ChunkProviderOverworld {
         IBlockState bedrock = Blocks.BEDROCK.getDefaultState();
         IBlockState wastelandblock = EzWastelands.wastelandBlock.getDefaultState();
 
-        int z = 0;
-        int x = 0;
         int height;
         IBlockState block;
 
-
-        for (x = 0; x < 16; ++x) {
-            for (z = 0; z < 16; ++z) {
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
                 height = 52;
                 height = core.addElementHeight(height, x + (p_x * 16), z + (p_z * 16), this.worldSeed);
-                for (int y = 0; y < 256; ++y) {
+                for (int y = 0; y < 256; y++) {
                     block = null;
                     if (y <= 1) {
                         block = bedrock;
@@ -129,26 +126,26 @@ public class WastelandChunkProvider extends ChunkProviderOverworld {
 
     /**
      * Gets structure locations
-     * @param worldIn - world objecct
+     *
+     * @param worldIn       - world objecct
      * @param structureName - name of the structure we want to find the closes instance of
-     * @param position - position of the structure
-     * @param p_180513_4_ - ?? looks like it determines if its existing, or can generate
-     * @return
+     * @param position      - position of the structure
+     * @param p_180513_4_   - ?? looks like it determines if its existing, or can generate
+     * @return the position of the stronghold
      */
-    @Nullable
+    @SuppressWarnings("NullableProblems")
     @Override
-    public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position, boolean p_180513_4_)
-    {
-        if(structureName.equals("Stronghold")){
+    public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position, boolean p_180513_4_) {
+        if (structureName.equals("Stronghold")) {
             return core.getStrongholdGen(worldIn, structuresEnabled, position);
-        }
-        else if(structureName.equals("Village")) {
+        } else if (structureName.equals("Village")) {
             return core.getVillageGen(worldIn, structuresEnabled, position);
         }
         return null;
     }
 
     // never generate ocean monuments in the wastelands
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean generateStructures(Chunk chunkIn, int x, int z) {
         return false;

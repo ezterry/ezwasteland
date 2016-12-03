@@ -40,7 +40,7 @@ import net.minecraft.world.chunk.IChunkGenerator;
 
 import java.util.*;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings("WeakerAccess,unused")
 public class RegionCore {
     static private LinkedList<IRegionElement> mainFeatures = new LinkedList<>();
     static private LinkedList<IRegionElement> overrideFeatures = new LinkedList<>();
@@ -181,10 +181,10 @@ public class RegionCore {
 
     /**
      * A function for the elements to request the parameters at a position (such as in postPointFill)
-     * @param x
-     * @param z
-     * @param e
-     * @param world
+     * @param x - x cord to lookup
+     * @param z - z cord to lookup
+     * @param e - return the parameters to IRegionElement e
+     * @param world - the minecraft world to get the seed from.
      * @return list of parameters from calcElements
      */
     public List<Object> getRegionElements(int x, int z,IRegionElement e, World world) {

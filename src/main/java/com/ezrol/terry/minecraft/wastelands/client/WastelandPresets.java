@@ -26,7 +26,6 @@
 
 package com.ezrol.terry.minecraft.wastelands.client;
 
-import com.ezrol.terry.minecraft.wastelands.EzWastelands;
 import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.client.Minecraft;
@@ -48,13 +47,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Class to display the Wasteland Preset Gui, allows both for choosing between some pre-made presets as well
+ * as manually exporting/importing a JSON from an external source such as a web page or chat.
+ *
  * Created by ezterry on 9/8/16.
  */
+@SuppressWarnings("CanBeFinal")
 public class WastelandPresets extends GuiScreen implements GuiPageButtonList.GuiResponder {
     final private static int CANCEL_BTN_ID = 80;
     final private static int SELECT_BTN_ID = 81;
     final private static int PRESET_INPUT_BOX = 82;
-    static private Logger log = new Logger(false);
+    static final private Logger log = new Logger(false);
     private WastelandCustomization parent;
     private String currentJson = "";
     private String title = "Presets";
@@ -204,6 +207,7 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
 
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public void setEntryValue(int id, String value) {
         if (id == PRESET_INPUT_BOX) {
@@ -217,11 +221,11 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
     }
 
     private class WastelandPresetEntry {
-        protected String json;
-        protected String title;
-        protected ResourceLocation texture;
+        String json;
+        String title;
+        ResourceLocation texture;
 
-        public WastelandPresetEntry(String title, ResourceLocation icon, String json) {
+        private WastelandPresetEntry(String title, ResourceLocation icon, String json) {
             this.json = json;
             this.title = title;
             this.texture = icon;
@@ -233,6 +237,7 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
         private List<WastelandPresetEntry> selectionList;
         private String selectedJson;
 
+        @SuppressWarnings("SameParameterValue")
         private PresetSlotList(Minecraft mc, int width, int height, int topOff, int bottomOff, int slotHight) {
             super(mc, width, height, topOff, bottomOff, slotHight);
             selectionList = new LinkedList<>();
@@ -245,9 +250,10 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
             return selectionList.size();
         }
 
+        @SuppressWarnings("WeakerAccess")
         protected void addItemToList(WastelandPresetEntry entry) {
             selectionList.add(entry);
-            if (entry.json == currentJson) {
+            if (entry.json.equals(currentJson)) {
                 selected = selectionList.size() - 1;
                 selectedJson = entry.json;
             }
@@ -274,23 +280,23 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
 
         }
 
+        @SuppressWarnings("PointlessArithmeticExpression")
         private void blitIcon(int xPos, int yPos, ResourceLocation icon) {
-            int i = xPos + 5;
-            drawHorizontalLine(i - 1, i + 32, yPos - 1, 0xffe0e0e0);
-            drawHorizontalLine(i - 1, i + 32, yPos + 32, 0xffa0a0a0);
-            drawVerticalLine(i - 1, yPos - 1, yPos + 32, 0xffe0e0e0);
-            drawVerticalLine(i + 32, yPos - 1, yPos + 32, 0xffa0a0a0);
+            xPos = xPos + 5;
+            drawHorizontalLine(xPos - 1, xPos + 32, yPos - 1, 0xffe0e0e0);
+            drawHorizontalLine(xPos - 1, xPos + 32, yPos + 32, 0xffa0a0a0);
+            drawVerticalLine(xPos - 1, yPos - 1, yPos + 32, 0xffe0e0e0);
+            drawVerticalLine(xPos + 32, yPos - 1, yPos + 32, 0xffa0a0a0);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
             mc.getTextureManager().bindTexture(icon);
-            int j = 32;
-            int k = 32;
             Tessellator tessellator = Tessellator.getInstance();
             VertexBuffer vertexbuffer = tessellator.getBuffer();
             vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-            vertexbuffer.pos((double) (i + 0), (double) (yPos + 32), 0.0D).tex(0.0D, 1.0D).endVertex();
-            vertexbuffer.pos((double) (i + 32), (double) (yPos + 32), 0.0D).tex(1.0D, 1.0D).endVertex();
-            vertexbuffer.pos((double) (i + 32), (double) (yPos + 0), 0.0D).tex(1.0D, 0.0D).endVertex();
-            vertexbuffer.pos((double) (i + 0), (double) (yPos + 0), 0.0D).tex(0.0D, 0.0D).endVertex();
+            vertexbuffer.pos((double) (xPos + 0), (double) (yPos + 32), 0.0D).tex(0.0D, 1.0D).endVertex();
+            vertexbuffer.pos((double) (xPos + 32), (double) (yPos + 32), 0.0D).tex(1.0D, 1.0D).endVertex();
+            vertexbuffer.pos((double) (xPos + 32), (double) (yPos + 0), 0.0D).tex(1.0D, 0.0D).endVertex();
+            vertexbuffer.pos((double) (xPos + 0), (double) (yPos + 0), 0.0D).tex(0.0D, 0.0D).endVertex();
             tessellator.draw();
         }
 
@@ -304,7 +310,6 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
                 fontcolor = 0xFFFFCC;
             }
             fontRendererObj.drawString(entry.title, insideLeft + 33 + 10, yPos + ((insideSlotHeight / 2) - 4), fontcolor);
-
         }
     }
 }

@@ -158,9 +158,9 @@ public class Shallows implements IRegionElement {
     }
 
     private class poi {
-        protected int x;
-        protected int z;
-        protected int radius;
-        protected int depth;
+        private int x;
+        private int z;
+        private int radius;
+        private int depth;
     }
 }
