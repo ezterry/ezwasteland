@@ -26,7 +26,6 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
-import net.minecraftforge.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
 
 

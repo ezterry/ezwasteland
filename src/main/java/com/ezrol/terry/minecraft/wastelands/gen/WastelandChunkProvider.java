@@ -42,18 +42,16 @@ import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import java.util.List;
 
 public class WastelandChunkProvider extends ChunkGeneratorOverworld {
-    private final long worldSeed;
     private final World localWorldObj;
     private final RegionCore core;
     private Biome[] mockGeneratedBiomes;
     private boolean structuresEnabled = true;
 
-    public WastelandChunkProvider(World dim, long seed, String generatorOptions) {
-        super(dim, seed, false, null);
+    public WastelandChunkProvider(World dim, String generatorOptions) {
+        super(dim, dim.getSeed(), false, null);
         localWorldObj = dim;
-        worldSeed = seed;
         structuresEnabled = dim.getWorldInfo().isMapFeaturesEnabled();
-        core = new RegionCore(generatorOptions);
+        core = new RegionCore(generatorOptions,dim);
     }
 
     @SuppressWarnings("NullableProblems")
@@ -82,7 +80,7 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 height = 52;
-                height = core.addElementHeight(height, x + (p_x * 16), z + (p_z * 16), this.worldSeed);
+                height = core.addElementHeight(height, x + (p_x * 16), z + (p_z * 16));
                 for (int y = 0; y < 256; y++) {
                     block = null;
                     if (y <= 1) {
@@ -100,14 +98,14 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
                     }
                 }
                 //wasteland blocks have been filled in see if the modules have anything custom to add
-                core.postPointFill(chunkprimer, height, x + (p_x * 16), z + (p_z * 16), this.worldSeed);
+                core.postPointFill(chunkprimer, height, x + (p_x * 16), z + (p_z * 16));
             }
         }
 
         ChunkPos chunkCord = new ChunkPos(p_x, p_z);
         //allow any post generation cleanup to be done (last chance to edit chunkprimer prior to it being added
         //to the world
-        core.additionalTriggers("chunkcleanup", this, chunkCord, this.localWorldObj, structuresEnabled, chunkprimer);
+        core.additionalTriggers("chunkcleanup", this, chunkCord, structuresEnabled, chunkprimer);
         Chunk chunk = new Chunk(this.localWorldObj, chunkprimer, p_x, p_z);
         chunk.generateSkylightMap();
 
@@ -118,13 +116,13 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
     public void populate(int chunk_x, int chunk_z) {
         ChunkPos chunkCord = new ChunkPos(chunk_x, chunk_z);
 
-        core.additionalTriggers("populate", this, chunkCord, this.localWorldObj, structuresEnabled, null);
+        core.additionalTriggers("populate", this, chunkCord, structuresEnabled, null);
     }
 
     @Override
     public void recreateStructures(Chunk c, int chunk_x, int chunk_z) {
         ChunkPos chunkCord = new ChunkPos(chunk_x, chunk_z);
-        core.additionalTriggers("recreateStructures", this, chunkCord, this.localWorldObj, structuresEnabled, null);
+        core.additionalTriggers("recreateStructures", this, chunkCord, structuresEnabled, null);
     }
 
     /**
@@ -140,9 +138,9 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
     @Override
     public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean p_180513_4_) {
         if (structureName.equals("Stronghold")) {
-            return core.getStrongholdGen(worldIn, structuresEnabled, position);
+            return core.getStrongholdGen(structuresEnabled, position);
         } else if (structureName.equals("Village")) {
-            return core.getVillageGen(worldIn, structuresEnabled, position);
+            return core.getVillageGen(structuresEnabled, position);
         }
         return null;
     }

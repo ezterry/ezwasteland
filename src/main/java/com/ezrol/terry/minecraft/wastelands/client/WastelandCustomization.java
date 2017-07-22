@@ -54,7 +54,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
     public WastelandCustomization(GuiCreateWorld p) {
         super();
         this.parent = p;
-        core = new RegionCore(p.chunkProviderSettingsJson);
+        core = new RegionCore(p.chunkProviderSettingsJson,null);
     }
 
     @Override
@@ -239,7 +239,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
 
     void updateFromJson(String json) {
         int pos = list.getAmountScrolled();
-        core = new RegionCore(json);
+        core = new RegionCore(json,null);
         reloadList();
         list.scrollBy(pos);
     }

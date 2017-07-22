@@ -54,7 +54,7 @@ public class WastelandsWorldType extends WorldType {
     @SuppressWarnings("NullableProblems")
     @Override
     public IChunkGenerator getChunkGenerator(World world, String generatorOptions) {
-        return (new WastelandChunkProvider(world, world.getSeed(), generatorOptions));
+        return (new WastelandChunkProvider(world, generatorOptions));
     }
 
     @Override
@@ -71,7 +71,7 @@ public class WastelandsWorldType extends WorldType {
     @SuppressWarnings("NullableProblems")
     @Override
     public BiomeProvider getBiomeProvider(World world) {
-        return new WastelandBiomeProvider(world.getWorldInfo());
+        return new BiomeProvider(world.getWorldInfo());
     }
 
     @SuppressWarnings("NullableProblems")

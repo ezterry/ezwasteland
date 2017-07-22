@@ -184,7 +184,7 @@ public class RandomOptions implements IRegionElement {
                     getStrongholdGen(worldobj).generate(worldobj, cords.x, cords.z, chunkprimer);
                 }
                 if (genVillages) {
-                    if (core.addElementHeight(52, cords.x << 4, cords.z << 4, worldobj.getSeed()) >= 52) {
+                    if (core.addElementHeight(52, cords.x << 4, cords.z << 4) >= 52) {
                         getVillageGen(worldobj, villageRate).generate(worldobj, cords.x,
                                 cords.z, chunkprimer);
                     }

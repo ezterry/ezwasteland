@@ -50,6 +50,7 @@ public class ConfigGui extends GuiConfig {
     private static configFile config = null;
     private static Logger log = new Logger(false);
 
+    @SuppressWarnings("WeakerAccess")
     public ConfigGui(GuiScreen parent) {
         super(parent, initList(), EzWastelands.MODID, true, false,
                 I18n.format("sysconfig.ezwastelands.config.title"));

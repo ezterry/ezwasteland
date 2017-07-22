@@ -52,11 +52,13 @@ public class RegionCore {
     private int cachedX = 0;
     private int cachedZ = 0;
     private Map<String, List<Object>> cachedElements = null;
+    private World ourWorld;
 
-    public RegionCore(String properties) {
+    public RegionCore(String properties,World w) {
         IRegionElement element;
         elementParams = new HashMap<>(mainFeatures.size() + overrideFeatures.size());
 
+        ourWorld=w;
         //prepare the default parameters
         for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
             element = i.next();
@@ -180,22 +182,29 @@ public class RegionCore {
     }
 
     /**
+     * get our world object
+     *
+     * @return the terrain generators world
+     */
+    public World getWorld(){
+        return ourWorld;
+    }
+    /**
      * A function for the elements to request the parameters at a position (such as in postPointFill)
      * @param x - x cord to lookup
      * @param z - z cord to lookup
      * @param e - return the parameters to IRegionElement e
-     * @param world - the minecraft world to get the seed from.
      * @return list of parameters from calcElements
      */
-    public List<Object> getRegionElements(int x, int z,IRegionElement e, World world) {
-        Map<String, List<Object>> worldElements = getRegionElements(x, z, world.getSeed());
+    public List<Object> getRegionElements(int x, int z,IRegionElement e) {
+        Map<String, List<Object>> worldElements = getRegionElements(x, z, ourWorld.getSeed());
         return(worldElements.get(e.getElementName()));
     }
 
-    public int addElementHeight(int currentoffset, int x, int z, long seed) {
+    public int addElementHeight(int currentoffset, int x, int z) {
         IRegionElement element;
         String elementName;
-        Map<String, List<Object>> worldElements = getRegionElements(x, z, seed);
+        Map<String, List<Object>> worldElements = getRegionElements(x, z, ourWorld.getSeed());
 
         for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
             element = i.next();
@@ -206,9 +215,11 @@ public class RegionCore {
         return (currentoffset);
     }
 
-    public void postPointFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed) {
+    public void postPointFill(ChunkPrimer chunkprimer, int height, int x, int z) {
         IRegionElement element;
         String elementName;
+
+        long worldSeed = ourWorld.getSeed();
 
         for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
             element = i.next();
@@ -218,7 +229,7 @@ public class RegionCore {
         }
     }
 
-    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos chunkCord, World world,
+    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos chunkCord,
                                    boolean structuresEnabled, ChunkPrimer chunkprimer) {
         IRegionElement element;
         String elementName;
@@ -227,12 +238,12 @@ public class RegionCore {
             element = i.next();
             elementName = element.getElementName();
 
-            element.additionalTriggers(event, gen, chunkCord, world, structuresEnabled, chunkprimer,
+            element.additionalTriggers(event, gen, chunkCord, ourWorld, structuresEnabled, chunkprimer,
                     elementParams.get(elementName),this);
         }
     }
 
-    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position) {
+    public BlockPos getStrongholdGen(boolean structuresEnabled, BlockPos position) {
         IRegionElement element;
         String elementName;
         BlockPos returnval = null;
@@ -242,7 +253,7 @@ public class RegionCore {
             element = i.next();
             elementName = element.getElementName();
 
-            newval = element.getStrongholdGen(worldIn,structuresEnabled,position,elementParams.get(elementName),this);
+            newval = element.getStrongholdGen(ourWorld,structuresEnabled,position,elementParams.get(elementName),this);
             if (newval != null) {
                 returnval = newval;
             }
@@ -250,7 +261,7 @@ public class RegionCore {
         return returnval;
     }
 
-    public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position) {
+    public BlockPos getVillageGen(boolean structuresEnabled, BlockPos position) {
         IRegionElement element;
         String elementName;
         BlockPos returnval = null;
@@ -260,7 +271,7 @@ public class RegionCore {
             element = i.next();
             elementName = element.getElementName();
 
-            newval = element.getVillageGen(worldIn,structuresEnabled,position,elementParams.get(elementName),this);
+            newval = element.getVillageGen(ourWorld,structuresEnabled,position,elementParams.get(elementName),this);
             if (newval != null) {
                 returnval = newval;
             }

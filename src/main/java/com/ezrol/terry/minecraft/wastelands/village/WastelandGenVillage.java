@@ -27,7 +27,6 @@
 package com.ezrol.terry.minecraft.wastelands.village;
 
 import com.ezrol.terry.minecraft.wastelands.Logger;
-import com.ezrol.terry.minecraft.wastelands.WastelandBiomeProvider;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.gen.structure.StructureStart;
@@ -93,15 +92,9 @@ public class WastelandGenVillage extends MapGenVillage {
     @SuppressWarnings("NullableProblems")
     @Override
     protected synchronized StructureStart getStructureStart(int chunkX, int chunkZ) {
-        BiomeProvider world = this.world.getBiomeProvider();
         MapGenVillage.Start village;
-        if (world instanceof WastelandBiomeProvider) {
-            ((WastelandBiomeProvider) world).setAllBiomesViable();
-            village = new MapGenVillage.Start(this.world, this.rand, chunkX, chunkZ, 0);
-            ((WastelandBiomeProvider) world).unsetAllBiomesViable();
-        } else {
-            village = new MapGenVillage.Start(this.world, this.rand, chunkX, chunkZ, 0);
-        }
+
+        village = new MapGenVillage.Start(this.world, this.rand, chunkX, chunkZ, 0);
 
         return village;
     }
