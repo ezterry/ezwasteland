@@ -30,9 +30,9 @@ import com.ezrol.terry.minecraft.wastelands.Logger;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResource;
@@ -137,7 +137,7 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
         Keyboard.enableRepeatEvents(true);
         title = I18n.format("config.ezwastelands.presets.title");
 
-        presetInput = new GuiTextField(PRESET_INPUT_BOX, this.fontRendererObj, 50, 40, this.width - 100, 20);
+        presetInput = new GuiTextField(PRESET_INPUT_BOX, this.fontRenderer, 50, 40, this.width - 100, 20);
         presetInput.setMaxStringLength(2048);
         presetInput.setText(currentJson);
         presetInput.setCursorPositionZero();
@@ -163,7 +163,7 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
         listGUI.drawScreen(mouseX, mouseY, partialTicks);
-        drawCenteredString(fontRendererObj, title, width / 2, 8, 0xffffff);
+        drawCenteredString(fontRenderer, title, width / 2, 8, 0xffffff);
         presetInput.drawTextBox();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
@@ -290,18 +290,24 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
             mc.getTextureManager().bindTexture(icon);
+
             Tessellator tessellator = Tessellator.getInstance();
-            VertexBuffer vertexbuffer = tessellator.getBuffer();
-            vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-            vertexbuffer.pos((double) (xPos + 0), (double) (yPos + 32), 0.0D).tex(0.0D, 1.0D).endVertex();
-            vertexbuffer.pos((double) (xPos + 32), (double) (yPos + 32), 0.0D).tex(1.0D, 1.0D).endVertex();
-            vertexbuffer.pos((double) (xPos + 32), (double) (yPos + 0), 0.0D).tex(1.0D, 0.0D).endVertex();
-            vertexbuffer.pos((double) (xPos + 0), (double) (yPos + 0), 0.0D).tex(0.0D, 0.0D).endVertex();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+            bufferbuilder.pos((double) (xPos + 0), (double) (yPos + 32), 0.0D).tex(0.0D, 1.0D).endVertex();
+            bufferbuilder.pos((double) (xPos + 32), (double) (yPos + 32), 0.0D).tex(1.0D, 1.0D).endVertex();
+            bufferbuilder.pos((double) (xPos + 32), (double) (yPos + 0), 0.0D).tex(1.0D, 0.0D).endVertex();
+            bufferbuilder.pos((double) (xPos + 0), (double) (yPos + 0), 0.0D).tex(0.0D, 0.0D).endVertex();
             tessellator.draw();
         }
 
+
         @Override
-        protected void drawSlot(int entryID, int insideLeft, int yPos, int insideSlotHeight, int mouseXIn, int mouseYIn) {
+        protected void drawSlot(int entryID, int insideLeft, int yPos, int insideSlotHeight, int mouseXIn, int mouseYIn, float partialTicks) {
+            drawSlot(entryID,insideLeft,yPos,insideSlotHeight);
+        }
+
+        private void drawSlot(int entryID, int insideLeft, int yPos, int insideSlotHeight) {
             int fontcolor = 0xFFFFFF;
             WastelandPresetEntry entry = selectionList.get(entryID);
 
@@ -309,7 +315,7 @@ public class WastelandPresets extends GuiScreen implements GuiPageButtonList.Gui
             if (selected == entryID) {
                 fontcolor = 0xFFFFCC;
             }
-            fontRendererObj.drawString(entry.title, insideLeft + 33 + 10, yPos + ((insideSlotHeight / 2) - 4), fontcolor);
+            fontRenderer.drawString(entry.title, insideLeft + 33 + 10, yPos + ((insideSlotHeight / 2) - 4), fontcolor);
         }
     }
 }

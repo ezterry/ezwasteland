@@ -248,7 +248,7 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         this.list.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("config.ezwastelands.WorldConfigGUI"), this.width / 2, 2, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("config.ezwastelands.WorldConfigGUI"), this.width / 2, 2, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (mouseX != lastMouseX || mouseY != lastMouseY) {
             lastMouseX = mouseX;
@@ -283,8 +283,8 @@ public class WastelandCustomization extends GuiScreen implements GuiSlider.Forma
             id = i.next();
             entry = list.getComponent(id);
             if (entry instanceof GuiButton) {
-                xoff = ((GuiButton) entry).xPosition;
-                yoff = ((GuiButton) entry).yPosition;
+                xoff = ((GuiButton) entry).x;
+                yoff = ((GuiButton) entry).y;
                 width = ((GuiButton) entry).width;
                 height = ((GuiButton) entry).height;
 

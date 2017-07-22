@@ -37,7 +37,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.MapGenStronghold;
 import net.minecraftforge.event.terraingen.TerrainGen;
 
@@ -131,6 +131,7 @@ public class RandomOptions implements IRegionElement {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
         List<Object> placeholder = new ArrayList<>();
         placeholder.add(((Param.IntegerParam) Param.lookUp(p, "globaloffset")).get());
@@ -138,6 +139,7 @@ public class RandomOptions implements IRegionElement {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core) {
         if (((Param.BooleanParam) Param.lookUp(p, "oceans")).get()) {
             IBlockState water = Blocks.WATER.getDefaultState();
@@ -155,8 +157,8 @@ public class RandomOptions implements IRegionElement {
         Random r;
         long localSeed;
 
-        long x = p.chunkXPos;
-        long z = p.chunkZPos;
+        long x = p.x;
+        long z = p.z;
 
         localSeed = (x << 32) + (z * 31);
         localSeed = localSeed ^ seed;
@@ -169,6 +171,7 @@ public class RandomOptions implements IRegionElement {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, World worldobj,
                                    boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core) {
         boolean genStrongholds = ((Param.BooleanParam) Param.lookUp(p, "strongholds")).get();
@@ -178,12 +181,12 @@ public class RandomOptions implements IRegionElement {
         if (event.equals("chunkcleanup") || event.equals("recreateStructures")) {
             if (structuresEnabled) {
                 if (genStrongholds) {
-                    getStrongholdGen(worldobj).generate(worldobj, cords.chunkXPos, cords.chunkZPos, chunkprimer);
+                    getStrongholdGen(worldobj).generate(worldobj, cords.x, cords.z, chunkprimer);
                 }
                 if (genVillages) {
-                    if (core.addElementHeight(52, cords.chunkXPos << 4, cords.chunkZPos << 4, worldobj.getSeed()) >= 52) {
-                        getVillageGen(worldobj, villageRate).generate(worldobj, cords.chunkXPos,
-                                cords.chunkZPos, chunkprimer);
+                    if (core.addElementHeight(52, cords.x << 4, cords.z << 4, worldobj.getSeed()) >= 52) {
+                        getVillageGen(worldobj, villageRate).generate(worldobj, cords.x,
+                                cords.z, chunkprimer);
                     }
                 }
             }
@@ -195,7 +198,7 @@ public class RandomOptions implements IRegionElement {
             if (triggers) {
                 //noinspection ConstantConditions
                 net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, gen, worldobj, rng,
-                        cords.chunkXPos, cords.chunkZPos, flag);
+                        cords.x, cords.z, flag);
             }
             if (structuresEnabled) {
                 if (genStrongholds) {
@@ -207,27 +210,29 @@ public class RandomOptions implements IRegionElement {
             }
             if (triggers) {
                 net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, gen, worldobj, rng,
-                        cords.chunkXPos, cords.chunkZPos, flag);
+                        cords.x, cords.z, flag);
             }
         }
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
                                      List<Param> p, RegionCore core) {
         if (((Param.BooleanParam) Param.lookUp(p, "strongholds")).get()) {
-            return (getStrongholdGen(worldIn).getClosestStrongholdPos(worldIn, position,false));
+            return (getStrongholdGen(worldIn).getNearestStructurePos(worldIn, position,false));
         }
         return null;
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
                                   List<Param> p, RegionCore core) {
         if (((Param.BooleanParam) Param.lookUp(p, "villages")).get()) {
             float rate = ((Param.FloatParam) Param.lookUp(p, "villagechance")).get();
             WastelandGenVillage village = getVillageGen(worldIn,rate);
-            return (village.getClosestStrongholdPos(worldIn, position,false));
+            return (village.getNearestStructurePos(worldIn, position,false));
         }
         return null;
     }

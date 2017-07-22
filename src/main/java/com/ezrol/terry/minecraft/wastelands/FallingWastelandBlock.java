@@ -39,6 +39,7 @@ public class FallingWastelandBlock extends BlockFalling {
         this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
         this.setHarvestLevel("shovel", 0);
         this.setRegistryName("ezwastelandblock");
+        //noinspection ConstantConditions
         this.setUnlocalizedName(this.getRegistryName().toString());
     }
 }

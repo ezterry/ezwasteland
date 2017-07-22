@@ -34,7 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraft.world.gen.IChunkGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +87,7 @@ public class Spires implements IRegionElement {
     /**
      * calculate a regions elements
      **/
+    @SuppressWarnings("ConstantConditions")
     public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
         int count = ((Param.IntegerParam) Param.lookUp(p, "count")).get();
         int maxSize = ((Param.IntegerParam) Param.lookUp(p, "size")).get();

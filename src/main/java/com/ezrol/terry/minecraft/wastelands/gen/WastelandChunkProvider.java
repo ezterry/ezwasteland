@@ -29,6 +29,7 @@ package com.ezrol.terry.minecraft.wastelands.gen;
 import com.ezrol.terry.minecraft.wastelands.EzWastelands;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -36,9 +37,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.gen.ChunkProviderOverworld;
+import net.minecraft.world.gen.ChunkGeneratorOverworld;
 
-public class WastelandChunkProvider extends ChunkProviderOverworld {
+import java.util.List;
+
+public class WastelandChunkProvider extends ChunkGeneratorOverworld {
     private final long worldSeed;
     private final World localWorldObj;
     private final RegionCore core;
@@ -62,7 +65,7 @@ public class WastelandChunkProvider extends ChunkProviderOverworld {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public synchronized Chunk provideChunk(int p_x, int p_z) {
+    public synchronized Chunk generateChunk(int p_x, int p_z) {
         /* calculate the empty chunk */
         ChunkPrimer chunkprimer = new ChunkPrimer();
 
@@ -135,7 +138,7 @@ public class WastelandChunkProvider extends ChunkProviderOverworld {
      */
     @SuppressWarnings("NullableProblems")
     @Override
-    public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position, boolean p_180513_4_) {
+    public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean p_180513_4_) {
         if (structureName.equals("Stronghold")) {
             return core.getStrongholdGen(worldIn, structuresEnabled, position);
         } else if (structureName.equals("Village")) {
@@ -148,6 +151,22 @@ public class WastelandChunkProvider extends ChunkProviderOverworld {
     @SuppressWarnings("NullableProblems")
     @Override
     public boolean generateStructures(Chunk chunkIn, int x, int z) {
+        return false;
+    }
+
+    @SuppressWarnings("NullableProblems")
+    @Override
+    public List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos)
+    {
+        Biome biome = this.localWorldObj.getBiome(pos);
+
+        return biome.getSpawnableList(creatureType);
+    }
+
+    @SuppressWarnings("NullableProblems")
+    @Override
+    public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos)
+    {
         return false;
     }
 }

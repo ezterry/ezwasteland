@@ -45,7 +45,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SuppressWarnings("unused,WeakerAccess")
@@ -60,12 +60,13 @@ public class EzWastelands {
     public static WorldType wastelandsWorldType;
     @SuppressWarnings("FieldCanBeLocal")
     private static boolean wastelandBlockGravity = false;
-    private static Logger log = new Logger(false);
+    private static Logger log;
 
     private Configuration cfg;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        log = new Logger(event.getModLog(),false);
         cfg = new Configuration(event.getSuggestedConfigurationFile());
         ItemBlock wastelandBlockItm;
 
@@ -82,11 +83,13 @@ public class EzWastelands {
             log.status("What is this gravity you speak of");
             wastelandBlock = new WastelandBlock(Material.GROUND);
         }
-        GameRegistry.register(wastelandBlock);
+        ForgeRegistries.BLOCKS.register(wastelandBlock);
         wastelandBlockItm = new ItemBlock(wastelandBlock);
+        //noinspection ConstantConditions
         wastelandBlockItm.setRegistryName(wastelandBlock.getRegistryName());
+        //noinspection ConstantConditions
         wastelandBlockItm.setUnlocalizedName(wastelandBlockItm.getRegistryName().toString());
-        GameRegistry.register(wastelandBlockItm);
+        ForgeRegistries.ITEMS.register(wastelandBlockItm);
 
     }
 

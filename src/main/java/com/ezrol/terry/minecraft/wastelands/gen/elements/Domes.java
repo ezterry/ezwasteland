@@ -33,7 +33,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraft.world.gen.IChunkGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -186,6 +186,7 @@ public class Domes implements IRegionElement {
      * @return - list of the points of interest
      */
     @Override
+    @SuppressWarnings("ConstantConditions")
     public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
         List<Object> elements = new ArrayList<>();
         int i;

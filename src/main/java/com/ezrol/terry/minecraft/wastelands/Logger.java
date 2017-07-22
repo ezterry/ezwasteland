@@ -36,8 +36,17 @@ public class Logger {
     static private boolean GlobalDebugMode = false;
     //if the local sub instance is in debug mode even if global is not
     private boolean LocalDebugMode;
+    static private org.apache.logging.log4j.Logger modLog = null;
 
-    public Logger(boolean debug) {
+    public Logger(boolean debug){
+        if(modLog == null){
+            throw(new RuntimeException("Logger called from subclass prior to mod pre-init"));
+        }
+        LocalDebugMode = debug;
+    }
+
+    public Logger(org.apache.logging.log4j.Logger modLog,boolean debug) {
+        Logger.modLog=modLog;
         LocalDebugMode = debug;
     }
 
@@ -45,7 +54,7 @@ public class Logger {
      * Always send as log level INFO
      **/
     public void status(String msg) {
-        FMLLog.log(EzWastelands.MODID, Level.INFO, "STATUS: " + msg);
+        modLog.log(Level.INFO, "STATUS: " + msg);
     }
 
     /**
@@ -53,7 +62,7 @@ public class Logger {
      **/
     public void info(String msg) {
         if (GlobalDebugMode || LocalDebugMode) {
-            FMLLog.log(EzWastelands.MODID, Level.INFO, msg);
+            modLog.log(Level.INFO, msg);
         }
     }
 
@@ -62,7 +71,7 @@ public class Logger {
      **/
     public void warn(String msg) {
         if (GlobalDebugMode || LocalDebugMode) {
-            FMLLog.log(EzWastelands.MODID, Level.WARN, msg);
+            modLog.log(Level.WARN, msg);
         }
     }
 
@@ -70,14 +79,14 @@ public class Logger {
      * Send a Error Level message (regardless of debug mode)
      **/
     public void error(String msg) {
-        FMLLog.log(EzWastelands.MODID, Level.ERROR, msg);
+        modLog.log(Level.ERROR, msg);
     }
 
     /**
      * Send a Faital error message and force global debug mode
      **/
     public void crit(String msg) {
-        FMLLog.log(EzWastelands.MODID, Level.FATAL, msg);
+        modLog.log(Level.FATAL, msg);
         GlobalDebugMode = true;
     }
 }
