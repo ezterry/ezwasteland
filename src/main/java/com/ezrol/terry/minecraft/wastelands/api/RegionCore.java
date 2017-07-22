@@ -39,20 +39,32 @@ import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @SuppressWarnings("WeakerAccess,unused")
 public class RegionCore {
+    //main set of features
     static private LinkedList<IRegionElement> mainFeatures = new LinkedList<>();
+    //additional features (ran after main set)
     static private LinkedList<IRegionElement> overrideFeatures = new LinkedList<>();
+    //local logger
     static private Logger log = new Logger(false);
+    //preset locations (for preset screen on world creation)
     static private LinkedList<ResourceLocation> presets = new LinkedList<>();
 
+    //parameter set for each region
     private Map<String, List<Param>> elementParams = null;
+
     //current cached region
     private int cachedX = 0;
     private int cachedZ = 0;
+    //the cached reagon cached parameters
     private Map<String, List<Object>> cachedElements = null;
+
+    //the current world (null if in config screen)
     private World ourWorld;
+
 
     public RegionCore(String properties,World w) {
         IRegionElement element;
@@ -108,12 +120,38 @@ public class RegionCore {
         return(Collections.unmodifiableList(presets));
     }
     /**
-     * The current parameter map
+     * The current parameter map (for all loaded elements)
+     * this is primarily used by the config screen
      *
      * @return the map of element parameters
      */
     public Map<String, List<Param>> getCurrentParamMap() {
         return (elementParams);
+    }
+
+    /**
+     * return all the parameters for a specific element
+     *
+     * @param e the element to find the parameters of
+     * @return the list of parameters
+     */
+    public List<Param> getElementParams(IRegionElement e){
+        return elementParams.get(e.getElementName());
+    }
+
+    /**
+     * Lookup an elements sepcific parameter (shortcut)
+     *
+     * @param e the element we are looking up
+     * @param name the name of the parameter we want
+     * @return the found parameter (or null)
+     */
+    public Param lookupParam(IRegionElement e,String name){
+        List<Param> eParam = getElementParams(e);
+        if(eParam != null){
+            return(Param.lookUp(eParam,name));
+        }
+        return null;
     }
 
     /**
@@ -243,40 +281,32 @@ public class RegionCore {
         }
     }
 
-    public BlockPos getStrongholdGen(boolean structuresEnabled, BlockPos position) {
-        IRegionElement element;
-        String elementName;
-        BlockPos returnval = null;
-        BlockPos newval;
-
-        for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
-            element = i.next();
-            elementName = element.getElementName();
-
-            newval = element.getStrongholdGen(ourWorld,structuresEnabled,position,elementParams.get(elementName),this);
-            if (newval != null) {
-                returnval = newval;
+    public BlockPos getNearestStructure(String name,BlockPos curPos,boolean findUnexplored){
+        //search for the nearest instance of the structure
+        return forEachElement((e,p) ->{
+            BlockPos pos = e.getNearestStructure(name,curPos,findUnexplored,this);
+            if(pos == null){
+                return p;
             }
-        }
-        return returnval;
+            else if(p == null){
+                return pos;
+            }
+            else{
+                if(curPos.distanceSq(p)>curPos.distanceSq(pos)){
+                    return pos;
+                }
+                return p;
+            }
+        },null);
     }
 
-    public BlockPos getVillageGen(boolean structuresEnabled, BlockPos position) {
-        IRegionElement element;
-        String elementName;
-        BlockPos returnval = null;
-        BlockPos newval;
-
-        for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
-            element = i.next();
-            elementName = element.getElementName();
-
-            newval = element.getVillageGen(ourWorld,structuresEnabled,position,elementParams.get(elementName),this);
-            if (newval != null) {
-                returnval = newval;
+    public boolean isInsideStructure(String structureName, BlockPos pos) {
+        return forEachElement((e,found) ->{
+            if(!found){
+                return e.isInsideStructure(structureName,pos,this);
             }
-        }
-        return returnval;
+            return(true);
+        },false);
     }
 
     /**
@@ -336,8 +366,6 @@ public class RegionCore {
             JsonElement configParams;
             JsonElement configParam;
             String elementName;
-            Iterator<Param> pIter;
-            Param curParam;
 
             //load feature parameters
             for (i = new FeatureIterator(); i.hasNext(); ) {
@@ -353,12 +381,10 @@ public class RegionCore {
                     log.error("Expected JsonObject for " + elementName);
                     continue;
                 }
-                pIter = (elementParams.get(elementName)).iterator();
-                while (pIter.hasNext()) {
-                    curParam = pIter.next();
-                    configParam = ((JsonObject) configParams).get(curParam.getName());
+                for(Param p : (elementParams.get(elementName))){
+                    configParam = ((JsonObject) configParams).get(p.getName());
                     if (configParam != null) {
-                        curParam.importJson(configParam);
+                        p.importJson(configParam);
                     }
                 }
             }
@@ -405,6 +431,21 @@ public class RegionCore {
         public void remove() {
             throw new UnsupportedOperationException("remove");
         }
+    }
 
+    /**
+     * apply an action for each registered IRegionElement
+     *
+     * @param op Operation to conduct (lambda result op(IRegionElement,currentValue))
+     * @param initial the initial value (passed in as currentValue on the first call
+     * @param <RVAL> the object you are operating on
+     * @return the final result after the last call
+     */
+    static private <RVAL> RVAL forEachElement(BiFunction<IRegionElement,RVAL,RVAL> op,RVAL initial){
+        RVAL current=initial;
+        for(Iterator<IRegionElement> itr = new FeatureIterator();itr.hasNext();){
+            current=op.apply(itr.next(),current);
+        }
+        return current;
     }
 }

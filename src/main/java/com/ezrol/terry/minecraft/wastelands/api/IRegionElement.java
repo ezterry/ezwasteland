@@ -116,28 +116,22 @@ public interface IRegionElement {
                             boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core);
 
     /**
-     * Very special case call, to find a generated village (eye of ender)
+     * Get the nearest structure of the given name to the given position (or null if unknown)
      *
-     * @param worldIn            - World
-     * @param structuresEnabled  - if user has structures enabled in world gen advanced options
-     * @param position           - Event's triggered location
-     * @param p                  - Populated Params from getParamTemplate
-     * @param core               - core object in use
-     * @return If it exists return the BlockPos expected, otherwise null.
+     * @param name name of the structure we are looking for
+     * @param curPos position we are looking from
+     * @param findUnexplored if we are to find structures that are yet to be explored
+     * @param core              - current region core object
+     * @return the nearest known instance or null if unknown
      */
+    BlockPos getNearestStructure(String name,BlockPos curPos, boolean findUnexplored, RegionCore core);
 
-    BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
-                              List<Param> p, RegionCore core);
     /**
-     * Very special case call, to find a generated village (/locate?)
-     *
-     * @param worldIn            - World
-     * @param structuresEnabled  - if user has structures enabled in world gen advanced options
-     * @param position           - Event's triggered location
-     * @param p                  - Populated Params from getParamTemplate
-     * @param core               - core object in use
-     * @return If it exists return the BlockPos expected, otherwise null.
+     * If we are currently inside a structure
+     * @param structureName     - the name of the structure
+     * @param pos               - the position being checked
+     * @param core              - current region core object
+     * @return true if its in the structure, else false
      */
-    BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
-                              List<Param> p, RegionCore core);
+    boolean isInsideStructure(String structureName, BlockPos pos, RegionCore core);
 }

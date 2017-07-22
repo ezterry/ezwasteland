@@ -216,24 +216,40 @@ public class RandomOptions implements IRegionElement {
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
-    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
-                                     List<Param> p, RegionCore core) {
-        if (((Param.BooleanParam) Param.lookUp(p, "strongholds")).get()) {
-            return (getStrongholdGen(worldIn).getNearestStructurePos(worldIn, position,false));
+    public BlockPos getNearestStructure(String name, BlockPos curPos, boolean findUnexplored, RegionCore core) {
+        World w = core.getWorld();
+        switch(name){
+            case "Stronghold":
+                if (((Param.BooleanParam) core.lookupParam(this, "strongholds")).get()) {
+                    return (getStrongholdGen(w).getNearestStructurePos(w,curPos,findUnexplored));
+                }
+                break;
+            case "Village":
+                if (((Param.BooleanParam) core.lookupParam(this, "villages")).get()) {
+                    float rate = ((Param.FloatParam) core.lookupParam(this, "villagechance")).get();
+                    return (getVillageGen(w,rate).getNearestStructurePos(w,curPos,findUnexplored));
+                }
+                break;
         }
         return null;
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
-    public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
-                                  List<Param> p, RegionCore core) {
-        if (((Param.BooleanParam) Param.lookUp(p, "villages")).get()) {
-            float rate = ((Param.FloatParam) Param.lookUp(p, "villagechance")).get();
-            WastelandGenVillage village = getVillageGen(worldIn,rate);
-            return (village.getNearestStructurePos(worldIn, position,false));
+    public boolean isInsideStructure(String name, BlockPos pos, RegionCore core) {
+        World w = core.getWorld();
+        switch(name){
+            case "Stronghold":
+                if (((Param.BooleanParam) core.lookupParam(this, "strongholds")).get()) {
+                    return (getStrongholdGen(w).isInsideStructure(pos));
+                }
+                break;
+            case "Village":
+                if (((Param.BooleanParam) core.lookupParam(this, "villages")).get()) {
+                    float rate = ((Param.FloatParam) core.lookupParam(this, "villagechance")).get();
+                    return (getVillageGen(w,rate).isInsideStructure(pos));
+                }
+                break;
         }
-        return null;
+        return false;
     }
 }

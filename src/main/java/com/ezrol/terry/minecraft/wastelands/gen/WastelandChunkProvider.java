@@ -131,18 +131,13 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
      * @param worldIn       - world objecct
      * @param structureName - name of the structure we want to find the closes instance of
      * @param position      - position of the structure
-     * @param p_180513_4_   - ?? looks like it determines if its existing, or can generate
+     * @param findUnexplored   - ?? looks like it determines if its existing, or can generate
      * @return the position of the stronghold
      */
     @SuppressWarnings("NullableProblems")
     @Override
-    public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean p_180513_4_) {
-        if (structureName.equals("Stronghold")) {
-            return core.getStrongholdGen(structuresEnabled, position);
-        } else if (structureName.equals("Village")) {
-            return core.getVillageGen(structuresEnabled, position);
-        }
-        return null;
+    public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean findUnexplored) {
+        return(core.getNearestStructure(structureName,position,findUnexplored));
     }
 
     // never generate ocean monuments in the wastelands
@@ -165,6 +160,9 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
     @Override
     public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos)
     {
-        return false;
+        if(worldIn != this.localWorldObj){
+            return false;
+        }
+        return(core.isInsideStructure(structureName,pos));
     }
 }

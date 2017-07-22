@@ -152,15 +152,13 @@ public class TerrainVariation implements IRegionElement {
     }
 
     @Override
-    public BlockPos getStrongholdGen(World worldIn, boolean structuresEnabled, BlockPos position,
-                                     List<Param> p, RegionCore core) {
+    public BlockPos getNearestStructure(String name, BlockPos curPos, boolean findUnexplored, RegionCore core) {
         return null;
     }
 
     @Override
-    public BlockPos getVillageGen(World worldIn, boolean structuresEnabled, BlockPos position,
-                                  List<Param> p, RegionCore core) {
-        return null;
+    public boolean isInsideStructure(String structureName, BlockPos pos, RegionCore core) {
+        return false;
     }
 
     private class attractors {
