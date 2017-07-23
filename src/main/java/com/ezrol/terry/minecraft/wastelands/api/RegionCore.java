@@ -32,10 +32,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 
@@ -373,6 +375,21 @@ public class RegionCore {
                 }
             }
         }
+    }
+
+    /**
+     * Get valid spawns for this area
+     *
+     * @param spawnableList the default list
+     * @param creatureType the creature type being checked
+     * @param pos the position being checked
+     * @return the final list
+     */
+    @SuppressWarnings("RedundantCast")
+    public List<Biome.SpawnListEntry> getSpawnable(List<Biome.SpawnListEntry> spawnableList,
+                                                   EnumCreatureType creatureType, BlockPos pos) {
+        return(forEachElement((e,lst) -> e.getSpawnable(lst,creatureType,pos,this),
+                (List<Biome.SpawnListEntry>) new ArrayList<>(spawnableList)));
     }
 
     /***

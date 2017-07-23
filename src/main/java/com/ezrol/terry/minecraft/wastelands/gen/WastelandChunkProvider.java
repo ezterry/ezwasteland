@@ -151,7 +151,7 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
     {
         Biome biome = this.localWorldObj.getBiome(pos);
 
-        return biome.getSpawnableList(creatureType);
+        return core.getSpawnable(biome.getSpawnableList(creatureType),creatureType,pos);
     }
 
     @SuppressWarnings("NullableProblems")

@@ -30,8 +30,10 @@ package com.ezrol.terry.minecraft.wastelands.gen.elements;
 import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 
@@ -248,6 +250,11 @@ public class Domes implements IRegionElement {
     @Override
     public boolean isInsideStructure(String structureName, BlockPos pos, RegionCore core) {
         return false;
+    }
+
+    @Override
+    public List<Biome.SpawnListEntry> getSpawnable(List<Biome.SpawnListEntry> lst, EnumCreatureType creatureType, BlockPos pos, RegionCore core) {
+        return lst;
     }
 
     /**

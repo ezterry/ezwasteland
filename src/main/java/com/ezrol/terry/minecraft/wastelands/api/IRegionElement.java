@@ -27,12 +27,14 @@
 
 package com.ezrol.terry.minecraft.wastelands.api;
 
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -128,4 +130,16 @@ public interface IRegionElement {
      * @return true if its in the structure, else false
      */
     boolean isInsideStructure(String structureName, BlockPos pos, RegionCore core);
+
+    /**
+     * Allows tweaking spawnable creatures in a region
+     *
+     * @param lst the current list
+     * @param creatureType the creature type to spawn
+     * @param pos the position being checked
+     * @param core the current region core object
+     * @return the new list (or the original if no change/directly modified)
+     */
+    List<Biome.SpawnListEntry> getSpawnable(List<Biome.SpawnListEntry> lst, EnumCreatureType creatureType,
+                                            BlockPos pos, RegionCore core);
 }

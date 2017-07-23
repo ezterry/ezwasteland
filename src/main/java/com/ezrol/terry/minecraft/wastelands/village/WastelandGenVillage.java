@@ -27,10 +27,20 @@
 
 package com.ezrol.terry.minecraft.wastelands.village;
 
+import com.ezrol.terry.minecraft.wastelands.EzWastelands;
 import com.ezrol.terry.minecraft.wastelands.Logger;
-import net.minecraft.world.biome.BiomeProvider;
-import net.minecraft.world.gen.structure.MapGenVillage;
-import net.minecraft.world.gen.structure.StructureStart;
+import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockColored;
+import net.minecraft.block.BlockFence;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.structure.*;
 
 import java.util.Random;
 
@@ -38,6 +48,10 @@ public class WastelandGenVillage extends MapGenVillage {
     static private Logger log = new Logger(false);
     private float rate;
     private long worldSeed;
+    private static IBlockState wastelandPathBlock=Blocks.STAINED_HARDENED_CLAY.getDefaultState().
+            withProperty(BlockColored.COLOR, EnumDyeColor.SILVER);
+    private static IBlockState brownPowder = Blocks.CONCRETE_POWDER.getDefaultState().
+            withProperty(BlockColored.COLOR,EnumDyeColor.BROWN);
 
     public WastelandGenVillage(long seed, float villagerate) {
         super();
@@ -82,6 +96,111 @@ public class WastelandGenVillage extends MapGenVillage {
             }
         }
         return valid;
+    }
+
+    public boolean isPositionInVillageRegion(BlockPos p){
+        int region_x = (p.getX() >> 6);
+        int region_z = (p.getZ() >> 6);
+
+        //only 1 in 4 regions are valid for a potential village
+        if (region_x % 2 == 0 || region_z % 2 == 0) {
+            return false;
+        }
+        Random r = RegionRNG(region_x, region_z);
+        return (r.nextFloat() * 10000) <= (rate * rate);
+    }
+
+    public synchronized void fixPathBlock(World worldIn, ChunkPos chunkCoord, RegionCore core)
+    {
+        this.initializeStructureData(worldIn);
+
+        Chunk chunkDat = worldIn.getChunkFromChunkCoords(chunkCoord.x,chunkCoord.z);
+        boolean changed=false;
+
+        for (StructureStart structurestart : this.structureMap.values()) {
+            if (structurestart.isSizeableStructure()) {
+                //its a valid village in the list
+                if(structurestart.getBoundingBox().maxX+8 < chunkCoord.getXStart() ||
+                        structurestart.getBoundingBox().maxZ+8 < chunkCoord.getZStart() ||
+                        structurestart.getBoundingBox().minX-8 > chunkCoord.getXEnd() ||
+                        structurestart.getBoundingBox().minZ-8 > chunkCoord.getZEnd()){
+                    //we are not inside the structure
+                    continue;
+                }
+                for(int x = chunkCoord.getXStart(); x<= chunkCoord.getXEnd();x++){
+                    for(int z = chunkCoord.getZStart(); z<= chunkCoord.getZEnd();z++){
+                        for(StructureComponent c : structurestart.getComponents()){
+                            StructureBoundingBox box = c.getBoundingBox();
+                            if(x >= box.minX && x<= box.maxX && z>= box.minZ && z<= box.maxZ &&
+                                    c.getClass() == StructureVillagePieces.Path.class) {
+                                BlockPos pos = new BlockPos(x,core.addElementHeight(x,z),z);
+                                //check the path is still a wasteland block
+                                //if so change it to light gray terracotta
+                                if(chunkDat.getBlockState(pos).getBlock() == EzWastelands.wastelandBlock){
+                                    chunkDat.setBlockState(pos, wastelandPathBlock);
+                                    changed=true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(changed){
+            chunkDat.markDirty();
+        }
+    }
+
+    public synchronized void reduceDirt(World worldIn, ChunkPos chunkCoord, RegionCore core)
+    {
+        this.initializeStructureData(worldIn);
+
+        Chunk chunkDat = worldIn.getChunkFromChunkCoords(chunkCoord.x,chunkCoord.z);
+        boolean changed=false;
+
+        for (StructureStart structurestart : this.structureMap.values()) {
+            if (structurestart.isSizeableStructure()) {
+                //its a valid village in the list
+                if(structurestart.getBoundingBox().maxX+8 < chunkCoord.getXStart() ||
+                        structurestart.getBoundingBox().maxZ+8 < chunkCoord.getZStart() ||
+                        structurestart.getBoundingBox().minX-8 > chunkCoord.getXEnd() ||
+                        structurestart.getBoundingBox().minZ-8 > chunkCoord.getZEnd()){
+                    //we are not inside the structure
+                    continue;
+                }
+                for(int x = chunkCoord.getXStart(); x<= chunkCoord.getXEnd();x++){
+                    for(int z = chunkCoord.getZStart(); z<= chunkCoord.getZEnd();z++){
+                        for(StructureComponent c : structurestart.getComponents()){
+                            StructureBoundingBox box = c.getBoundingBox();
+                            if(x >= box.minX && x<= box.maxX && z>= box.minZ && z<= box.maxZ) {
+                                BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x,core.addElementHeight(x,z),z);
+                                while(pos.getY() < 255){
+                                    Block CurrentBlock = chunkDat.getBlockState(pos).getBlock();
+                                    pos.setY(pos.getY()+1);
+                                    Block BlockAbove = chunkDat.getBlockState(pos).getBlock();
+
+                                    if(CurrentBlock == EzWastelands.wastelandBlock ){
+                                        continue;
+                                    }
+                                    if(CurrentBlock == Blocks.DIRT){
+                                        if(BlockAbove != Blocks.AIR && BlockAbove != Blocks.WATER &&
+                                                !(BlockAbove instanceof BlockFence)){
+                                            pos.setY(pos.getY()-1);
+                                            chunkDat.setBlockState(pos, brownPowder);
+                                            changed = true;
+                                            pos.setY(pos.getY()+1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(changed){
+            chunkDat.markDirty();
+        }
     }
 
     @SuppressWarnings("NullableProblems")

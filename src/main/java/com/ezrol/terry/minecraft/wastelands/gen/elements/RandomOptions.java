@@ -33,10 +33,13 @@ import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.ezrol.terry.minecraft.wastelands.village.WastelandGenVillage;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.monster.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.MapGenStronghold;
@@ -61,6 +64,8 @@ public class RandomOptions implements IRegionElement {
     static final private Logger log = new Logger(false);
     private final WeakHashMap<World, MapGenStronghold> StrongholdGens;
     private final WeakHashMap<World, WastelandGenVillage> VillageGens;
+    private static final Biome.SpawnListEntry VILLAGE_ZOMBIE =
+            new Biome.SpawnListEntry(EntityZombieVillager.class, 300, 2, 2);
 
     public RandomOptions() {
         StrongholdGens = new WeakHashMap<>();
@@ -196,6 +201,7 @@ public class RandomOptions implements IRegionElement {
             boolean flag = false;
             boolean triggers = ((Param.BooleanParam) core.lookupParam(this,"integration")).get();
             Random rng = chunkBasedRNG(cords, w.getSeed());
+            WastelandGenVillage villageGenerator=null;
 
             if (triggers) {
                 //noinspection ConstantConditions
@@ -207,12 +213,29 @@ public class RandomOptions implements IRegionElement {
                     getStrongholdGen(w).generateStructure(w, rng, cords);
                 }
                 if (genVillages) {
-                    flag = getVillageGen(w, villageRate).generateStructure(w, rng, cords);
+                    villageGenerator = getVillageGen(w, villageRate);
+                    flag = villageGenerator.generateStructure(w, rng, cords);
                 }
             }
             if (triggers) {
                 net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, gen, w, rng,
                         cords.x, cords.z, flag);
+            }
+            if (flag){
+                cleanupVillage(villageGenerator, core, cords);
+            }
+        }
+    }
+
+    private void cleanupVillage(WastelandGenVillage villageGenerator, RegionCore core, ChunkPos cords) {
+        //first "regenerate" paths
+        villageGenerator.fixPathBlock(core.getWorld(),cords,core);
+        for(int x=-1;x<=1;x++){
+            for(int z=-1;z<=1;z++){
+                ChunkPos check = new ChunkPos(cords.x + x,cords.z + z);
+                if(core.getWorld().isBlockLoaded(check.getBlock(8,8,8),false)){
+                    villageGenerator.reduceDirt(core.getWorld(),check,core);
+                }
             }
         }
     }
@@ -234,6 +257,24 @@ public class RandomOptions implements IRegionElement {
                 break;
         }
         return null;
+    }
+
+    @Override
+    public List<Biome.SpawnListEntry> getSpawnable(List<Biome.SpawnListEntry> lst, EnumCreatureType creatureType, BlockPos pos, RegionCore core) {
+
+
+        if(creatureType == EnumCreatureType.MONSTER &&
+                ((Param.BooleanParam) core.lookupParam(this, "villages")).get()){
+
+            float rate = ((Param.FloatParam) core.lookupParam(this, "villagechance")).get();
+            WastelandGenVillage vg = getVillageGen(core.getWorld(),rate);
+            if(vg != null && vg.isPositionInVillageRegion(pos)) {
+                //we are near a village, make zombie villages more common
+                lst.add(VILLAGE_ZOMBIE);
+            }
+        }
+
+        return lst;
     }
 
     @Override
