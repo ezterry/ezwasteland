@@ -45,12 +45,10 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
     private final World localWorldObj;
     private final RegionCore core;
     private Biome[] mockGeneratedBiomes;
-    private boolean structuresEnabled = true;
 
     public WastelandChunkProvider(World dim, String generatorOptions) {
         super(dim, dim.getSeed(), false, null);
         localWorldObj = dim;
-        structuresEnabled = dim.getWorldInfo().isMapFeaturesEnabled();
         core = new RegionCore(generatorOptions,dim);
     }
 
@@ -79,8 +77,7 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                height = 52;
-                height = core.addElementHeight(height, x + (p_x * 16), z + (p_z * 16));
+                height = core.addElementHeight( x + (p_x * 16), z + (p_z * 16));
                 for (int y = 0; y < 256; y++) {
                     block = null;
                     if (y <= 1) {
@@ -105,7 +102,7 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
         ChunkPos chunkCord = new ChunkPos(p_x, p_z);
         //allow any post generation cleanup to be done (last chance to edit chunkprimer prior to it being added
         //to the world
-        core.additionalTriggers("chunkcleanup", this, chunkCord, structuresEnabled, chunkprimer);
+        core.additionalTriggers("chunkcleanup", this, chunkCord, chunkprimer);
         Chunk chunk = new Chunk(this.localWorldObj, chunkprimer, p_x, p_z);
         chunk.generateSkylightMap();
 
@@ -116,13 +113,13 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
     public void populate(int chunk_x, int chunk_z) {
         ChunkPos chunkCord = new ChunkPos(chunk_x, chunk_z);
 
-        core.additionalTriggers("populate", this, chunkCord, structuresEnabled, null);
+        core.additionalTriggers("populate", this, chunkCord, null);
     }
 
     @Override
     public void recreateStructures(Chunk c, int chunk_x, int chunk_z) {
         ChunkPos chunkCord = new ChunkPos(chunk_x, chunk_z);
-        core.additionalTriggers("recreateStructures", this, chunkCord, structuresEnabled, null);
+        core.additionalTriggers("recreateStructures", this, chunkCord, null);
     }
 
     /**
@@ -158,11 +155,7 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos)
-    {
-        if(worldIn != this.localWorldObj){
-            return false;
-        }
-        return(core.isInsideStructure(structureName,pos));
+    public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos) {
+        return worldIn == this.localWorldObj && (core.isInsideStructure(structureName, pos));
     }
 }

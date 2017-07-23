@@ -78,11 +78,10 @@ public interface IRegionElement {
      * @param r    - a rng for this region
      * @param x    - x region cord (ie 64x block cord)
      * @param z    - z region cord (ie 64x block cord)
-     * @param p    - Populated Params from getParamTemplate
      * @param core - the current region core object
      * @return data to include for this region, must be a list, but can be empty
      */
-    List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core);
+    List<Object> calcElements(Random r, int x, int z, RegionCore core);
 
     /**
      * Post filling in wasteland blocks to the result of calling addElementHeight() on all modules this will be called
@@ -92,11 +91,9 @@ public interface IRegionElement {
      * @param height      - height of the wasteland at this x/z cord
      * @param x           - x block cord
      * @param z           - z block cord
-     * @param worldSeed   - world seed (to allow a custom RNG to be created if required)
-     * @param p           - Populated Params from getParamTemplate
      * @param core        - the current region core object
      */
-    void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core);
+    void postFill(ChunkPrimer chunkprimer, int height, int x, int z, RegionCore core);
 
     /**
      * A few "event" trigger points for more advanced generation
@@ -106,14 +103,10 @@ public interface IRegionElement {
      *                          - "recreateStructures" - called when its time to re-create the structures of the world
      * @param gen               - the wastelands chunk generator
      * @param cords             - Chunk cords
-     * @param worldobj          - World
-     * @param structuresEnabled - if user has structures enabled in world gen advanced options
      * @param chunkprimer       - for "chunkcleanup" this is the chunkprimer, otherwise null
-     * @param p                 - Populated Params from getParamTemplate
      * @param core              - current region core object
      */
-    void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, World worldobj,
-                            boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core);
+    void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords,ChunkPrimer chunkprimer, RegionCore core);
 
     /**
      * Get the nearest structure of the given name to the given position (or null if unknown)

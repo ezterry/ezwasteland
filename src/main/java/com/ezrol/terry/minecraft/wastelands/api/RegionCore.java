@@ -40,10 +40,10 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @SuppressWarnings("WeakerAccess,unused")
 public class RegionCore {
+    public static final int WASTELAND_HEIGHT = 52;
     //main set of features
     static private LinkedList<IRegionElement> mainFeatures = new LinkedList<>();
     //additional features (ran after main set)
@@ -130,6 +130,14 @@ public class RegionCore {
     }
 
     /**
+     * Check if world features (ie structures) are enabled.
+     * @return true if the world was created with structures enabled.
+     */
+    public boolean isStructuresEnabled() {
+        return ourWorld != null && ourWorld.getWorldInfo().isMapFeaturesEnabled();
+    }
+
+    /**
      * return all the parameters for a specific element
      *
      * @param e the element to find the parameters of
@@ -209,7 +217,7 @@ public class RegionCore {
                         current = new ArrayList<>();
                     }
                     current.addAll(element.calcElements(rand, (localX + x) >> 6,
-                            (localZ + z) >> 6, elementParams.get(elementName),this));
+                            (localZ + z) >> 6,this));
                     cachedElements.put(elementName, current);
                 }
             }
@@ -227,6 +235,7 @@ public class RegionCore {
     public World getWorld(){
         return ourWorld;
     }
+
     /**
      * A function for the elements to request the parameters at a position (such as in postPointFill)
      * @param x - x cord to lookup
@@ -239,46 +248,25 @@ public class RegionCore {
         return(worldElements.get(e.getElementName()));
     }
 
-    public int addElementHeight(int currentoffset, int x, int z) {
-        IRegionElement element;
-        String elementName;
-        Map<String, List<Object>> worldElements = getRegionElements(x, z, ourWorld.getSeed());
-
-        for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
-            element = i.next();
-            elementName = element.getElementName();
-
-            currentoffset = element.addElementHeight(currentoffset, x, z, this, worldElements.get(elementName));
-        }
-        return (currentoffset);
+    public int addElementHeight(int x, int z) {
+        return(forEachElement((e,h) -> (
+                e.addElementHeight(h,x,z,this,getRegionElements(x,z,e))
+        ), WASTELAND_HEIGHT));
     }
 
     public void postPointFill(ChunkPrimer chunkprimer, int height, int x, int z) {
-        IRegionElement element;
-        String elementName;
-
-        long worldSeed = ourWorld.getSeed();
-
-        for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
-            element = i.next();
-            elementName = element.getElementName();
-
-            element.postFill(chunkprimer, height, x, z, worldSeed, elementParams.get(elementName),this);
-        }
+        forEachElement((e,nop)->{
+            e.postFill(chunkprimer,height,x,z,this);
+            return nop;
+        },null);
     }
 
     public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos chunkCord,
-                                   boolean structuresEnabled, ChunkPrimer chunkprimer) {
-        IRegionElement element;
-        String elementName;
-
-        for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
-            element = i.next();
-            elementName = element.getElementName();
-
-            element.additionalTriggers(event, gen, chunkCord, ourWorld, structuresEnabled, chunkprimer,
-                    elementParams.get(elementName),this);
-        }
+                                   ChunkPrimer chunkprimer) {
+        forEachElement((e,nop)->{
+            e.additionalTriggers(event, gen, chunkCord, chunkprimer,this);
+            return nop;
+        },null);
     }
 
     public BlockPos getNearestStructure(String name,BlockPos curPos,boolean findUnexplored){
@@ -301,12 +289,7 @@ public class RegionCore {
     }
 
     public boolean isInsideStructure(String structureName, BlockPos pos) {
-        return forEachElement((e,found) ->{
-            if(!found){
-                return e.isInsideStructure(structureName,pos,this);
-            }
-            return(true);
-        },false);
+        return forEachElement((e,found) -> found || e.isInsideStructure(structureName, pos, this),false);
     }
 
     /**
@@ -398,7 +381,7 @@ public class RegionCore {
         private boolean main;
         private Iterator<IRegionElement> par;
 
-        public FeatureIterator() {
+        private FeatureIterator() {
             main = true;
             par = mainFeatures.iterator();
         }

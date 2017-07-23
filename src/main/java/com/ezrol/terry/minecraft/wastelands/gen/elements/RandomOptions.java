@@ -132,22 +132,23 @@ public class RandomOptions implements IRegionElement {
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
+    public List<Object> calcElements(Random r, int x, int z, RegionCore core) {
         List<Object> placeholder = new ArrayList<>();
-        placeholder.add(((Param.IntegerParam) Param.lookUp(p, "globaloffset")).get());
+        placeholder.add(((Param.IntegerParam) core.lookupParam(this,"globaloffset")).get());
         return placeholder;
     }
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core) {
-        if (((Param.BooleanParam) Param.lookUp(p, "oceans")).get()) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, RegionCore core) {
+
+        if (((Param.BooleanParam) core.lookupParam(this, "oceans")).get()) {
             IBlockState water = Blocks.WATER.getDefaultState();
 
             if (height < 0) {
                 height = 0;
             }
-            for (int i = height + 1; i <= 52; i++) {
+            for (int i = height + 1; i <= RegionCore.WASTELAND_HEIGHT; i++) {
                 chunkprimer.setBlockState(x & 0x0F, i, z & 0x0F, water);
             }
         }
@@ -172,44 +173,44 @@ public class RandomOptions implements IRegionElement {
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, World worldobj,
-                                   boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core) {
-        boolean genStrongholds = ((Param.BooleanParam) Param.lookUp(p, "strongholds")).get();
-        boolean genVillages = ((Param.BooleanParam) Param.lookUp(p, "villages")).get();
-        float villageRate = ((Param.FloatParam) Param.lookUp(p, "villagechance")).get();
+    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, ChunkPrimer chunkprimer, RegionCore core) {
+        boolean genStrongholds = ((Param.BooleanParam) core.lookupParam(this, "strongholds")).get();
+        boolean genVillages = ((Param.BooleanParam) core.lookupParam(this, "villages")).get();
+        float villageRate = ((Param.FloatParam) core.lookupParam(this, "villagechance")).get();
+        World w = core.getWorld();
 
         if (event.equals("chunkcleanup") || event.equals("recreateStructures")) {
-            if (structuresEnabled) {
+            if (core.isStructuresEnabled()) {
                 if (genStrongholds) {
-                    getStrongholdGen(worldobj).generate(worldobj, cords.x, cords.z, chunkprimer);
+                    getStrongholdGen(w).generate(w, cords.x, cords.z, chunkprimer);
                 }
                 if (genVillages) {
-                    if (core.addElementHeight(52, cords.x << 4, cords.z << 4) >= 52) {
-                        getVillageGen(worldobj, villageRate).generate(worldobj, cords.x,
+                    if (core.addElementHeight( cords.x << 4, cords.z << 4) >= RegionCore.WASTELAND_HEIGHT) {
+                        getVillageGen(w, villageRate).generate(w, cords.x,
                                 cords.z, chunkprimer);
                     }
                 }
             }
         } else if (event.equals("populate")) {
             boolean flag = false;
-            boolean triggers = ((Param.BooleanParam) Param.lookUp(p, "integration")).get();
-            Random rng = chunkBasedRNG(cords, worldobj.getSeed());
+            boolean triggers = ((Param.BooleanParam) core.lookupParam(this,"integration")).get();
+            Random rng = chunkBasedRNG(cords, w.getSeed());
 
             if (triggers) {
                 //noinspection ConstantConditions
-                net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, gen, worldobj, rng,
+                net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, gen, w, rng,
                         cords.x, cords.z, flag);
             }
-            if (structuresEnabled) {
+            if (core.isStructuresEnabled()) {
                 if (genStrongholds) {
-                    getStrongholdGen(worldobj).generateStructure(worldobj, rng, cords);
+                    getStrongholdGen(w).generateStructure(w, rng, cords);
                 }
                 if (genVillages) {
-                    flag = getVillageGen(worldobj, villageRate).generateStructure(worldobj, rng, cords);
+                    flag = getVillageGen(w, villageRate).generateStructure(w, rng, cords);
                 }
             }
             if (triggers) {
-                net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, gen, worldobj, rng,
+                net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, gen, w, rng,
                         cords.x, cords.z, flag);
             }
         }

@@ -31,7 +31,6 @@ import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 
@@ -181,63 +180,63 @@ public class Domes implements IRegionElement {
      * @param r - Locally seeded RNG
      * @param x - the x region cord
      * @param z - the z region cord
-     * @param p - the list of this modules world gen parameters used by the module
      * @param core - current core object
      * @return - list of the points of interest
      */
     @Override
     @SuppressWarnings("ConstantConditions")
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
+    public List<Object> calcElements(Random r, int x, int z, RegionCore core) {
         List<Object> elements = new ArrayList<>();
         int i;
         int cnt;
 
         //large domes:
 
-        i = ((Param.IntegerParam) Param.lookUp(p, "lgmincount")).get();
-        cnt = ((Param.IntegerParam) Param.lookUp(p, "lgmaxcount")).get();
+        i = ((Param.IntegerParam) core.lookupParam(this, "lgmincount")).get();
+        cnt = ((Param.IntegerParam) core.lookupParam(this, "lgmaxcount")).get();
 
         if (cnt > i) {
             cnt = i + r.nextInt(cnt - i);
         }
         appendDomes(elements, r, x, z, 4,
-                ((Param.IntegerParam) Param.lookUp(p, "lgradius")).get(),
-                ((Param.IntegerParam) Param.lookUp(p, "lgheight")).get(), cnt);
+                ((Param.IntegerParam) core.lookupParam(this, "lgradius")).get(),
+                ((Param.IntegerParam) core.lookupParam(this, "lgheight")).get(), cnt);
 
         //medium domes
 
-        i = ((Param.IntegerParam) Param.lookUp(p, "midmincount")).get();
-        cnt = ((Param.IntegerParam) Param.lookUp(p, "midmaxcount")).get();
+        i = ((Param.IntegerParam) core.lookupParam(this, "midmincount")).get();
+        cnt = ((Param.IntegerParam) core.lookupParam(this, "midmaxcount")).get();
 
         if (cnt > i) {
             cnt = i + r.nextInt(cnt - i);
         }
         appendDomes(elements, r, x, z, 3,
-                ((Param.IntegerParam) Param.lookUp(p, "midradius")).get(),
-                ((Param.IntegerParam) Param.lookUp(p, "midheight")).get(), cnt);
+                ((Param.IntegerParam) core.lookupParam(this, "midradius")).get(),
+                ((Param.IntegerParam) core.lookupParam(this, "midheight")).get(), cnt);
 
         //small domes
 
-        i = ((Param.IntegerParam) Param.lookUp(p, "smmincount")).get();
-        cnt = ((Param.IntegerParam) Param.lookUp(p, "smmaxcount")).get();
+        i = ((Param.IntegerParam) core.lookupParam(this, "smmincount")).get();
+        cnt = ((Param.IntegerParam) core.lookupParam(this, "smmaxcount")).get();
 
         if (cnt > i) {
             cnt = i + r.nextInt(cnt - i);
         }
         appendDomes(elements, r, x, z, 2,
-                ((Param.IntegerParam) Param.lookUp(p, "smradius")).get(),
-                ((Param.IntegerParam) Param.lookUp(p, "smheight")).get(), cnt);
+                ((Param.IntegerParam) core.lookupParam(this,"smradius")).get(),
+                ((Param.IntegerParam) core.lookupParam(this, "smheight")).get(), cnt);
 
         return (elements);
     }
 
     @Override
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p,RegionCore core) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, RegionCore core) {
+
     }
 
     @Override
-    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, World worldobj,
-                                   boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core) {
+    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, ChunkPrimer chunkprimer, RegionCore core) {
+
     }
 
     @Override

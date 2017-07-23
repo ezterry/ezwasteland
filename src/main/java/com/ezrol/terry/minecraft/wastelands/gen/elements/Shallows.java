@@ -32,7 +32,6 @@ import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 
@@ -102,18 +101,18 @@ public class Shallows implements IRegionElement {
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
+    public List<Object> calcElements(Random r, int x, int z, RegionCore core) {
         List<Object> elements = new ArrayList<>();
         poi shallow;
         int i;
         int cnt;
-        int radius = ((Param.IntegerParam) Param.lookUp(p, "radius")).get();
-        int depth = ((Param.IntegerParam) Param.lookUp(p, "depth")).get();
+        int radius = ((Param.IntegerParam) core.lookupParam(this, "radius")).get();
+        int depth = ((Param.IntegerParam) core.lookupParam(this, "depth")).get();
 
         //large domes:
 
-        i = ((Param.IntegerParam) Param.lookUp(p, "mincount")).get();
-        cnt = ((Param.IntegerParam) Param.lookUp(p, "maxcount")).get();
+        i = ((Param.IntegerParam) core.lookupParam(this, "mincount")).get();
+        cnt = ((Param.IntegerParam) core.lookupParam(this, "maxcount")).get();
 
         if (cnt > i) {
             cnt = i + r.nextInt(cnt - i);
@@ -136,13 +135,12 @@ public class Shallows implements IRegionElement {
     }
 
     @Override
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, RegionCore core) {
 
     }
 
     @Override
-    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, World worldobj,
-                                   boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core) {
+    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, ChunkPrimer chunkprimer, RegionCore core) {
 
     }
 

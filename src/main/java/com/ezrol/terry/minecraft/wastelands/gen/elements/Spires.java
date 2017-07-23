@@ -32,7 +32,6 @@ import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 
@@ -88,9 +87,9 @@ public class Spires implements IRegionElement {
      * calculate a regions elements
      **/
     @SuppressWarnings("ConstantConditions")
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
-        int count = ((Param.IntegerParam) Param.lookUp(p, "count")).get();
-        int maxSize = ((Param.IntegerParam) Param.lookUp(p, "size")).get();
+    public List<Object> calcElements(Random r, int x, int z, RegionCore core) {
+        int count = ((Param.IntegerParam) core.lookupParam(this, "count")).get();
+        int maxSize = ((Param.IntegerParam) core.lookupParam(this, "size")).get();
 
         List<Object> elements = new ArrayList<>(count * 2);
         poi spire;
@@ -111,12 +110,13 @@ public class Spires implements IRegionElement {
     }
 
     @Override
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, RegionCore core) {
+
     }
 
     @Override
-    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, World worldobj,
-                                   boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core) {
+    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, ChunkPrimer chunkprimer, RegionCore core) {
+
     }
 
     @Override

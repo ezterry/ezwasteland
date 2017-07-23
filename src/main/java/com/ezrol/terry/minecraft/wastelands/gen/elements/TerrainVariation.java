@@ -31,7 +31,6 @@ import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 
@@ -104,10 +103,10 @@ public class TerrainVariation implements IRegionElement {
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public List<Object> calcElements(Random r, int x, int z, List<Param> p, RegionCore core) {
+    public List<Object> calcElements(Random r, int x, int z, RegionCore core) {
         List<Object> elements = new ArrayList<>();
-        int variation = ((Param.IntegerParam) Param.lookUp(p, "variation")).get();
-        int amplification = ((Param.IntegerParam) Param.lookUp(p, "amplification")).get();
+        int variation = ((Param.IntegerParam) core.lookupParam(this, "variation")).get();
+        int amplification = ((Param.IntegerParam) core.lookupParam(this, "amplification")).get();
         boolean duplicate;
         attractors node;
         attractors testNode;
@@ -141,13 +140,12 @@ public class TerrainVariation implements IRegionElement {
     }
 
     @Override
-    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, long worldSeed, List<Param> p, RegionCore core) {
+    public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, RegionCore core) {
 
     }
 
     @Override
-    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, World worldobj,
-                                   boolean structuresEnabled, ChunkPrimer chunkprimer, List<Param> p, RegionCore core) {
+    public void additionalTriggers(String event, IChunkGenerator gen, ChunkPos cords, ChunkPrimer chunkprimer, RegionCore core) {
 
     }
 
