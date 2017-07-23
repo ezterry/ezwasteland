@@ -51,6 +51,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 @SuppressWarnings("unused,WeakerAccess")
 @Mod(modid = EzWastelands.MODID, version = EzWastelands.VERSION, name = EzWastelands.NAME,
+        dependencies = "required-after:forge@[14.21.1.2406,)",
         guiFactory = "com.ezrol.terry.minecraft.wastelands.client.GuiFactory")
 public class EzWastelands {
     public static final String MODID = "ezwastelands";
