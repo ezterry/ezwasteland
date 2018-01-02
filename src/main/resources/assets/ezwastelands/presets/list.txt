@@ -17,3 +17,8 @@ ezwastelands:presets/alien.png
 presets.ezwastelands.atsea.name
 ezwastelands:presets/atsea.png
 {"terrainvariation":{"amplification":7,"variation":1},"randopts":{"oceans":true,"globaloffset":-2,"integration":true,"villages":false,"villagechance":10.0,"strongholds":false},"domes":{"lgmincount":2,"lgmaxcount":5,"lgradius":38,"lgheight":7,"midmincount":3,"midmaxcount":5,"midradius":27,"midheight":6,"smmincount":4,"smmaxcount":5,"smradius":14,"smheight":5},"shallows":{"mincount":2,"maxcount":7,"radius":59,"depth":6},"spire":{"count":2,"size":6}}
+
+#Lava Lakes
+presets.ezwastelands.lavalake.name
+ezwastelands:presets/lavalake.png
+{"terrainvariation":{"amplification":14,"variation":1},"randopts":{"oceans":true,"oceanblock":"minecraft:lava","globaloffset":-3,"integration":true,"villages":false,"villagechance":10.0,"strongholds":true},"domes":{"lgmincount":3,"lgmaxcount":8,"lgradius":38,"lgheight":10,"midmincount":4,"midmaxcount":6,"midradius":25,"midheight":6,"smmincount":8,"smmaxcount":12,"smradius":14,"smheight":5},"shallows":{"mincount":3,"maxcount":10,"radius":52,"depth":6},"spire":{"count":0,"size":6}}

@@ -106,6 +106,7 @@ public class WastelandChunkProvider extends ChunkGeneratorOverworld {
         core.additionalTriggers("chunkcleanup", this, chunkCord, chunkprimer);
         Chunk chunk = new Chunk(this.localWorldObj, chunkprimer, p_x, p_z);
         chunk.generateSkylightMap();
+        chunk.resetRelightChecks();
 
         return chunk;
     }

@@ -19,6 +19,7 @@ presets.ezwastelands.classic.name=Classic
 presets.ezwastelands.village.name=Village Challenge
 presets.ezwastelands.alien.name=Alien Hills
 presets.ezwastelands.atsea.name=Wasteland Seas
+presets.ezwastelands.lavalake.name=Lakes of Lava
 
 #Spire Configuration Options
 config.ezwastelands.spire.configtitle=Wasteland Spires
@@ -38,7 +39,7 @@ config.ezwastelands.domes.lgradius.help=The maximum radius of the large domes
 config.ezwastelands.domes.lgheight.name=Large Height
 config.ezwastelands.domes.lgheight.help=The maximum height of the large domes
 config.ezwastelands.domes.midmincount.name=Min Mid Count
-config.ezwastelands.domes.midmincount.help=Minimum number of medium domes (ignored if >= max
+config.ezwastelands.domes.midmincount.help=Minimum number of medium domes (ignored if >= max)
 config.ezwastelands.domes.midmaxcount.name=Max Mid Count
 config.ezwastelands.domes.midmaxcount.help=Maximum number of medium domes
 config.ezwastelands.domes.midradius.name=Mid Radius
@@ -46,7 +47,7 @@ config.ezwastelands.domes.midradius.help=The maximum radius of the medium domes
 config.ezwastelands.domes.midheight.name=Mid Height
 config.ezwastelands.domes.midheight.help=The maximum height of the medium domes
 config.ezwastelands.domes.smmincount.name=Min Small Count
-config.ezwastelands.domes.smmincount.help=Minimum number of small domes (ignored if >= max
+config.ezwastelands.domes.smmincount.help=Minimum number of small domes (ignored if >= max)
 config.ezwastelands.domes.smmaxcount.name=Max Small Count
 config.ezwastelands.domes.smmaxcount.help=Maximum number of small domes
 config.ezwastelands.domes.smradius.name=Small Radius
@@ -75,8 +76,10 @@ config.ezwastelands.terrainvariation.variation.help=The number of attraction poi
 
 #random options
 config.ezwastelands.randopts.configtitle=Misc. Options
-config.ezwastelands.randopts.oceans.name=Water Oceans
-config.ezwastelands.randopts.oceans.help=Generate water pools/oceans when y<=52
+config.ezwastelands.randopts.oceans.name=Generate Oceans
+config.ezwastelands.randopts.oceans.help=Generate pools/oceans when terrain is y<=52
+config.ezwastelands.randopts.oceanblock.name=Ocean Block
+config.ezwastelands.randopts.oceanblock.help=Fluid (or other block) to fill oceans with
 config.ezwastelands.randopts.globaloffset.name=Global Height Offset
 config.ezwastelands.randopts.globaloffset.help=Offset the terrain up or down
 config.ezwastelands.randopts.integration.name=Run Forge Events

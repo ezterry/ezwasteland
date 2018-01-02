@@ -36,6 +36,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.*;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -44,6 +45,7 @@ import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.MapGenStronghold;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.*;
 
@@ -118,6 +120,9 @@ public class RandomOptions implements IRegionElement {
                 "oceans",
                 "config.ezwastelands.randopts.oceans.help",
                 false));
+        lst.add(new Param.StringParam("oceanblock",
+                "config.ezwastelands.randopts.oceanblock.help",
+                "minecraft:water"));
         lst.add(new Param.IntegerParam("globaloffset",
                 "config.ezwastelands.randopts.globaloffset.help",
                 0, -25, 25));
@@ -149,7 +154,15 @@ public class RandomOptions implements IRegionElement {
     public void postFill(ChunkPrimer chunkprimer, int height, int x, int z, RegionCore core) {
 
         if (((Param.BooleanParam) core.lookupParam(this, "oceans")).get()) {
-            IBlockState water = Blocks.WATER.getDefaultState();
+            IBlockState water;
+            ResourceLocation oceanBlockName = new ResourceLocation(
+                    ((Param.StringParam) core.lookupParam(this, "oceanblock")).get());
+            if(ForgeRegistries.BLOCKS.containsKey(oceanBlockName)){
+                water=ForgeRegistries.BLOCKS.getValue(oceanBlockName).getDefaultState();
+            }
+            else{
+                water = Blocks.WATER.getDefaultState();
+            }
 
             if (height < 0) {
                 height = 0;
