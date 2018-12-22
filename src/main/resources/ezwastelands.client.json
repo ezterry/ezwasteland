@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.ezrol.terry.minecraft.wastelands.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ClientMixinNewWorldGui"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

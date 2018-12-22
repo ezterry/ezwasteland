@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": [
+        { "model": "ezwastelands:block/ezwastelandblock" },
+        { "model": "ezwastelands:block/ezwastelandblock_mirrored" }]
+    }
+}

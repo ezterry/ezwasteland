@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.ezrol.terry.minecraft.wastelands.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "CommonMixinToolItem",
+    "CommonMixinChunkGeneratorType",
+    "CommonMixinOverworldDimension"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "ezwastelands",
+  "name": "EzWastelands",
+  "description": "EzTerry's Wastelands terrain generator",
+  "version": "${version}",
+  "side": "universal",
+  "initializer": "com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric",
+  "requires": {
+    "fabric": "*"
+  },
+  "mixins": {
+    "client": "ezwastelands.client.json",
+    "common": "ezwastelands.common.json"
+  }
+}
