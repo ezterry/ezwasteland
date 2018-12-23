@@ -4,6 +4,8 @@ import com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGenerator;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorSettings;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandsBiomeSource;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeSourceType;
 import net.minecraft.world.biome.source.VanillaLayeredBiomeSourceConfig;
@@ -44,5 +46,16 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
             );
         }
 
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public float method_12455() {
+        LevelGeneratorType type = this.world.getLevelProperties().getGeneratorType();
+
+        if(type == EzwastelandsFabric.WASTELANDS_LEVEL_TYPE){
+            return 200.0f;
+        }
+        return super.method_12455();
     }
 }

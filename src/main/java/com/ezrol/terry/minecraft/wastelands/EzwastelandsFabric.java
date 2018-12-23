@@ -4,6 +4,10 @@ import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGenerator;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorSettings;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandRegisterI;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandsLevelType;
+import com.ezrol.terry.minecraft.wastelands.world.elements.Domes;
+import com.ezrol.terry.minecraft.wastelands.world.elements.Shallows;
+import com.ezrol.terry.minecraft.wastelands.world.elements.Spires;
+import com.ezrol.terry.minecraft.wastelands.world.elements.TerrainVariation;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.events.ServerEvent;
 import net.minecraft.block.Block;
@@ -31,7 +35,7 @@ public class EzwastelandsFabric implements ModInitializer {
         WASTELANDS_LEVEL_TYPE = WastelandsLevelType.getType();
 
         //register the wasteland generator type
-        WASTELANDS = new ChunkGeneratorType<>(null,false,WastelandChunkGeneratorSettings::new);
+        WASTELANDS = new ChunkGeneratorType<>(null,true,WastelandChunkGeneratorSettings::new);
         //noinspection ConstantConditions
         ((WastelandRegisterI)WASTELANDS).enableWastelandGenerator(true);
 
@@ -62,6 +66,13 @@ public class EzwastelandsFabric implements ModInitializer {
                 }
             }
         });
+
+        //register terrain generation elements
+        // (simply create an instance they self register)
+        new Spires();
+        new Domes();
+        new Shallows();
+        new TerrainVariation();
     }
 
     public interface SetEffectiveTool{

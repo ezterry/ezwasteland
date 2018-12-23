@@ -29,7 +29,7 @@ public class WastelandsBiomeSource extends VanillaLayeredBiomeSource {
         if(topMaterials == null) {
             Set<BlockState> vanilla = super.getTopMaterials();
             topMaterials = new LinkedHashSet<>(vanilla);
-            topMaterials.add(EzwastelandsFabric.WastelandsBlock.getDefaultState());
+            //topMaterials.add(EzwastelandsFabric.WastelandsBlock.getDefaultState());
         }
 
         return topMaterials;
