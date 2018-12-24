@@ -1,4 +1,9 @@
 {
   "block.ezwastelands.ezwastelandblock": "Wasteland Block",
-  "generator.ezwastelands": "Wastelands"
+  "generator.ezwastelands": "Wastelands",
+
+  "config.ezwastelands.WorldConfigGUI": "Wasteland Customization",
+  "config.ezwastelands.BTNPresets": "Presets",
+  "config.ezwastelands.BTNCancel": "Cancel",
+  "config.ezwastelands.BTNDefault": "Defaults"
 }

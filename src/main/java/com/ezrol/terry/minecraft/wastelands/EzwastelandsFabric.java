@@ -16,6 +16,8 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.item.block.BlockItem;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.chunk.ChunkGeneratorType;
@@ -49,6 +51,7 @@ public class EzwastelandsFabric implements ModInitializer {
         BlockItem itm = new BlockItem(WastelandsBlock, new Item.Settings().itemGroup(ItemGroup.BUILDING_BLOCKS));
         Registry.register(Registry.ITEM, "ezwastelands:ezwastelandblock", itm);
 
+
         //when the server starts make the Wasteland block effective on
         //shovels
         ServerEvent.START.register(new Consumer<MinecraftServer>() {
@@ -57,6 +60,10 @@ public class EzwastelandsFabric implements ModInitializer {
                 //debug, print all generator types
                 for(Identifier id : Registry.CHUNK_GENERATOR_TYPE.keys()){
                     System.out.println(id);
+                }
+
+                for(Tag.Entry<Block> e : BlockTags.VALID_SPAWN.entries()){
+                    System.out.println(e.toString());
                 }
                 //add wasteland block to all shovels
                 for(Item i : Registry.ITEM){

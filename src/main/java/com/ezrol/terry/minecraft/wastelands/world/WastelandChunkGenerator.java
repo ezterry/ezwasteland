@@ -4,6 +4,7 @@ import com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.class_2839;
 import net.minecraft.class_3233;
 import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
@@ -16,10 +17,14 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPos;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.chunk.ChunkGenerator;;import java.util.List;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;;import java.util.List;
 
 public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGeneratorSettings>{
     private RegionCore core;
+    static private Logger log = LogManager.getLogger("WastelandChunkGenerator");
+
     public WastelandChunkGenerator(World world, BiomeSource biomeGen, WastelandChunkGeneratorSettings settings){
         super(world,biomeGen,settings);
 
@@ -74,6 +79,8 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
         BlockState bedrock = Blocks.BEDROCK.getDefaultState();
         BlockState wastelandblock = EzwastelandsFabric.WastelandsBlock.getDefaultState();
 
+        Heightmap heights = chunk.getHeightmap(Heightmap.Type.WORLD_SURFACE_WG);
+
         int height;
         BlockState block;
 
@@ -98,6 +105,7 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
                 }
                 //wasteland blocks have been filled in see if the modules have anything custom to add
                 core.postPointFill(chunk, height, x + (p_x * 16), z + (p_z * 16));
+                heights.method_12597(x,height,z, wastelandblock);
             }
         }
 
@@ -106,8 +114,9 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
 
     @Override
     public int produceHeight(int x, int z, Heightmap.Type type) {
-
-        return core.addElementHeight(x, z);
+        int h = core.addElementHeight(x, z);
+        log.info("Height at: " + x + ", " + z + " = " + h);
+        return(h);
     }
 
     @Override
@@ -115,8 +124,10 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
         return RegionCore.WASTELAND_HEIGHT;
     }
 
+
     @Override
     public int method_12100() {
-        return RegionCore.WASTELAND_HEIGHT;
+        Chunk chunk = this.world.method_8392(0, 0);
+        return chunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING, 8, 8);
     }
 }

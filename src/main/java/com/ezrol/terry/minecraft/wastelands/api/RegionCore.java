@@ -27,7 +27,6 @@
 
 package com.ezrol.terry.minecraft.wastelands.api;
 
-import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGenerator;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -70,13 +69,13 @@ public class RegionCore {
 
     //the current world (null if in config screen)
     private World ourWorld;
-    private WastelandChunkGenerator chunkgen;
+    private ChunkGenerator chunkgen;
 
-    public ChunkGenerator<?> getChunkGen(){
+    public ChunkGenerator getChunkGen(){
         return chunkgen;
     }
 
-    public RegionCore(String properties,World w, WastelandChunkGenerator gen) {
+    public RegionCore(String properties,World w, ChunkGenerator gen) {
         IRegionElement element;
         elementParams = new HashMap<>(mainFeatures.size() + overrideFeatures.size());
 
