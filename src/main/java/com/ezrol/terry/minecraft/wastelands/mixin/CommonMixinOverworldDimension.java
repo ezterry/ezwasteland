@@ -6,6 +6,7 @@ import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorSetting
 import com.ezrol.terry.minecraft.wastelands.world.WastelandsBiomeSource;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeSourceType;
 import net.minecraft.world.biome.source.VanillaLayeredBiomeSourceConfig;
@@ -37,7 +38,8 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
             LOGGER.info("Use wastelands generator");
             ChunkGeneratorType<WastelandChunkGeneratorSettings, WastelandChunkGenerator> ezwastelands = EzwastelandsFabric.WASTELANDS;
 
-            WastelandChunkGeneratorSettings settings = new WastelandChunkGeneratorSettings();
+            CompoundTag opts = this.world.getLevelProperties().getGeneratorOptions();
+            WastelandChunkGeneratorSettings settings = new WastelandChunkGeneratorSettings(opts);
             VanillaLayeredBiomeSourceConfig biomeSrcCfg = ((VanillaLayeredBiomeSourceConfig)BiomeSourceType.VANILLA_LAYERED.getConfig()).setGeneratorSettings(new OverworldChunkGeneratorSettings()).setLevelProperties(this.world.getLevelProperties());
 
             //noinspection unchecked

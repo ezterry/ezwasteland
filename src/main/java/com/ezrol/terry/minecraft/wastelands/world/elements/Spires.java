@@ -80,7 +80,7 @@ public class Spires implements IRegionElement {
     public List<Param> getParamTemplate() {
         List<Param> lst = new ArrayList<>();
 
-        lst.add(new Param.IntegerParam("count", "config.ezwastelands.spire.count.help", 2, 0, 20));
+        lst.add(new Param.IntegerParam("count", "config.ezwastelands.spire.count.help", 2, 0, 30));
         lst.add(new Param.IntegerParam("size", "config.ezwastelands.spire.size.help", 6, 2, 10));
         return lst;
     }

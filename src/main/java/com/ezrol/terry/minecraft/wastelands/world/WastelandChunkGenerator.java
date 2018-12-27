@@ -28,7 +28,7 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
     public WastelandChunkGenerator(World world, BiomeSource biomeGen, WastelandChunkGeneratorSettings settings){
         super(world,biomeGen,settings);
 
-        core = new RegionCore("", world, this);
+        core = new RegionCore(settings.getGeneratorJson(), world, this);
     }
 
     @Override

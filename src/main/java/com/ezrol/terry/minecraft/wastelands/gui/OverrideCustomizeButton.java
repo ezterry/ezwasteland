@@ -38,6 +38,5 @@ public class OverrideCustomizeButton extends ButtonWidget {
             LOGGER.info("Fallback to normal customization logic");
             original.onPressed(var1, var3);
         }
-
     }
 }
