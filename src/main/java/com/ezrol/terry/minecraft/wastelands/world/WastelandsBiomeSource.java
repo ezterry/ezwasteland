@@ -21,7 +21,7 @@ public class WastelandsBiomeSource extends VanillaLayeredBiomeSource {
 
     @Override
     public boolean hasStructureFeature(StructureFeature<?> structureFeature_1) {
-        return false;
+        return sysGen.checkIfHasStructure(structureFeature_1);
     }
 
     @Override

@@ -27,9 +27,11 @@
 
 package com.ezrol.terry.minecraft.wastelands.world.elements;
 
+import com.ezrol.terry.minecraft.wastelands.api.AbstractElement;
 import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
+import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
@@ -47,12 +49,8 @@ import java.util.Random;
  * <p>
  * Created by ezterry on 9/6/16.
  */
-public class Shallows implements IRegionElement {
+public class Shallows extends AbstractElement {
     static private Logger log = LogManager.getLogger("Shallows");
-
-    public Shallows() {
-        RegionCore.register(this);
-    }
 
     @Override
     public int addElementHeight(int currentoffset, int x, int z, RegionCore core, List<Object> elements) {
@@ -134,31 +132,6 @@ public class Shallows implements IRegionElement {
             elements.add(shallow);
         }
         return elements;
-    }
-
-    @Override
-    public void postFill(Chunk chunk, int height, int x, int z, RegionCore core) {
-
-    }
-
-    @Override
-    public void additionalTriggers(String event, ChunkPos cords, Chunk chunkprimer, RegionCore core) {
-
-    }
-
-    @Override
-    public BlockPos getNearestStructure(String name, BlockPos curPos, boolean findUnexplored, RegionCore core) {
-        return null;
-    }
-
-    @Override
-    public List<Biome.SpawnEntry> getSpawnable(List<Biome.SpawnEntry> lst, EntityCategory creatureType, BlockPos pos, RegionCore core) {
-        return lst;
-    }
-
-    @Override
-    public boolean isInsideStructure(String structureName, BlockPos pos, RegionCore core) {
-        return false;
     }
 
     private class poi {

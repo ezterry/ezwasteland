@@ -31,6 +31,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import it.unimi.dsi.fastutil.ints.IntLists;
+import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -43,6 +45,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,9 +60,11 @@ public class RegionCore {
     static private Logger log = LogManager.getLogger("RegionCore");
     //preset locations (for preset screen on world creation)
     static private LinkedList<Identifier> presets = new LinkedList<>();
+    //list of structures in the wastelands
+    static private LinkedList<ConfiguredFeature> features = new LinkedList<>();
 
     //parameter set for each region
-    private Map<String, List<Param>> elementParams = null;
+    private Map<String, List<Param>> elementParams;
 
     //current cached region
     private int cachedX = 0;
@@ -80,7 +85,7 @@ public class RegionCore {
         elementParams = new HashMap<>(mainFeatures.size() + overrideFeatures.size());
 
         ourWorld=w;
-        chunkgen=chunkgen;
+        chunkgen=gen;
         //prepare the default parameters
         for (Iterator<IRegionElement> i = new FeatureIterator(); i.hasNext(); ) {
             element = i.next();
@@ -118,6 +123,25 @@ public class RegionCore {
         }
     }
 
+    /**
+     * register a new element for world generation, with a feature list
+     *
+     * @param element:    Your custom IRegionElement
+     * @param isOverride: Event for override elements after non override
+     * @param features:   A list of features to generate
+     */
+    static public void register(IRegionElement element, boolean isOverride, ConfiguredFeature[] features){
+        register(element, isOverride);
+        RegionCore.features.addAll(Arrays.asList(features));
+    }
+
+    /**
+     * Internal call to get the list of features to process
+     * @return the list of all potential features
+     */
+    static public List<ConfiguredFeature> getFeatureLst(){
+        return Collections.unmodifiableList(features);
+    }
     /**
      * Add a presets.txt file append to the resources in the presets screen
      * @param p the location of the presets.txt file to append to the presets screen
@@ -272,17 +296,21 @@ public class RegionCore {
     }
 
     public void additionalTriggers(String event, ChunkPos chunkCord,
-                                   Chunk chunk) {
+                                   Chunk chunk, class_3485 resources) {
         forEachElement((e,nop)->{
-            e.additionalTriggers(event, chunkCord, chunk,this);
+            e.additionalTriggers(event, chunkCord, chunk, resources,this);
             return nop;
         },null);
     }
 
-    public BlockPos getNearestStructure(String name,BlockPos curPos,boolean findUnexplored){
+    public boolean hasStructure(String name){
+        return forEachElement((e,found) -> found || e.hasStructure(name, this),false);
+    }
+
+    public BlockPos getNearestStructure(String name,BlockPos curPos, int tries,boolean findUnexplored){
         //search for the nearest instance of the structure
         return forEachElement((e,p) ->{
-            BlockPos pos = e.getNearestStructure(name,curPos,findUnexplored,this);
+            BlockPos pos = e.getNearestStructure(name,curPos,tries,findUnexplored,this);
             if(pos == null){
                 return p;
             }
@@ -296,10 +324,6 @@ public class RegionCore {
                 return p;
             }
         },null);
-    }
-
-    public boolean isInsideStructure(String structureName, BlockPos pos) {
-        return forEachElement((e,found) -> found || e.isInsideStructure(structureName, pos, this),false);
     }
 
     /**
@@ -392,11 +416,17 @@ public class RegionCore {
      * @param pos the position being checked
      * @return the final list
      */
-    @SuppressWarnings("RedundantCast")
     public List<Biome.SpawnEntry> getSpawnable(List<Biome.SpawnEntry> spawnableList,
                                                EntityCategory creatureType, BlockPos pos) {
         return(forEachElement((e,lst) -> e.getSpawnable(lst,creatureType,pos,this),
                 (List<Biome.SpawnEntry>) new ArrayList<>(spawnableList)));
+    }
+
+    /** Find any offset for the world height at this point in world gen **/
+    public int getWorldHeight(int x, int starth, int z) {
+        return(forEachElement((e,h) -> (
+                e.getWorldHeight(h,x,z,this)
+        ), starth));
     }
 
     /***

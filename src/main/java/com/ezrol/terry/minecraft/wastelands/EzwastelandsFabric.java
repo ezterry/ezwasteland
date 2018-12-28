@@ -4,10 +4,7 @@ import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGenerator;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorSettings;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandRegisterI;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandsLevelType;
-import com.ezrol.terry.minecraft.wastelands.world.elements.Domes;
-import com.ezrol.terry.minecraft.wastelands.world.elements.Shallows;
-import com.ezrol.terry.minecraft.wastelands.world.elements.Spires;
-import com.ezrol.terry.minecraft.wastelands.world.elements.TerrainVariation;
+import com.ezrol.terry.minecraft.wastelands.world.elements.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.events.ServerEvent;
 import net.minecraft.block.Block;
@@ -80,6 +77,7 @@ public class EzwastelandsFabric implements ModInitializer {
         new Domes();
         new Shallows();
         new TerrainVariation();
+        new RandomOptions();
     }
 
     public interface SetEffectiveTool{

@@ -56,5 +56,19 @@
   "config.ezwastelands.terrainvariation.amplification.name": "Amplification",
   "config.ezwastelands.terrainvariation.amplification.help": "Range in blocks of the variable terrain",
   "config.ezwastelands.terrainvariation.variation.name": "Variation",
-  "config.ezwastelands.terrainvariation.variation.help": "The number of attraction points per 64x64 region"
+  "config.ezwastelands.terrainvariation.variation.help": "The number of attraction points per 64x64 region",
+
+  "ezwastelands.config.randopts.title": "Misc Options",
+  "config.ezwastelands.randopts.oceans.name": "Oceans",
+  "config.ezwastelands.randopts.oceans.help": "Generate oceans < y=52",
+  "config.ezwastelands.randopts.oceanblock.name": "Ocean Block",
+  "config.ezwastelands.randopts.oceanblock.help": "Block to fill oceans with",
+  "config.ezwastelands.randopts.globaloffset.name": "Global Offset",
+  "config.ezwastelands.randopts.globaloffset.help": "A global offset to generated height",
+  "config.ezwastelands.randopts.villages.name": "Villages",
+  "config.ezwastelands.randopts.villages.help": "Generate villages when enabled",
+  "config.ezwastelands.randopts.villagechance.name": "Frequency",
+  "config.ezwastelands.randopts.villagechance.help": "Frequency of villages in world",
+  "config.ezwastelands.randopts.strongholds.name": "Strongholds",
+  "config.ezwastelands.randopts.strongholds.help": "Generate strongholds when enabled"
 }

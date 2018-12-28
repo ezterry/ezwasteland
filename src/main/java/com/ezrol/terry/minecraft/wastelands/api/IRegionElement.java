@@ -27,6 +27,7 @@
 
 package com.ezrol.terry.minecraft.wastelands.api;
 
+import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
@@ -106,27 +107,29 @@ public interface IRegionElement {
      * @param curchunk          - for "chunkcleanup" this is the chunkprimer, otherwise null
      * @param core              - current region core object
      */
-    void additionalTriggers(String event, ChunkPos cords, Chunk curchunk, RegionCore core);
+    void additionalTriggers(String event, ChunkPos cords, Chunk curchunk, class_3485 resources, RegionCore core);
 
     /**
      * Get the nearest structure of the given name to the given position (or null if unknown)
      *
      * @param name name of the structure we are looking for
      * @param curPos position we are looking from
+     * @param tries how hard to look for the structure
      * @param findUnexplored if we are to find structures that are yet to be explored
      * @param core              - current region core object
      * @return the nearest known instance or null if unknown
      */
-    BlockPos getNearestStructure(String name,BlockPos curPos, boolean findUnexplored, RegionCore core);
+    BlockPos getNearestStructure(String name,BlockPos curPos, int tries, boolean findUnexplored, RegionCore core);
 
     /**
-     * If we are currently inside a structure
-     * @param structureName     - the name of the structure
-     * @param pos               - the position being checked
-     * @param core              - current region core object
-     * @return true if its in the structure, else false
+     * If we can generate a specific structure
+     * @param name the name of the structure
+     * @param core the current region core
+     * @return
      */
-    boolean isInsideStructure(String structureName, BlockPos pos, RegionCore core);
+    boolean hasStructure(String name, RegionCore core);
+
+    int getWorldHeight(int h,int x,int z,RegionCore core);
 
     /**
      * Allows tweaking spawnable creatures in a region

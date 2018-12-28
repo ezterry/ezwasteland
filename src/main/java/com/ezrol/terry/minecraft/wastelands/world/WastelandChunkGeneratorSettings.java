@@ -8,12 +8,16 @@ import com.mojang.datafixers.types.templates.CompoundList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.chunk.OverworldChunkGeneratorSettings;
+import net.minecraft.world.gen.feature.StructureFeature;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 public class WastelandChunkGeneratorSettings extends OverworldChunkGeneratorSettings {
     private String generatorOps="";
+    private WeakReference<RegionCore> core;
 
     public WastelandChunkGeneratorSettings(){
         super();
@@ -39,6 +43,18 @@ public class WastelandChunkGeneratorSettings extends OverworldChunkGeneratorSett
         if(generatorOps != null) {
             generatorOps = CompoundToJson(tags);
         }
+    }
+
+    public void assignCore(RegionCore c){
+        core = new WeakReference<>(c);
+    }
+
+    public boolean checkIfHasStructure(StructureFeature feature){
+        RegionCore c = core.get();
+        if(c != null){
+            return c.hasStructure(feature.getName());
+        }
+        return false;
     }
 
     public String getGeneratorJson(){

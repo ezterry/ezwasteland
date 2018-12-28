@@ -5,6 +5,7 @@ import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.class_2839;
+import net.minecraft.class_2919;
 import net.minecraft.class_3233;
 import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
@@ -18,8 +19,14 @@ import net.minecraft.world.chunk.ChunkPos;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.DecoratedFeature;
+import net.minecraft.world.gen.feature.StructureFeature;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;;import java.util.List;
+import org.apache.logging.log4j.Logger;
+
+import java.util.List;
+import java.util.Random;
 
 public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGeneratorSettings>{
     private RegionCore core;
@@ -29,6 +36,7 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
         super(world,biomeGen,settings);
 
         core = new RegionCore(settings.getGeneratorJson(), world, this);
+        settings.assignCore(core);
     }
 
     @Override
@@ -37,13 +45,43 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
     }
 
     @Override
-    public BlockPos locateStructure(World world_1, String string_1, BlockPos blockPos_1, int int_1, boolean boolean_1) {
-        return super.locateStructure(world_1, string_1, blockPos_1, int_1, boolean_1);
+    public BlockPos locateStructure(World world_1, String name, BlockPos pos, int tries, boolean unexplored) {
+        //return super.locateStructure(world_1, string_1, blockPos_1, int_1, boolean_1);
+        return core.getNearestStructure(name, pos, tries, unexplored);
+    }
+
+    private Random chunkBasedRNG(ChunkPos p, long seed) {
+        Random r;
+        long localSeed;
+
+        long x = p.x;
+        long z = p.z;
+
+        localSeed = (x << 32) + (z * 31);
+        localSeed = localSeed ^ seed;
+        localSeed += 5147;
+
+        r = new Random(localSeed);
+        r.nextInt();
+        r.nextInt();
+        return (r);
     }
 
     @Override
-    public void generateFeatures(class_3233 class_3233_1) {
-        //super.generateFeatures(class_3233_1);
+    public void generateFeatures(class_3233 world) {
+        ChunkPos pos = new ChunkPos(world.method_14336(), world.method_14339());
+        int blockx = pos.x * 16;
+        int blockz = pos.z * 16;
+
+        BlockPos chunkCorner = new BlockPos(blockx, 0, blockz);
+        Random rng = chunkBasedRNG(pos, world.getSeed());
+
+        for (ConfiguredFeature<?> configuredFeature : RegionCore.getFeatureLst()) {
+            configuredFeature.generate(world, this, rng, chunkCorner);
+        }
+
+        Chunk c = world.method_8392(pos.x, pos.z);
+        core.additionalTriggers("featuresgen", c.getPos(), c, null);
     }
 
     @Override
@@ -52,8 +90,8 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
     }
 
     @Override
-    public void method_16129(Chunk chunk_1, ChunkGenerator<?> chunkGenerator_1, class_3485 class_3485_1) {
-        core.additionalTriggers("populate", chunk_1.getPos(),chunk_1);
+    public void method_16129(Chunk chunk, ChunkGenerator<?> chunkGenerator_1, class_3485 resources) {
+        core.additionalTriggers("populate", chunk.getPos(),chunk,resources);
     }
 
     @Override
@@ -68,6 +106,7 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
 
     @Override
     public void buildSurface(Chunk chunk) {
+        core.additionalTriggers("surfacecleanup", chunk.getPos(), chunk, null);
     }
 
     @Override
@@ -109,14 +148,14 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
             }
         }
 
-        core.additionalTriggers("chunkcleanup", pos, chunk);
+        core.additionalTriggers("chunkcleanup", pos, chunk, null);
     }
 
     @Override
     public int produceHeight(int x, int z, Heightmap.Type type) {
-        int h = core.addElementHeight(x, z);
-        log.info("Height at: " + x + ", " + z + " = " + h);
-        return(h);
+        int h = core.addElementHeight(x, z) + 1;
+
+        return core.getWorldHeight(x,h,z);
     }
 
     @Override
