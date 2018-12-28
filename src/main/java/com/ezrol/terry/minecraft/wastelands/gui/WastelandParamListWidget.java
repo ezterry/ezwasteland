@@ -22,6 +22,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
                 return( new IntParamButton(id, type, x, y, w, h, (Param.IntegerParam)p));
             case FLOAT:
                 return( new FloatParamButton(id, type, x, y, w, h, (Param.FloatParam)p));
+            case STRING:
+                return( new StringParamButton(id, type, x, y, w, h, (Param.StringParam)p));
             default:
                 throw(new IllegalArgumentException("Unsupported Parameter Type"));
         }
@@ -42,7 +44,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         addEntry(new Entry("ezwastelands.config." + title + ".title"));
 
         for(Param p : sectionParams){
-            if(p.getType() != Param.ParamTypes.STRING){
+            {
                 if(a==null){
                     a= nextWidget(curid,title,xoff,0,(getEntryWidth()/2)-5,20,p);
                 }
@@ -51,14 +53,10 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
                 }
                 curid++;
             }
-            else{
-                //we have a string
-                //TODO implement me
-            }
-            if(a!= null && b!= null){
+            if(a != null && b != null) {
                 addEntry(new Entry(a, b));
-                a=null;
-                b=null;
+                a = null;
+                b = null;
             }
         }
         if(a != null){
@@ -316,8 +314,127 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
 
         private void setBtnText(){
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
-
             text = name + ": " + param.get();
+        }
+    }
+
+    private class StringParamButton extends HoverableWidget{
+        Param.StringParam param;
+        String type;
+        TextFieldWidget textfield=null;
+        private int yloc=-1;
+        private boolean focused = false;
+
+        StringParamButton(int id, String type, int x, int y, int width, int height, Param.StringParam p){
+            super(id,x,y,width,height,"");
+            this.type = type;
+            param = p;
+            text = param.get();
+        }
+
+        @Override
+        public void draw(int mouseX, int mouseY, float partialTicks) {
+            if(textfield == null || y!=yloc){
+                yloc = y;
+                String value = param.get();
+                if(textfield!=null)
+                    value = textfield.getText();
+                textfield = new TextFieldWidget(this.id, client.fontRenderer,x,y,width,height);
+                textfield.setText(value);
+                textfield.setHasFocus(focused);
+                param.set(value);
+            }
+            textfield.render(mouseX,mouseY,partialTicks);
+
+            hovered = mouseX > x && mouseX < (x + width) && mouseY > y && mouseY < y + height;
+            drawHover(mouseX,mouseY);
+        }
+
+        @Override
+        public boolean mouseClicked(double mx, double my, int mb) {
+            if(textfield != null){
+                return textfield.mouseClicked(mx,my,mb);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean mouseReleased(double mx, double my, int mb) {
+            if(textfield != null){
+                return textfield.mouseReleased(mx,my,mb);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean mouseDragged(double mx1, double my1, int mb, double mx2, double my2) {
+            if(textfield != null){
+                return textfield.mouseDragged(mx1,my1,mb,mx2,my2);
+            }
+            return false;
+        }
+
+        @Override
+        public void mouseMoved(double a, double b) {
+            if(textfield != null){
+                textfield.mouseMoved(a,b);
+            }
+        }
+
+        @Override
+        public boolean mouseScrolled(double amount) {
+            if(textfield != null){
+                return textfield.mouseScrolled(amount);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean keyPressed(int a, int b, int c) {
+            if(textfield != null){
+                return textfield.keyPressed(a,b,c);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean keyReleased(int a, int b, int c) {
+            if(textfield != null){
+                return textfield.keyReleased(a,b,c);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean charTyped(char input, int num) {
+            if(textfield != null){
+                boolean r = textfield.charTyped(input, num);
+                if(r)
+                    param.set(textfield.getText());
+                return r;
+            }
+            return false;
+        }
+
+        @Override
+        public void setHasFocus(boolean focus) {
+            if(textfield != null){
+                focused = focus;
+                textfield.setHasFocus(focus);
+            }
+        }
+
+        @Override
+        public boolean hasFocus() {
+            if(textfield != null){
+                return textfield.hasFocus();
+            }
+            return false;
+        }
+
+        @Override
+        public String getHoverText(){
+            return(I18n.translate(param.getComment()));
         }
     }
 
@@ -341,6 +458,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         private ButtonWidget widget2=null;
         private String title=null;
         private ButtonWidget inputbox=null;
+        private ButtonWidget selected=null;
 
         public Entry(String title){
             //a simple title widget
@@ -365,11 +483,18 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         @Override
         public boolean mouseClicked(double x, double y, int i) {
             boolean r=false;
+            selected = null;
             if(x < width / 2 && widget1 != null){
                 r=widget1.mouseClicked(x,y,i);
+                if(r){
+                    selected = widget1;
+                }
             }
             if(x > width / 2 && widget2 != null){
                 r=widget2.mouseClicked(x,y,i);
+                if(r){
+                    selected = widget2;
+                }
             }
             if(!r){
                 r=super.mouseClicked(x,y,i);
@@ -409,17 +534,45 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
 
         @Override
         public boolean keyPressed(int int_1, int int_2, int int_3) {
+            if(selected != null){
+                selected.keyPressed(int_1, int_2, int_3);
+            }
             return false;
         }
 
         @Override
         public boolean keyReleased(int int_1, int int_2, int int_3) {
+            if(selected != null && selected.hasFocus()){
+                selected.keyReleased(int_1, int_2, int_3);
+            }
             return false;
         }
 
         @Override
         public boolean charTyped(char char_1, int int_1) {
+            if(selected != null && selected.hasFocus()){
+                selected.charTyped(char_1, int_1);
+            }
             return false;
+        }
+
+
+        @Override
+        public void setHasFocus(boolean focus) {
+            if(selected != null){
+                selected.setHasFocus(focus);
+            }
+            super.setHasFocus(focus);
+        }
+
+        @Override
+        public boolean hasFocus() {
+            if(selected != null){
+                if(selected.hasFocus()){
+                    return true;
+                }
+            }
+            return super.hasFocus();
         }
 
         @Override
