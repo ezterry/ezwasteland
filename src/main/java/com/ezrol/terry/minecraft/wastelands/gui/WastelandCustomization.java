@@ -95,7 +95,7 @@ public class WastelandCustomization extends Gui {
     private void reloadList() {
         int oldscroll = 0;
         if(list != null){
-            oldscroll = list.getScrollbarPosition();
+            oldscroll = list.getScrollY();
             listeners.remove(list);
         }
         list = new WastelandParamListWidget(client, width, height, 32, height-32, 25);
@@ -141,10 +141,8 @@ public class WastelandCustomization extends Gui {
     }
 
     void updateFromJson(String json) {
-        //int pos = list.getAmountScrolled();
         core = new RegionCore(json,null,null);
         reloadList();
-        //list.scrollBy(pos);
     }
 
     @Override
