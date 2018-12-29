@@ -1,6 +1,7 @@
 {
   "block.ezwastelands.ezwastelandblock": "Wasteland Block",
   "generator.ezwastelands": "Wastelands",
+  "generator.ezwastelands.wastelands": "Wasteland",
 
   "config.ezwastelands.WorldConfigGUI": "Wasteland Customization",
   "config.ezwastelands.BTNPresets": "Presets",

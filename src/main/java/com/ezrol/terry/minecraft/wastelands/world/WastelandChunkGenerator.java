@@ -75,14 +75,20 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
     }
 
     @Override
-    public void carve(Chunk chunk_1, GenerationStep.Carver generationStep$Carver_1) {
-        //super.carve(chunk_1, generationStep$Carver_1);
+    public void carve(Chunk chunk, GenerationStep.Carver carver) {
+        if(settings.buffetGen()){
+            super.carve(chunk,carver);
+        }
     }
 
     @Override
     public BlockPos locateStructure(World world_1, String name, BlockPos pos, int tries, boolean unexplored) {
         //return super.locateStructure(world_1, string_1, blockPos_1, int_1, boolean_1);
-        return core.getNearestStructure(name, pos, tries, unexplored);
+        BlockPos b = core.getNearestStructure(name, pos, tries, unexplored);
+        if(b == null && settings.buffetGen()){
+            b = super.locateStructure(world_1,name,pos,tries,unexplored);
+        }
+        return b;
     }
 
     private Random chunkBasedRNG(ChunkPos p, long seed) {
@@ -117,6 +123,10 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
 
         Chunk c = world.method_8392(pos.x, pos.z);
         core.additionalTriggers("featuresgen", c.getPos(), c, null);
+
+        if(settings.buffetGen()){
+            super.generateFeatures(world);
+        }
     }
 
     @Override
@@ -127,6 +137,10 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
     @Override
     public void method_16129(Chunk chunk, ChunkGenerator<?> chunkGenerator_1, class_3485 resources) {
         core.additionalTriggers("populate", chunk.getPos(),chunk,resources);
+
+        if(settings.buffetGen()){
+            super.method_16129(chunk, chunkGenerator_1, resources);
+        }
     }
 
     @Override
@@ -157,10 +171,19 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
 
         int height;
         BlockState block;
+        boolean buffetgen = settings.buffetGen();
+        BlockState blocksubsurface = wastelandblock;
+        BlockState blocktop = wastelandblock;
+        Biome curBiome = null;
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 height = core.addElementHeight( x + (p_x * 16), z + (p_z * 16));
+                if(buffetgen){
+                    curBiome = chunk.getBiome(new BlockPos(x,height,z));
+                    blocksubsurface = curBiome.getSurfaceConfig().getUnderMaterial();
+                    blocktop = curBiome.getSurfaceConfig().getTopMaterial();
+                }
                 for (int y = 0; y < 256; y++) {
                     block = null;
                     if (y <= 1) {
@@ -171,6 +194,14 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
                     }
                     if (y > 1 && y <= height/* y==height*/) {
                         block = wastelandblock;
+                        if(buffetgen){
+                            if(y > height - 3){
+                                block = blocksubsurface;
+                            }
+                            if(y == height){
+                                block = blocktop;
+                            }
+                        }
                     }
 
                     if (block != null) {

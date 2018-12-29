@@ -18,6 +18,7 @@ import java.util.WeakHashMap;
 public class WastelandChunkGeneratorSettings extends OverworldChunkGeneratorSettings {
     private String generatorOps="";
     private WeakReference<RegionCore> core;
+    private boolean isBuffet;
 
     public WastelandChunkGeneratorSettings(){
         super();
@@ -47,6 +48,14 @@ public class WastelandChunkGeneratorSettings extends OverworldChunkGeneratorSett
 
     public void assignCore(RegionCore c){
         core = new WeakReference<>(c);
+    }
+
+    public void initBuffet(boolean b){
+        isBuffet = b;
+    }
+
+    public boolean buffetGen(){
+        return isBuffet;
     }
 
     public boolean checkIfHasStructure(StructureFeature feature){
