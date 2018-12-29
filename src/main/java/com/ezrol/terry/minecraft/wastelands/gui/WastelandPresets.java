@@ -27,7 +27,6 @@
 
 package com.ezrol.terry.minecraft.wastelands.gui;
 
-import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
@@ -152,6 +151,8 @@ public class WastelandPresets extends Gui {
     @Override
     public void onInitialized() {
         this.buttons.clear();
+        this.client.keyboard.enableRepeatEvents(true);
+
         title = I18n.translate("config.ezwastelands.presets.title");
 
         presetInput = new TextFieldWidget(PRESET_INPUT_BOX, this.fontRenderer, 50, 40, this.width - 100, 20);
@@ -173,6 +174,10 @@ public class WastelandPresets extends Gui {
         this.focusOn(listGUI);
     }
 
+    @Override
+    public boolean canClose(){
+        return false;
+    }
 
     @Override
     public void draw(int mouseX, int mouseY, float partialTicks) {

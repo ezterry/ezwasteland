@@ -71,10 +71,14 @@ public class WastelandCustomization extends Gui {
         }
     }
 
-
+    @Override
+    public boolean canClose(){
+        return false;
+    }
 
     @Override
     public void onInitialized() {
+        this.client.keyboard.enableRepeatEvents(true);
 
         this.addButton(new SimpleButton(DONE_ID, this.width / 2 + 98, this.height - 27, 90, 20,
                 I18n.translate("gui.done")));
