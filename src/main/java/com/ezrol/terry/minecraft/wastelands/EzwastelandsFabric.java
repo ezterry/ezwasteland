@@ -1,5 +1,6 @@
 package com.ezrol.terry.minecraft.wastelands;
 
+import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGenerator;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorSettings;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandRegisterI;
@@ -78,6 +79,8 @@ public class EzwastelandsFabric implements ModInitializer {
         new Shallows();
         new TerrainVariation();
         new RandomOptions();
+
+        RegionCore.registerPreset(new Identifier("ezwastelands:presets/list.txt"));
     }
 
     public interface SetEffectiveTool{

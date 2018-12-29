@@ -10,6 +10,14 @@
   "config.ezwastelands.boolean.true": "True",
   "config.ezwastelands.boolean.false": "False",
 
+  "config.ezwastelands.presets.title": "EzWastelands Presets",
+  "config.ezwastelands.BTNSelect": "Select",
+  "presets.ezwastelands.classic.name": "Classic",
+  "presets.ezwastelands.village.name": "Village Challenge",
+  "presets.ezwastelands.alien.name": "Alien Hills",
+  "presets.ezwastelands.atsea.name": "Wasteland Seas",
+  "presets.ezwastelands.lavalake.name": "Lakes of Lava",
+
   "ezwastelands.config.spire.title": "Wasteland Spires",
   "config.ezwastelands.spire.count.name": "Count",
   "config.ezwastelands.spire.count.help": "Number of spires/region",

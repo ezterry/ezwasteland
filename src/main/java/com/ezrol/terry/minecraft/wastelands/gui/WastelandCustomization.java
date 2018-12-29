@@ -135,6 +135,7 @@ public class WastelandCustomization extends Gui {
                     break;
                 case PRESETS_ID:
                     log.info("Opening Presets");
+                    this.client.openGui(new WastelandPresets(this, core.getJson()));
                     //MinecraftClient.getInstance().openGui(new WastelandPresets(this, core.getJson()));
             }
         }
