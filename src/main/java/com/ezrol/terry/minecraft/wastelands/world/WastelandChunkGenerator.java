@@ -2,10 +2,9 @@ package com.ezrol.terry.minecraft.wastelands.world;
 
 import com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.class_2839;
-import net.minecraft.class_2919;
 import net.minecraft.class_3233;
 import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
@@ -16,12 +15,11 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPos;
+import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.DecoratedFeature;
-import net.minecraft.world.gen.feature.StructureFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,6 +35,43 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
 
         core = new RegionCore(settings.getGeneratorJson(), world, this);
         settings.assignCore(core);
+    }
+
+    public BlockPos verifySpawn(int blockx, int blockz, boolean scan) {
+        BlockPos.Mutable pos = new BlockPos.Mutable(blockx, 0, blockz);
+        pos.setY(core.addElementHeight(blockx, blockz));
+
+        int scanstart = Math.min(pos.getY(),RegionCore.WASTELAND_HEIGHT);
+
+        if(scan && pos.getY() <=  RegionCore.WASTELAND_HEIGHT){
+            return null;
+        }
+
+        Chunk chunk =core.getWorld().getChunk(blockx >> 4, blockz >> 4);
+        Block block = chunk.getBlockState(pos).getBlock();
+
+        if(block != EzwastelandsFabric.WastelandsBlock){
+            log.info("no wasteland block");
+            if(scan){
+                return null;
+            }
+        }
+        //scan for first air block above sea level
+        pos.setY(scanstart);
+        block = chunk.getBlockState(pos).getBlock();
+        while (block != Blocks.AIR){
+
+            if(block == Blocks.LAVA){
+                return null;
+            }
+
+            if(pos.getY() == 255)
+                return null;
+            pos.setY(1 + pos.getY());
+            block = chunk.getBlockState(pos).getBlock();
+        }
+
+        return pos;
     }
 
     @Override

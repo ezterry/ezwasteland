@@ -7,6 +7,7 @@ import com.ezrol.terry.minecraft.wastelands.world.WastelandsBiomeSource;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeSourceType;
 import net.minecraft.world.biome.source.VanillaLayeredBiomeSourceConfig;
@@ -30,6 +31,7 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
     }
 
     private static final Logger LOGGER = LogManager.getLogger("ChunkGenType");
+
     @Inject(at = @At(value="INVOKE",
             target="Lnet/minecraft/world/gen/chunk/ChunkGeneratorType;createSettings()Lnet/minecraft/world/gen/chunk/ChunkGeneratorSettings;"), method = "createChunkGenerator", cancellable = true)
     public void createChunkGenerator(CallbackInfoReturnable ci){
@@ -48,6 +50,17 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
             );
         }
 
+    }
+
+    //custom spawn logic
+    @Inject(at = @At("HEAD"), method = "method_12444", cancellable = true)
+    public void playerSpawn(int blockx, int blockz, boolean force,CallbackInfoReturnable ci){
+        LevelGeneratorType type = this.world.getLevelProperties().getGeneratorType();
+        if(type == EzwastelandsFabric.WASTELANDS_LEVEL_TYPE){
+            //correct a spawn location
+            WastelandChunkGenerator gen = (WastelandChunkGenerator) world.getChunkManager().getChunkGenerator();
+            ci.setReturnValue(gen.verifySpawn(blockx, blockz, force));
+        }
     }
 
     @Override
