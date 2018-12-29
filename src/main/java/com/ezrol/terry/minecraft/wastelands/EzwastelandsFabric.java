@@ -86,10 +86,6 @@ public class EzwastelandsFabric implements ModInitializer {
                 for(Identifier id : Registry.CHUNK_GENERATOR_TYPE.keys()){
                     System.out.println(id);
                 }
-
-                for(Tag.Entry<Block> e : BlockTags.VALID_SPAWN.entries()){
-                    System.out.println(e.toString());
-                }
                 //add wasteland block to all shovels
                 for(Item i : Registry.ITEM){
                     if(i instanceof ShovelItem){
