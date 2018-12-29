@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, Terrence Ezrol (ezterry)
+ * Copyright (c) 2015-2019, Terrence Ezrol (ezterry)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,19 +27,16 @@
 
 package com.ezrol.terry.minecraft.wastelands.world.elements;
 
-import com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric;
 import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.mojang.datafixers.Dynamic;
 import net.minecraft.*;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BoundingBox;
 import net.minecraft.util.math.MutableIntBoundingBox;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
@@ -54,7 +51,6 @@ import net.minecraft.world.gen.decorator.Decorator;
 import net.minecraft.world.gen.feature.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.system.CallbackI;
 
 import java.util.*;
 import java.util.function.Function;
