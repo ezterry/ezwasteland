@@ -54,7 +54,7 @@ public abstract class ClientMixinNewWorldGui extends Gui implements OverrideCust
 
     private static final Logger LOGGER = LogManager.getLogger("NewGiuMixin");
 
-    @Inject(at = @At("RETURN"), method = "onInitialized() V", cancellable = false)
+    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/client/gui/menu/NewLevelGui;onInitialized()V", cancellable = false)
     public void onInitialized(CallbackInfo info) {
         LOGGER.info("Updating Button");
 

@@ -44,13 +44,17 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeSource;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.chunk.ChunkGeneratorType;
-import net.minecraft.world.gen.chunk.EzChunkGeneratorFactoryProxy;
 import net.minecraft.world.level.LevelGeneratorType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class EzwastelandsFabric implements ModInitializer {
     public static LevelGeneratorType WASTELANDS_LEVEL_TYPE = null;
@@ -64,10 +68,10 @@ public class EzwastelandsFabric implements ModInitializer {
         WASTELANDS_LEVEL_TYPE = WastelandsLevelType.getType();
 
         //register the wasteland generator type
-        EzChunkGeneratorFactoryProxy<WastelandChunkGeneratorSettings,WastelandChunkGenerator> factoryProxy;
+        createWastelandGenerator factory = new createWastelandGenerator();
 
-        factoryProxy = new EzChunkGeneratorFactoryProxy<>(new createWastelandGenerator());
-        WASTELANDS = new ChunkGeneratorType<>(factoryProxy.getFactory(),true,WastelandChunkGeneratorSettings::new);
+        WASTELANDS = factory.getChunkGeneratorType(WastelandChunkGeneratorSettings::new);
+
         Registry.register(Registry.CHUNK_GENERATOR_TYPE, "ezwastelands:wastelands", WASTELANDS);
 
         //register block
@@ -108,13 +112,79 @@ public class EzwastelandsFabric implements ModInitializer {
         RegionCore.registerPreset(new Identifier("ezwastelands:presets/list.txt"));
     }
 
-    private class createWastelandGenerator
-            implements EzChunkGeneratorFactoryProxy.ProxyFactory<WastelandChunkGeneratorSettings,WastelandChunkGenerator>
+    /**
+     * This is a bit hacky,
+     * The short of it is we want to register the wastelands as CHUNK_GENERATOR_TYPE
+     *
+     * However  ChunkGeneratorType requires a factory interface ChunkGeneratorFactory
+     * that is package private.  (thus we can't use the interface directly)
+     *
+     * The folowing class uses reflection to become an instance of "ChunkGeneratorFactory"
+     * as well as reflection to create the ChunkGeneratorType object to pass in the
+     * interface object
+     */
+    private class createWastelandGenerator implements InvocationHandler
     {
+        private Object factoryProxy;
+        private Class factoryClass;
 
-        @Override
+        createWastelandGenerator(){
+            //reflection hack, dev = mapped in dev enviroment, prod = intermediate value
+            String dev_name = "net.minecraft.world.gen.chunk.ChunkGeneratorFactory";
+            String prod_name = "net.minecraft.class_2801";
+
+            try {
+                factoryClass = Class.forName(dev_name);
+            } catch (ClassNotFoundException e1){
+                try {
+                    factoryClass = Class.forName(prod_name);
+                }catch (ClassNotFoundException e2){
+                    throw(new RuntimeException("Unable to find " + dev_name));
+                }
+            }
+            factoryProxy = Proxy.newProxyInstance(factoryClass.getClassLoader(),
+                    new Class[] {factoryClass},
+                    this);
+        }
+
         public WastelandChunkGenerator createProxy(World w, BiomeSource biomesource, WastelandChunkGeneratorSettings gensettings) {
             return new WastelandChunkGenerator(w,biomesource,gensettings);
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            if(args.length == 3 &&
+                args[0] instanceof World &&
+                args[1] instanceof BiomeSource &&
+                args[2] instanceof WastelandChunkGeneratorSettings
+            ){
+
+                return createProxy((World)args[0],
+                        (BiomeSource)args[1],
+                        (WastelandChunkGeneratorSettings)args[2]);
+            }
+            throw(new UnsupportedOperationException("Unknown Method: " + method.toString()));
+        }
+
+        public ChunkGeneratorType getChunkGeneratorType(Supplier<WastelandChunkGeneratorSettings> supplier){
+            Constructor<?>[] initlst = ChunkGeneratorType.class.getDeclaredConstructors();
+            final Logger log = LogManager.getLogger("ChunkGenErr");
+
+            for(Constructor<?> init : initlst){
+                init.setAccessible(true);
+                if(init.getParameterCount() != 3){
+                    continue; //skip
+                }
+                //lets try it
+                try {
+                    return (ChunkGeneratorType) init.newInstance(factoryProxy, true, supplier);
+                }
+                catch (Exception e){
+                    log.error("Error in calling Chunk Generator Type", e);
+                }
+            }
+            log.error("Unable to find constructor for ChunkGeneratorType");
+            return null;
         }
     }
 
