@@ -30,7 +30,6 @@ package com.ezrol.terry.minecraft.wastelands;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGenerator;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorSettings;
-import com.ezrol.terry.minecraft.wastelands.world.WastelandRegisterI;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandsLevelType;
 import com.ezrol.terry.minecraft.wastelands.world.elements.*;
 import net.fabricmc.api.ModInitializer;
@@ -41,11 +40,14 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.item.block.BlockItem;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.source.BiomeSource;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.chunk.ChunkGeneratorType;
+import net.minecraft.world.gen.chunk.EzChunkGeneratorFactoryProxy;
 import net.minecraft.world.level.LevelGeneratorType;
 
 import java.util.function.Consumer;
@@ -62,10 +64,10 @@ public class EzwastelandsFabric implements ModInitializer {
         WASTELANDS_LEVEL_TYPE = WastelandsLevelType.getType();
 
         //register the wasteland generator type
-        WASTELANDS = new ChunkGeneratorType<>(null,true,WastelandChunkGeneratorSettings::new);
-        //noinspection ConstantConditions
-        ((WastelandRegisterI)WASTELANDS).enableWastelandGenerator(true);
+        EzChunkGeneratorFactoryProxy<WastelandChunkGeneratorSettings,WastelandChunkGenerator> factoryProxy;
 
+        factoryProxy = new EzChunkGeneratorFactoryProxy<>(new createWastelandGenerator());
+        WASTELANDS = new ChunkGeneratorType<>(factoryProxy.getFactory(),true,WastelandChunkGeneratorSettings::new);
         Registry.register(Registry.CHUNK_GENERATOR_TYPE, "ezwastelands:wastelands", WASTELANDS);
 
         //register block
@@ -104,6 +106,16 @@ public class EzwastelandsFabric implements ModInitializer {
         new RandomOptions();
 
         RegionCore.registerPreset(new Identifier("ezwastelands:presets/list.txt"));
+    }
+
+    private class createWastelandGenerator
+            implements EzChunkGeneratorFactoryProxy.ProxyFactory<WastelandChunkGeneratorSettings,WastelandChunkGenerator>
+    {
+
+        @Override
+        public WastelandChunkGenerator createProxy(World w, BiomeSource biomesource, WastelandChunkGeneratorSettings gensettings) {
+            return new WastelandChunkGenerator(w,biomesource,gensettings);
+        }
     }
 
     public interface SetEffectiveTool{

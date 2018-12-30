@@ -42,7 +42,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPos;
-import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -53,7 +52,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Random;
 
-public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGeneratorSettings>{
+public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGeneratorSettings> {
     private RegionCore core;
     static private Logger log = LogManager.getLogger("WastelandChunkGenerator");
 
@@ -201,7 +200,7 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
         boolean buffetgen = settings.buffetGen();
         BlockState blocksubsurface = wastelandblock;
         BlockState blocktop = wastelandblock;
-        Biome curBiome = null;
+        Biome curBiome;
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
@@ -262,4 +261,5 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
         Chunk chunk = this.world.method_8392(0, 0);
         return chunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING, 8, 8);
     }
+
 }
