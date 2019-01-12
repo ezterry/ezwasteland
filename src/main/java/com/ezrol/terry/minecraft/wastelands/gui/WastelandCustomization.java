@@ -29,7 +29,7 @@ package com.ezrol.terry.minecraft.wastelands.gui;
 
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
-import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorSettings;
+import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorConfig;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.menu.NewLevelGui;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -54,7 +54,7 @@ public class WastelandCustomization extends Gui {
     public WastelandCustomization(NewLevelGui p, CompoundTag tags) {
         super();
         this.parent = p;
-        core = new RegionCore(WastelandChunkGeneratorSettings.CompoundToJson(tags),null, null);
+        core = new RegionCore(WastelandChunkGeneratorConfig.CompoundToJson(tags),null, null);
     }
 
     private class SimpleButton extends ButtonWidget{
@@ -72,7 +72,7 @@ public class WastelandCustomization extends Gui {
     }
 
     @Override
-    public boolean canClose(){
+    public boolean doesEscapeKeyClose(){
         return false;
     }
 
@@ -127,7 +127,7 @@ public class WastelandCustomization extends Gui {
                 case DONE_ID:
                     String json = core.getJson();
                     log.info("Wasteland Settings: " + json);
-                    parent.field_3200 = WastelandChunkGeneratorSettings.CoreConfigToCompound(core);
+                    parent.field_3200 = WastelandChunkGeneratorConfig.CoreConfigToCompound(core);
                     this.client.openGui(this.parent);
                     break;
                 case DEFAULTS_ID:

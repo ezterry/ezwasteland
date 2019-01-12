@@ -29,7 +29,7 @@ package com.ezrol.terry.minecraft.wastelands;
 
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGenerator;
-import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorSettings;
+import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorConfig;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandsLevelType;
 import com.ezrol.terry.minecraft.wastelands.world.elements.*;
 import net.fabricmc.api.ModInitializer;
@@ -58,7 +58,7 @@ import java.util.function.Supplier;
 
 public class EzwastelandsFabric implements ModInitializer {
     public static LevelGeneratorType WASTELANDS_LEVEL_TYPE = null;
-    public static ChunkGeneratorType<WastelandChunkGeneratorSettings, WastelandChunkGenerator> WASTELANDS;
+    public static ChunkGeneratorType<WastelandChunkGeneratorConfig, WastelandChunkGenerator> WASTELANDS;
     public static Block WastelandsBlock;
 
 
@@ -70,7 +70,7 @@ public class EzwastelandsFabric implements ModInitializer {
         //register the wasteland generator type
         createWastelandGenerator factory = new createWastelandGenerator();
 
-        WASTELANDS = factory.getChunkGeneratorType(WastelandChunkGeneratorSettings::new);
+        WASTELANDS = factory.getChunkGeneratorType(WastelandChunkGeneratorConfig::new);
 
         Registry.register(Registry.CHUNK_GENERATOR_TYPE, "ezwastelands:wastelands", WASTELANDS);
 
@@ -147,7 +147,7 @@ public class EzwastelandsFabric implements ModInitializer {
                     this);
         }
 
-        public WastelandChunkGenerator createProxy(World w, BiomeSource biomesource, WastelandChunkGeneratorSettings gensettings) {
+        public WastelandChunkGenerator createProxy(World w, BiomeSource biomesource, WastelandChunkGeneratorConfig gensettings) {
             return new WastelandChunkGenerator(w,biomesource,gensettings);
         }
 
@@ -156,17 +156,17 @@ public class EzwastelandsFabric implements ModInitializer {
             if(args.length == 3 &&
                 args[0] instanceof World &&
                 args[1] instanceof BiomeSource &&
-                args[2] instanceof WastelandChunkGeneratorSettings
+                args[2] instanceof WastelandChunkGeneratorConfig
             ){
 
                 return createProxy((World)args[0],
                         (BiomeSource)args[1],
-                        (WastelandChunkGeneratorSettings)args[2]);
+                        (WastelandChunkGeneratorConfig)args[2]);
             }
             throw(new UnsupportedOperationException("Unknown Method: " + method.toString()));
         }
 
-        public ChunkGeneratorType getChunkGeneratorType(Supplier<WastelandChunkGeneratorSettings> supplier){
+        public ChunkGeneratorType getChunkGeneratorType(Supplier<WastelandChunkGeneratorConfig> supplier){
             Constructor<?>[] initlst = ChunkGeneratorType.class.getDeclaredConstructors();
             final Logger log = LogManager.getLogger("ChunkGenErr");
 

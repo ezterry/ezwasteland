@@ -34,6 +34,7 @@ import net.minecraft.item.MiningToolItem;
 import net.minecraft.item.ToolItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -41,6 +42,7 @@ import java.util.Set;
 
 @Mixin(MiningToolItem.class)
 abstract public class CommonMixinToolItem  implements EzwastelandsFabric.SetEffectiveTool {
+    @Final
     @Shadow
     private  Set<Block> effectiveBlocks;
 

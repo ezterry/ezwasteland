@@ -32,10 +32,10 @@ import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.class_3233;
-import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
+import net.minecraft.sortme.structures.StructureManager;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -52,15 +52,15 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Random;
 
-public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGeneratorSettings> {
+public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGeneratorConfig> {
     private RegionCore core;
     static private Logger log = LogManager.getLogger("WastelandChunkGenerator");
 
-    public WastelandChunkGenerator(World world, BiomeSource biomeGen, WastelandChunkGeneratorSettings settings){
-        super(world,biomeGen,settings);
+    public WastelandChunkGenerator(World world, BiomeSource biomeGen, WastelandChunkGeneratorConfig config){
+        super(world,biomeGen,config);
 
-        core = new RegionCore(settings.getGeneratorJson(), world, this);
-        settings.assignCore(core);
+        core = new RegionCore(config.getGeneratorJson(), world, this);
+        config.assignCore(core);
     }
 
     public BlockPos verifySpawn(int blockx, int blockz, boolean scan) {
@@ -102,7 +102,7 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
 
     @Override
     public void carve(Chunk chunk, GenerationStep.Carver carver) {
-        if(settings.buffetGen()){
+        if(config.buffetGen()){
             super.carve(chunk,carver);
         }
     }
@@ -111,7 +111,7 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
     public BlockPos locateStructure(World world_1, String name, BlockPos pos, int tries, boolean unexplored) {
         //return super.locateStructure(world_1, string_1, blockPos_1, int_1, boolean_1);
         BlockPos b = core.getNearestStructure(name, pos, tries, unexplored);
-        if(b == null && settings.buffetGen()){
+        if(b == null && config.buffetGen()){
             b = super.locateStructure(world_1,name,pos,tries,unexplored);
         }
         return b;
@@ -135,43 +135,38 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
     }
 
     @Override
-    public void generateFeatures(class_3233 world) {
-        ChunkPos pos = new ChunkPos(world.method_14336(), world.method_14339());
+    public void generateFeatures(ChunkRegion region) {
+        ChunkPos pos = new ChunkPos(region.getCenterChunkX(), region.getCenterChunkZ());
         int blockx = pos.x * 16;
         int blockz = pos.z * 16;
 
         BlockPos chunkCorner = new BlockPos(blockx, 0, blockz);
-        Random rng = chunkBasedRNG(pos, world.getSeed());
+        Random rng = chunkBasedRNG(pos, region.getSeed());
 
         for (ConfiguredFeature<?> configuredFeature : RegionCore.getFeatureLst()) {
-            configuredFeature.generate(world, this, rng, chunkCorner);
+            configuredFeature.generate(region, this, rng, chunkCorner);
         }
 
-        Chunk c = world.method_8392(pos.x, pos.z);
+        Chunk c = region.getChunk(pos.x, pos.z);
         core.additionalTriggers("featuresgen", c.getPos(), c, null);
 
-        if(settings.buffetGen()){
-            super.generateFeatures(world);
+        if(config.buffetGen()){
+            super.generateFeatures(region);
         }
     }
 
     @Override
-    public void populateEntities(class_3233 class_3233_1) {
-        super.populateEntities(class_3233_1);
+    public void populateEntities(ChunkRegion region) {
+        super.populateEntities(region);
     }
 
     @Override
-    public void method_16129(Chunk chunk, ChunkGenerator<?> chunkGenerator_1, class_3485 resources) {
-        core.additionalTriggers("populate", chunk.getPos(),chunk,resources);
+    public void setStructureStarts(Chunk chunk, ChunkGenerator<?> chunkGenerator, StructureManager resources) {
+        core.additionalTriggers("structure_start", chunk.getPos(),chunk,resources);
 
-        if(settings.buffetGen()){
-            super.method_16129(chunk, chunkGenerator_1, resources);
+        if(config.buffetGen()){
+            super.setStructureStarts(chunk, chunkGenerator, resources);
         }
-    }
-
-    @Override
-    public void method_12099(World world_1, boolean boolean_1, boolean boolean_2) {
-        super.method_12099(world_1, boolean_1, boolean_2);
     }
 
     @Override
@@ -194,10 +189,11 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
         BlockState wastelandblock = EzwastelandsFabric.WastelandsBlock.getDefaultState();
 
         Heightmap heights = chunk.getHeightmap(Heightmap.Type.WORLD_SURFACE_WG);
+        Heightmap heights_ocean = chunk.getHeightmap(Heightmap.Type.OCEAN_FLOOR_WG);
 
         int height;
         BlockState block;
-        boolean buffetgen = settings.buffetGen();
+        boolean buffetgen = config.buffetGen();
         BlockState blocksubsurface = wastelandblock;
         BlockState blocktop = wastelandblock;
         Biome curBiome;
@@ -235,8 +231,11 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
                     }
                 }
                 //wasteland blocks have been filled in see if the modules have anything custom to add
+
+                heights.trackUpdate(x,height,z, wastelandblock);
+                heights_ocean.trackUpdate(x,height,z,wastelandblock);
+
                 core.postPointFill(chunk, height, x + (p_x * 16), z + (p_z * 16));
-                heights.method_12597(x,height,z, wastelandblock);
             }
         }
 
@@ -257,8 +256,8 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
 
 
     @Override
-    public int method_12100() {
-        Chunk chunk = this.world.method_8392(0, 0);
+    public int getSpawnHeight() {
+        Chunk chunk = this.world.getChunk(0, 0);
         return chunk.sampleHeightmap(Heightmap.Type.MOTION_BLOCKING, 8, 8);
     }
 

@@ -30,7 +30,7 @@ package com.ezrol.terry.minecraft.wastelands.mixin;
 import com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGenerator;
-import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorSettings;
+import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorConfig;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandsBiomeSource;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -53,7 +53,7 @@ import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.gen.chunk.ChunkGeneratorType;
-import net.minecraft.world.gen.chunk.OverworldChunkGeneratorSettings;
+import net.minecraft.world.gen.chunk.OverworldChunkGeneratorConfig;
 import net.minecraft.world.level.LevelGeneratorType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,16 +71,16 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
     private static final Logger LOGGER = LogManager.getLogger("ChunkGenType");
 
     @Inject(at = @At(value="INVOKE",
-            target="Lnet/minecraft/world/gen/chunk/ChunkGeneratorType;createSettings()Lnet/minecraft/world/gen/chunk/ChunkGeneratorSettings;"), method = "createChunkGenerator", cancellable = true)
+            target="Lnet/minecraft/world/gen/chunk/ChunkGeneratorType;createSettings()Lnet/minecraft/world/gen/chunk/ChunkGeneratorConfig;"), method = "createChunkGenerator", cancellable = true)
     public void createChunkGenerator(CallbackInfoReturnable ci){
         LevelGeneratorType type = this.world.getLevelProperties().getGeneratorType();
-        ChunkGeneratorType<WastelandChunkGeneratorSettings, WastelandChunkGenerator> ezwastelands = EzwastelandsFabric.WASTELANDS;
+        ChunkGeneratorType<WastelandChunkGeneratorConfig, WastelandChunkGenerator> ezwastelands = EzwastelandsFabric.WASTELANDS;
 
         if(type == EzwastelandsFabric.WASTELANDS_LEVEL_TYPE){
             LOGGER.info("Use wastelands generator");
             CompoundTag opts = this.world.getLevelProperties().getGeneratorOptions();
-            WastelandChunkGeneratorSettings settings = new WastelandChunkGeneratorSettings(opts);
-            VanillaLayeredBiomeSourceConfig biomeSrcCfg = ((VanillaLayeredBiomeSourceConfig)BiomeSourceType.VANILLA_LAYERED.getConfig()).setGeneratorSettings(new OverworldChunkGeneratorSettings()).setLevelProperties(this.world.getLevelProperties());
+            WastelandChunkGeneratorConfig settings = new WastelandChunkGeneratorConfig(opts);
+            VanillaLayeredBiomeSourceConfig biomeSrcCfg = ((VanillaLayeredBiomeSourceConfig)BiomeSourceType.VANILLA_LAYERED.getConfig()).setGeneratorSettings(new OverworldChunkGeneratorConfig()).setLevelProperties(this.world.getLevelProperties());
 
             settings.initBuffet(false);
             //noinspection unchecked
@@ -101,10 +101,10 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
             }
             if(generator.equals("ezwastelands:wastelands")){
                 //we are up use the "BUFFET" default
-                String json = "{\"terrainvariation\":{\"amplification\":30,\"variation\":1},\"randopts\":{\"oceans\":false,\"oceanblock\":\"minecraft:water\",\"globaloffset\":0,\"villages\":false,\"villagechance\":10.0,\"strongholds\":true},\"domes\":{\"lgmincount\":3,\"lgmaxcount\":4,\"lgradius\":34,\"lgheight\":7,\"midmincount\":2,\"midmaxcount\":3,\"midradius\":23,\"midheight\":8,\"smmincount\":1,\"smmaxcount\":2,\"smradius\":18,\"smheight\":9},\"shallows\":{\"mincount\":4,\"maxcount\":5,\"radius\":42,\"depth\":5},\"spire\":{\"count\":2,\"size\":6}}";
-                CompoundTag tags = WastelandChunkGeneratorSettings.CoreConfigToCompound(
+                String json = "{\"terrainvariation\":{\"amplification\":30,\"variation\":1},\"randopts\":{\"oceans\":false,\"oceanblock\":\"minecraft:water\",\"globaloffset\":0,\"villages\":false,\"villagechance\":10.0,\"strongholds\":false},\"domes\":{\"lgmincount\":3,\"lgmaxcount\":4,\"lgradius\":34,\"lgheight\":7,\"midmincount\":2,\"midmaxcount\":3,\"midradius\":23,\"midheight\":8,\"smmincount\":1,\"smmaxcount\":2,\"smradius\":18,\"smheight\":9},\"shallows\":{\"mincount\":4,\"maxcount\":5,\"radius\":42,\"depth\":5},\"spire\":{\"count\":2,\"size\":6}}";
+                CompoundTag tags = WastelandChunkGeneratorConfig.CoreConfigToCompound(
                         new RegionCore(json,null,null));
-                WastelandChunkGeneratorSettings settings = new WastelandChunkGeneratorSettings(tags);
+                WastelandChunkGeneratorConfig settings = new WastelandChunkGeneratorConfig(tags);
                 settings.initBuffet(true);
 
                 //get the selected biome

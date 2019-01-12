@@ -2,9 +2,11 @@
   "id": "ezwastelands",
   "name": "EzWastelands",
   "description": "EzTerry's Wastelands terrain generator",
-  "version": "18w50a-fabric-1.3.2",
+  "version": "19w02a-fabric-1.4.1",
   "side": "universal",
-  "initializer": "com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric",
+  "initializers": [
+    "com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric"
+  ],
   "requires": {
     "fabric": "*"
   },

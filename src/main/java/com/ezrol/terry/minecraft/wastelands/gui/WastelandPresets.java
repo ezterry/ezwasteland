@@ -158,7 +158,7 @@ public class WastelandPresets extends Gui {
         presetInput = new TextFieldWidget(PRESET_INPUT_BOX, this.fontRenderer, 50, 40, this.width - 100, 20);
         presetInput.setMaxLength(2048);
         presetInput.setText(currentJson);
-        presetInput.method_1863(this::setEntryValue);
+        presetInput.setChangedListener(this::setEntryValue);
         this.listeners.add(presetInput);
 
         listGUI = new PresetSlotList(this.client, this.width, this.height, 80, this.height - 32, 36);
@@ -175,7 +175,7 @@ public class WastelandPresets extends Gui {
     }
 
     @Override
-    public boolean canClose(){
+    public boolean doesEscapeKeyClose(){
         return false;
     }
 

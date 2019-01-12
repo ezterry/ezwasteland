@@ -31,9 +31,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import it.unimi.dsi.fastutil.ints.IntLists;
-import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
+import net.minecraft.sortme.structures.StructureManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -296,7 +295,7 @@ public class RegionCore {
     }
 
     public void additionalTriggers(String event, ChunkPos chunkCord,
-                                   Chunk chunk, class_3485 resources) {
+                                   Chunk chunk, StructureManager resources) {
         forEachElement((e,nop)->{
             e.additionalTriggers(event, chunkCord, chunk, resources,this);
             return nop;

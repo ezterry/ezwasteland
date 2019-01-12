@@ -35,6 +35,8 @@ import net.minecraft.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityCategory;
+import net.minecraft.sortme.structures.StructureManager;
+import net.minecraft.sortme.structures.StructureStart;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableIntBoundingBox;
@@ -44,10 +46,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPos;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.config.decorator.DecoratorConfig;
-import net.minecraft.world.gen.config.feature.FeatureConfig;
-import net.minecraft.world.gen.config.feature.NewVillageFeatureConfig;
 import net.minecraft.world.gen.decorator.Decorator;
+import net.minecraft.world.gen.decorator.DecoratorConfig;
 import net.minecraft.world.gen.feature.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -171,42 +171,42 @@ public class RandomOptions implements IRegionElement {
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public void additionalTriggers(String event, ChunkPos cords, Chunk chunk, class_3485 resources, RegionCore core) {
+    public void additionalTriggers(String event, ChunkPos cords, Chunk chunk, StructureManager resources, RegionCore core) {
         boolean genStrongholds = ((Param.BooleanParam) core.lookupParam(this, "strongholds")).get();
         boolean genVillages = ((Param.BooleanParam) core.lookupParam(this, "villages")).get();
         float villageRate = ((Param.FloatParam) core.lookupParam(this, "villagechance")).get();
         World w = core.getWorld();
 
-        if (event.equals("populate")) {
+        if (event.equals("structure_start")) {
             Random rng = chunkBasedRNG(cords, w.getSeed());
             StructureFeature feature = StructureFeatures.STRONGHOLD;
             ChunkGenerator gen = core.getChunkGen();
 
             if (core.isStructuresEnabled() && genStrongholds) {
-                class_3449 struct = null;
+                StructureStart struct = null;
                 if (feature.method_14026(gen, rng, cords.x, cords.z)) {
-                    Biome biome = gen.getBiomeSource().method_8758(
+                    Biome biome = gen.getBiomeSource().getBiome(
                             new BlockPos(cords.getXStart() + 9, 0, cords.getZStart() + 9));
-                    class_3449 newstruct =  feature.method_14016().create(feature, cords.x, cords.z, biome, MutableIntBoundingBox.maxSize(), 0, gen.getSeed());
+                    StructureStart newstruct =  feature.method_14016().create(feature, cords.x, cords.z, biome, MutableIntBoundingBox.maxSize(), 0, gen.getSeed());
                     newstruct.method_16655(gen, resources, cords.x, cords.z, biome);
-                    struct = newstruct.hasChildren() ? newstruct : class_3449.field_16713;
+                    struct = newstruct.hasChildren() ? newstruct : StructureStart.field_16713;
                     if(struct != null){
-                        chunk.method_12184(feature.getName(), struct);
+                        chunk.setStructureStart(feature.getName(), struct);
                     }
                 }
             }
 
             feature = WASTELAND_VILLAGE;
             if(core.isStructuresEnabled() && genVillages){
-                class_3449 struct = null;
+                StructureStart struct = null;
                 if (WASTELAND_VILLAGE.canVillageSpawn(cords, villageRate, w.getSeed())) {
-                    Biome biome = gen.getBiomeSource().method_8758(
+                    Biome biome = gen.getBiomeSource().getBiome(
                             new BlockPos(cords.getXStart() + 9, 0, cords.getZStart() + 9));
-                    class_3449 newstruct =  feature.method_14016().create(feature, cords.x, cords.z, biome, MutableIntBoundingBox.maxSize(), 0, gen.getSeed());
+                    StructureStart newstruct =  feature.method_14016().create(feature, cords.x, cords.z, biome, MutableIntBoundingBox.maxSize(), 0, gen.getSeed());
                     newstruct.method_16655(gen, resources, cords.x, cords.z, biome);
-                    struct = newstruct.hasChildren() ? newstruct : class_3449.field_16713;
+                    struct = newstruct.hasChildren() ? newstruct : StructureStart.field_16713;
                     if(struct != null){
-                        chunk.method_12184(feature.getName(), struct);
+                        chunk.setStructureStart(feature.getName(), struct);
                     }
                 }
             }
@@ -274,7 +274,7 @@ public class RandomOptions implements IRegionElement {
         return lst;
     }
 
-    private static class WastelandVillage extends NewVillageFeature{
+    private static class WastelandVillage extends VillageFeature{
         WastelandVillage(Function<Dynamic<?>, ? extends NewVillageFeatureConfig> fn) {
             super(fn);
         }
@@ -307,14 +307,14 @@ public class RandomOptions implements IRegionElement {
             return false;
         }
 
-        public static class cityCore extends class_3449 {
+        public static class cityCore extends StructureStart {
 
             public cityCore(StructureFeature<?> structureFeature_1, int int_1, int int_2, Biome biome_1, MutableIntBoundingBox mutableIntBoundingBox_1, int int_3, long long_1) {
                 super(structureFeature_1, int_1, int_2, biome_1, mutableIntBoundingBox_1, int_3, long_1);
             }
 
             @Override
-            public void method_16655(ChunkGenerator<?> gen, class_3485 res, int x, int z, Biome var5) {
+            public void method_16655(ChunkGenerator<?> gen, StructureManager res, int x, int z, Biome var5) {
                 BlockPos blockPos_1 = new BlockPos(x * 16, 0, z * 16);
                 class_3813.method_16753(gen, res, blockPos_1, this.children, this.field_16715, WastelandVillageConfig(null));
                 this.method_14969();

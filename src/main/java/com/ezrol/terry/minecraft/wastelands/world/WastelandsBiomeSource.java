@@ -37,10 +37,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class WastelandsBiomeSource extends VanillaLayeredBiomeSource {
-    private WastelandChunkGeneratorSettings sysGen;
+    private WastelandChunkGeneratorConfig sysGen;
     private Set<BlockState> topMaterials;
 
-    public WastelandsBiomeSource(VanillaLayeredBiomeSourceConfig cfg, WastelandChunkGeneratorSettings gen){
+    public WastelandsBiomeSource(VanillaLayeredBiomeSourceConfig cfg, WastelandChunkGeneratorConfig gen){
         super(cfg);
         sysGen = gen;
         topMaterials = null;

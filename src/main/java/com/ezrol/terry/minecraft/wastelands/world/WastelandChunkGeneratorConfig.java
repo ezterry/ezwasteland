@@ -29,44 +29,39 @@ package com.ezrol.terry.minecraft.wastelands.world;
 
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.mojang.datafixers.types.templates.CompoundList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
-import net.minecraft.world.gen.chunk.OverworldChunkGeneratorSettings;
+import net.minecraft.world.gen.chunk.OverworldChunkGeneratorConfig;
 import net.minecraft.world.gen.feature.StructureFeature;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
-public class WastelandChunkGeneratorSettings extends OverworldChunkGeneratorSettings {
+public class WastelandChunkGeneratorConfig extends OverworldChunkGeneratorConfig {
     private String generatorOps="";
     private WeakReference<RegionCore> core;
     private boolean isBuffet;
 
-    public WastelandChunkGeneratorSettings(){
+    public WastelandChunkGeneratorConfig(){
         super();
 
         //stronghold - distance
-        field_13142 = 48;
+        strongholdDistance = 48;
         //stronghold - count
-        field_13141 = 196;
+        strongholdCount = 196;
         //stronghold - spread
-        field_13140 = 5;
+        strongholdSpread = 5;
 
     }
 
-    public WastelandChunkGeneratorSettings(CompoundTag tags){
+    public WastelandChunkGeneratorConfig(CompoundTag tags){
         super();
         //stronghold - distance
-        field_13142 = 48;
+        strongholdDistance = 48;
         //stronghold - count
-        field_13141 = 196;
+        strongholdCount = 196;
         //stronghold - spread
-        field_13140 = 5;
+        strongholdSpread = 5;
 
         if(generatorOps != null) {
             generatorOps = CompoundToJson(tags);

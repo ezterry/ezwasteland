@@ -30,8 +30,8 @@
  */
 package com.ezrol.terry.minecraft.wastelands.api;
 
-import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
+import net.minecraft.sortme.structures.StructureManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -67,7 +67,7 @@ public abstract class AbstractElement implements IRegionElement{
     }
 
     @Override
-    public void additionalTriggers(String event, ChunkPos cords, Chunk curchunk, class_3485 resources, RegionCore core) {
+    public void additionalTriggers(String event, ChunkPos cords, Chunk curchunk, StructureManager resources, RegionCore core) {
 
     }
 

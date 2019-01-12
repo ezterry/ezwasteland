@@ -27,8 +27,8 @@
 
 package com.ezrol.terry.minecraft.wastelands.api;
 
-import net.minecraft.class_3485;
 import net.minecraft.entity.EntityCategory;
+import net.minecraft.sortme.structures.StructureManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -107,7 +107,7 @@ public interface IRegionElement {
      * @param curchunk          - for "chunkcleanup" this is the chunkprimer, otherwise null
      * @param core              - current region core object
      */
-    void additionalTriggers(String event, ChunkPos cords, Chunk curchunk, class_3485 resources, RegionCore core);
+    void additionalTriggers(String event, ChunkPos cords, Chunk curchunk, StructureManager resources, RegionCore core);
 
     /**
      * Get the nearest structure of the given name to the given position (or null if unknown)
@@ -125,7 +125,7 @@ public interface IRegionElement {
      * If we can generate a specific structure
      * @param name the name of the structure
      * @param core the current region core
-     * @return
+     * @return if the structure is allowed to generate (false if unknown)
      */
     boolean hasStructure(String name, RegionCore core);
 
