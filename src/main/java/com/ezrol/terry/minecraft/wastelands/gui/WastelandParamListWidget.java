@@ -98,6 +98,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
     private abstract class HoverableWidget extends ButtonWidget{
         long hoverStart = -1;
         int lastX, lastY;
+
         HoverableWidget(int id, int x, int y, int w, int h, String t){
             super(id,x,y,w,h,t);
             lastX = -1;
@@ -110,7 +111,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         }
 
         protected void drawHover(int mouseX, int mouseY) {
-            boolean hovered = isHovered();
+            boolean hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
             if(hovered && (hoverStart == -1 || lastX != mouseX || lastY != mouseY)){
                 hoverStart = System.currentTimeMillis();
@@ -129,6 +130,11 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             if(!hovered){
                 hoverStart = -1;
             }
+        }
+
+        @Override
+        public boolean isHovered() {
+            return hoverStart != -1;
         }
 
         abstract public String getHoverText();
