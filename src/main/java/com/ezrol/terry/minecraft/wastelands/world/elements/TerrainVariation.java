@@ -73,7 +73,10 @@ public class TerrainVariation extends AbstractElement {
             if (weight <= 0) {
                 continue;
             }
-            weight = (int) Math.pow((double) weight, 1.2);
+            double power = 1.0;
+            power += (0.2 * attract.cntperrgn);
+
+            weight = (int) Math.pow((double) weight, power );
             totalWeight += weight;
             localVariation += (long) weight * (long) attract.height;
         }
@@ -132,6 +135,7 @@ public class TerrainVariation extends AbstractElement {
                 continue;
             }
             node.height = r.nextInt(amplification);
+            node.cntperrgn = variation;
             elements.add(node);
         }
 
@@ -142,5 +146,6 @@ public class TerrainVariation extends AbstractElement {
         protected int x;
         protected int z;
         protected int height;
+        protected int cntperrgn;
     }
 }
