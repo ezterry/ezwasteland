@@ -31,12 +31,12 @@ import com.ezrol.terry.minecraft.wastelands.api.IRegionElement;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.mojang.datafixers.Dynamic;
-import net.minecraft.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityCategory;
-import net.minecraft.sortme.structures.StructureManager;
-import net.minecraft.sortme.structures.StructureStart;
+import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructureStart;
+import net.minecraft.structure.generator.village.VillageGenerator;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableIntBoundingBox;
@@ -184,12 +184,12 @@ public class RandomOptions implements IRegionElement {
 
             if (core.isStructuresEnabled() && genStrongholds) {
                 StructureStart struct = null;
-                if (feature.method_14026(gen, rng, cords.x, cords.z)) {
+                if (feature.shouldStartAt(gen, rng, cords.x, cords.z)) {
                     Biome biome = gen.getBiomeSource().getBiome(
-                            new BlockPos(cords.getXStart() + 9, 0, cords.getZStart() + 9));
-                    StructureStart newstruct =  feature.method_14016().create(feature, cords.x, cords.z, biome, MutableIntBoundingBox.maxSize(), 0, gen.getSeed());
-                    newstruct.method_16655(gen, resources, cords.x, cords.z, biome);
-                    struct = newstruct.hasChildren() ? newstruct : StructureStart.field_16713;
+                            new BlockPos(cords.getStartX() + 9, 0, cords.getStartZ() + 9));
+                    StructureStart newstruct =  feature.getStructureStartFactory().create(feature, cords.x, cords.z, biome, MutableIntBoundingBox.empty(), 0, gen.getSeed());
+                    newstruct.initialize(gen, resources, cords.x, cords.z, biome);
+                    struct = newstruct.hasChildren() ? newstruct : StructureStart.DEFAULT;
                     if(struct != null){
                         chunk.setStructureStart(feature.getName(), struct);
                     }
@@ -201,10 +201,10 @@ public class RandomOptions implements IRegionElement {
                 StructureStart struct = null;
                 if (WASTELAND_VILLAGE.canVillageSpawn(cords, villageRate, w.getSeed())) {
                     Biome biome = gen.getBiomeSource().getBiome(
-                            new BlockPos(cords.getXStart() + 9, 0, cords.getZStart() + 9));
-                    StructureStart newstruct =  feature.method_14016().create(feature, cords.x, cords.z, biome, MutableIntBoundingBox.maxSize(), 0, gen.getSeed());
-                    newstruct.method_16655(gen, resources, cords.x, cords.z, biome);
-                    struct = newstruct.hasChildren() ? newstruct : StructureStart.field_16713;
+                            new BlockPos(cords.getStartX() + 9, 0, cords.getStartZ() + 9));
+                    StructureStart newstruct =  feature.getStructureStartFactory().create(feature, cords.x, cords.z, biome, MutableIntBoundingBox.empty(), 0, gen.getSeed());
+                    newstruct.initialize(gen, resources, cords.x, cords.z, biome);
+                    struct = newstruct.hasChildren() ? newstruct : StructureStart.DEFAULT;
                     if(struct != null){
                         chunk.setStructureStart(feature.getName(), struct);
                     }
@@ -275,7 +275,7 @@ public class RandomOptions implements IRegionElement {
     }
 
     private static class WastelandVillage extends VillageFeature{
-        WastelandVillage(Function<Dynamic<?>, ? extends NewVillageFeatureConfig> fn) {
+        WastelandVillage(Function<Dynamic<?>, ? extends VillageFeatureConfig> fn) {
             super(fn);
         }
 
@@ -293,17 +293,17 @@ public class RandomOptions implements IRegionElement {
             return (r);
         }
 
-        public static <T> NewVillageFeatureConfig WastelandVillageConfig(Dynamic<T> dyn) {
-            return new NewVillageFeatureConfig("village/desert/town_centers", 6);
+        public static <T> VillageFeatureConfig WastelandVillageConfig(Dynamic<T> dyn) {
+            return new VillageFeatureConfig("village/desert/town_centers", 6);
         }
 
         @Override
-        public StructureFeature.class_3774 method_14016() {
+        public StructureFeature.StructureStartFactory getStructureStartFactory() {
             return WastelandVillage.cityCore::new;
         }
 
         @Override
-        public boolean method_14026(ChunkGenerator<?> chunkGenerator_1, Random random_1, int int_1, int int_2) {
+        public boolean shouldStartAt(ChunkGenerator<?> chunkGenerator_1, Random random_1, int int_1, int int_2) {
             return false;
         }
 
@@ -314,10 +314,10 @@ public class RandomOptions implements IRegionElement {
             }
 
             @Override
-            public void method_16655(ChunkGenerator<?> gen, StructureManager res, int x, int z, Biome var5) {
+            public void initialize(ChunkGenerator<?> gen, StructureManager sm, int x, int z, Biome var5) {
                 BlockPos blockPos_1 = new BlockPos(x * 16, 0, z * 16);
-                class_3813.method_16753(gen, res, blockPos_1, this.children, this.field_16715, WastelandVillageConfig(null));
-                this.method_14969();
+                VillageGenerator.addPieces(gen, sm, blockPos_1, this.children, this.random, WastelandVillageConfig(null));
+                this.setBoundingBoxFromChildren();
             }
         }
 

@@ -30,7 +30,7 @@ package com.ezrol.terry.minecraft.wastelands.gui;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.widget.AbstractListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -57,7 +57,7 @@ import java.util.List;
  * Created by ezterry on 9/8/16.
  */
 @SuppressWarnings("CanBeFinal")
-public class WastelandPresets extends Gui {
+public class WastelandPresets extends Screen {
     final private static int CANCEL_BTN_ID = 80;
     final private static int SELECT_BTN_ID = 81;
     final private static int PRESET_INPUT_BOX = 82;
@@ -191,9 +191,9 @@ public class WastelandPresets extends Gui {
     protected void actionPerformed(ButtonWidget button){
         if (button.id == SELECT_BTN_ID) {
             parent.updateFromJson(currentJson);
-            this.client.openGui(parent);
+            this.client.openScreen(parent);
         } else if (button.id == CANCEL_BTN_ID) {
-            this.client.openGui(parent);
+            this.client.openScreen(parent);
         }
     }
 

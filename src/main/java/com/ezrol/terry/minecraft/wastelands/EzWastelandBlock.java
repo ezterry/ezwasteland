@@ -27,13 +27,10 @@
 
 package com.ezrol.terry.minecraft.wastelands;
 
-import net.fabricmc.fabric.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
-import net.minecraft.item.ShovelItem;
 import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.tag.Tag;
-import net.minecraft.util.Identifier;
 
 public class EzWastelandBlock extends Block {
     private static Settings blockSettings(){

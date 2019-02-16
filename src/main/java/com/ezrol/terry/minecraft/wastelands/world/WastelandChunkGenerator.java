@@ -33,7 +33,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityCategory;
-import net.minecraft.sortme.structures.StructureManager;
+import net.minecraft.structure.StructureManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.IWorld;
@@ -243,14 +243,14 @@ public class WastelandChunkGenerator extends ChunkGenerator<WastelandChunkGenera
     }
 
     @Override
-    public int produceHeight(int x, int z, Heightmap.Type type) {
+    public int getHeightOnGround(int x, int z, Heightmap.Type type) {
         int h = core.addElementHeight(x, z) + 1;
 
         return core.getWorldHeight(x,h,z);
     }
 
     @Override
-    public int method_16398() {
+    public int getSeaLevel() {
         return RegionCore.WASTELAND_HEIGHT;
     }
 

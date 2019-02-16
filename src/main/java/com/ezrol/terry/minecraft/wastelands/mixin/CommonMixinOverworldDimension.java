@@ -120,7 +120,7 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
                     LOGGER.error("Unable to parse biome from Buffet typo");
                 }
                 FixedBiomeSourceConfig fixedCfg = new FixedBiomeSourceConfig();
-                fixedCfg.method_8782(singlebiome);
+                fixedCfg.setBiome(singlebiome);
 
                 //noinspection unchecked
                 ci.setReturnValue(
@@ -131,8 +131,8 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
     }
 
     //custom spawn logic
-    @Inject(at = @At("HEAD"), method = "method_12444", cancellable = true)
-    public void playerSpawn(int blockx, int blockz, boolean force,CallbackInfoReturnable ci){
+    @Inject(at = @At("HEAD"), method = "getTopSpawningBlockPosition", cancellable = true)
+    public void playerSpawnTopBlock(int blockx, int blockz, boolean force,CallbackInfoReturnable ci){
         LevelGeneratorType type = this.world.getLevelProperties().getGeneratorType();
         if(type == EzwastelandsFabric.WASTELANDS_LEVEL_TYPE){
             //correct a spawn location
@@ -144,12 +144,12 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
 
     @Override
     @Environment(EnvType.CLIENT)
-    public float method_12455() {
+    public float getCloudHeight() {
         LevelGeneratorType type = this.world.getLevelProperties().getGeneratorType();
 
         if(type == EzwastelandsFabric.WASTELANDS_LEVEL_TYPE){
             return 200.0f;
         }
-        return super.method_12455();
+        return super.getCloudHeight();
     }
 }

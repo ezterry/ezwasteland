@@ -33,7 +33,7 @@ import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorConfig;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandsLevelType;
 import com.ezrol.terry.minecraft.wastelands.world.elements.*;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.events.ServerEvent;
+import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -53,7 +53,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class EzwastelandsFabric implements ModInitializer {
@@ -85,9 +84,9 @@ public class EzwastelandsFabric implements ModInitializer {
 
         //when the server starts make the Wasteland block effective on
         //shovels
-        ServerEvent.START.register(new Consumer<MinecraftServer>() {
+        ServerStartCallback.EVENT.register(new ServerStartCallback() {
             @Override
-            public void accept(MinecraftServer minecraftServer) {
+            public void onStartServer(MinecraftServer server) {
                 //debug, print all generator types
                 for(Identifier id : Registry.CHUNK_GENERATOR_TYPE.keys()){
                     System.out.println(id);

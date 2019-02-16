@@ -43,8 +43,8 @@ abstract public class ClientMixinWorld {
     @Shadow
     protected LevelProperties properties;
 
-    @Inject(at = @At("HEAD"), method = "method_8540()D", cancellable = true)
-    void method_8540(CallbackInfoReturnable ci){
+    @Inject(at = @At("HEAD"), method = "getHorizonHeight()D", cancellable = true)
+    void getHorizonHeight(CallbackInfoReturnable ci){
         LevelGeneratorType gen = this.properties.getGeneratorType();
         if(gen == EzwastelandsFabric.WASTELANDS_LEVEL_TYPE){
             ci.setReturnValue((double)RegionCore.WASTELAND_HEIGHT);

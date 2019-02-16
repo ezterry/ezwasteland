@@ -63,7 +63,7 @@ public class WastelandChunkGeneratorConfig extends OverworldChunkGeneratorConfig
         //stronghold - spread
         strongholdSpread = 5;
 
-        if(generatorOps != null) {
+        if(tags != null) {
             generatorOps = CompoundToJson(tags);
         }
     }

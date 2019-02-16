@@ -30,8 +30,8 @@ package com.ezrol.terry.minecraft.wastelands.gui;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorConfig;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.menu.NewLevelGui;
+import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.menu.NewLevelScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.nbt.CompoundTag;
@@ -40,18 +40,18 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-public class WastelandCustomization extends Gui {
+public class WastelandCustomization extends Screen {
     private static final int DONE_ID = 900;
     private static final int DEFAULTS_ID = 901;
     private static final int PRESETS_ID = 902;
     private static final int CANCEL_ID = 903;
     private static final Logger log = LogManager.getLogger("WastelandCustomization");
-    private final NewLevelGui parent;
+    private final NewLevelScreen parent;
     private final Map<Integer, Param> idMap = new HashMap<>();
     private RegionCore core;
     private WastelandParamListWidget list=null;
 
-    public WastelandCustomization(NewLevelGui p, CompoundTag tags) {
+    public WastelandCustomization(NewLevelScreen p, CompoundTag tags) {
         super();
         this.parent = p;
         core = new RegionCore(WastelandChunkGeneratorConfig.CompoundToJson(tags),null, null);
@@ -128,18 +128,18 @@ public class WastelandCustomization extends Gui {
                     String json = core.getJson();
                     log.info("Wasteland Settings: " + json);
                     parent.field_3200 = WastelandChunkGeneratorConfig.CoreConfigToCompound(core);
-                    this.client.openGui(this.parent);
+                    this.client.openScreen(this.parent);
                     break;
                 case DEFAULTS_ID:
                     updateFromJson("");
                     break;
                 case CANCEL_ID:
                     log.info("Cancel Customization, using previous settings.");
-                    this.client.openGui(this.parent);
+                    this.client.openScreen(this.parent);
                     break;
                 case PRESETS_ID:
                     log.info("Opening Presets");
-                    this.client.openGui(new WastelandPresets(this, core.getJson()));
+                    this.client.openScreen(new WastelandPresets(this, core.getJson()));
                     //MinecraftClient.getInstance().openGui(new WastelandPresets(this, core.getJson()));
             }
         }

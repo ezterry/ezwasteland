@@ -2,7 +2,7 @@
   "id": "ezwastelands",
   "name": "EzWastelands",
   "description": "EzTerry's Wastelands terrain generator",
-  "version": "19w02a-fabric-1.4.1",
+  "version": "${version}",
   "side": "universal",
   "initializers": [
     "com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric"

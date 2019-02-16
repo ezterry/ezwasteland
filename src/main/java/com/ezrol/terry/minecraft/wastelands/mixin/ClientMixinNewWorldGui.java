@@ -28,8 +28,8 @@
 package com.ezrol.terry.minecraft.wastelands.mixin;
 
 import com.ezrol.terry.minecraft.wastelands.gui.OverrideCustomizeButton;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.menu.NewLevelGui;
+import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.menu.NewLevelScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,8 +39,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(NewLevelGui.class)
-public abstract class ClientMixinNewWorldGui extends Gui implements OverrideCustomizeButton.getType{
+@Mixin(NewLevelScreen.class)
+public abstract class ClientMixinNewWorldGui extends Screen implements OverrideCustomizeButton.getType{
     @Shadow
     private ButtonWidget buttonCustomizeType;
     @Shadow
@@ -48,13 +48,12 @@ public abstract class ClientMixinNewWorldGui extends Gui implements OverrideCust
     @Shadow
     private boolean field_3202;
 
-
     @Shadow
     abstract void method_2710(boolean arg);
 
     private static final Logger LOGGER = LogManager.getLogger("NewGiuMixin");
 
-    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/client/gui/menu/NewLevelGui;onInitialized()V", cancellable = false)
+    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/client/gui/menu/NewLevelScreen;onInitialized()V", cancellable = false)
     public void onInitialized(CallbackInfo info) {
         LOGGER.info("Updating Button");
 
@@ -78,7 +77,7 @@ public abstract class ClientMixinNewWorldGui extends Gui implements OverrideCust
     }
 
     @Override
-    public NewLevelGui getGuiObject() {
-        return (NewLevelGui) (Object) this;
+    public NewLevelScreen getGuiObject() {
+        return (NewLevelScreen) (Object) this;
     }
 }

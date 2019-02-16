@@ -30,7 +30,9 @@ package com.ezrol.terry.minecraft.wastelands.gui;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.*;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resource.language.I18n;
 
 import java.util.List;
@@ -149,7 +151,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
                     I18n.translate("config.ezwastelands.boolean.false");
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
 
-            text = name + ": " + value;
+            //set text
+            method_2060(name + ": " + value);
         }
 
         @Override
@@ -252,7 +255,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         private void setBtnText(){
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
 
-            text = name + ": " + param.get();
+            //set text
+            method_2060(name + ": " + param.get());
         }
     }
 
@@ -341,7 +345,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
 
         private void setBtnText(){
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
-            text = name + ": " + param.get();
+            //set text
+            method_2060(name + ": " + param.get());
         }
     }
 
@@ -356,7 +361,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             super(id,x,y,width,height,"");
             this.type = type;
             param = p;
-            text = param.get();
+            //set text
+            method_2060(param.get());
         }
 
         @Override
@@ -373,7 +379,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             }
             textfield.render(mouseX,mouseY,partialTicks);
 
-            hovered = mouseX > x && mouseX < (x + width) && mouseY > y && mouseY < y + height;
+            //hover logic?
+            //method_18326(mouseX, mouseY,partialTicks);
             drawHover(mouseX,mouseY);
         }
 
