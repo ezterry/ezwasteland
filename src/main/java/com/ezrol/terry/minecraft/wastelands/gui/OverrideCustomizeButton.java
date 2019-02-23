@@ -46,7 +46,7 @@ public class OverrideCustomizeButton extends ButtonWidget {
     private static final Logger LOGGER = LogManager.getLogger("CustomizedBTN");
 
     public OverrideCustomizeButton(int width, ButtonWidget orig, getType nw) {
-        super(8, width / 2 + 5, 120, 150, 20, I18n.translate("selectWorld.customizeType"));
+        super(width / 2 + 5, 120, 150, 20, I18n.translate("selectWorld.customizeType"));
         gui = nw;
         original = orig;
     }

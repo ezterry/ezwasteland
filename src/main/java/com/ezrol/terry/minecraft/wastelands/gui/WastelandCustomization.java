@@ -58,9 +58,14 @@ public class WastelandCustomization extends Screen {
     }
 
     private class SimpleButton extends ButtonWidget{
-
+        private int  btnId;
         public SimpleButton(int id, int x, int y, int width, int height, String text){
-            super(id,x,y,width,height,text);
+            super(x,y,width,height,text);
+            btnId=id;
+        }
+
+        public int getId(){
+            return btnId;
         }
 
         @Override
@@ -104,10 +109,9 @@ public class WastelandCustomization extends Screen {
         }
         list = new WastelandParamListWidget(client, width, height, 32, height-32, 25);
         Map<String, List<Param>> pmap = core.getCurrentParamMap();
-        int startid = 4000;
         for(String entry : pmap.keySet()){
             List<Param> paramlst = pmap.get(entry);
-            startid = list.addGroup(startid, entry, paramlst);
+            list.addGroup(entry, paramlst);
         }
         this.listeners.add(list);
         list.scroll(oldscroll);
@@ -121,9 +125,9 @@ public class WastelandCustomization extends Screen {
         return b;
     }
 
-    protected void actionPerformed(ButtonWidget button){
+    protected void actionPerformed(SimpleButton button){
         if (button.enabled) {
-            switch (button.id) {
+            switch (button.getId()) {
                 case DONE_ID:
                     String json = core.getJson();
                     log.info("Wasteland Settings: " + json);

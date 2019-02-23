@@ -10,14 +10,13 @@ versionprop.load(new FileInputStream(project.file("versions.prop")))
 
 def mod_vers_part = versionprop.getProperty("mod_version")
 def mc_version = versionprop.getProperty("mc_version")
-def mc_vers_part = "${mc_version}-fabric"
 
 def yarn_version = mc_version + versionprop.getProperty("yarn_mapping")
 def fabric_loader_version = versionprop.getProperty("loader_version")
 def fabric_api_version = versionprop.getProperty("fabric_version")
 
-archivesBaseName = "ezwastelands"
-version = "${mc_vers_part}-${mod_vers_part}"
+archivesBaseName = "ezwastelands-${mc_version}-fabric"
+version = "${mod_vers_part}"
 
 minecraft {
 }

@@ -60,7 +60,6 @@ import java.util.List;
 public class WastelandPresets extends Screen {
     final private static int CANCEL_BTN_ID = 80;
     final private static int SELECT_BTN_ID = 81;
-    final private static int PRESET_INPUT_BOX = 82;
     private static final Logger log = LogManager.getLogger("WastelandPreset");
     private WastelandCustomization parent;
     private String currentJson = "";
@@ -69,9 +68,15 @@ public class WastelandPresets extends Screen {
     private PresetSlotList listGUI;
 
     private class SimpleButton extends ButtonWidget {
+        private int btnId;
 
-        public SimpleButton(int id, int x, int y, int width, int height, String text){
-            super(id,x,y,width,height,text);
+        SimpleButton(int id, int x, int y, int width, int height, String text){
+            super(x,y,width,height,text);
+            btnId = id;
+        }
+
+        public int getId(){
+            return btnId;
         }
 
         @Override
@@ -155,7 +160,7 @@ public class WastelandPresets extends Screen {
 
         title = I18n.translate("config.ezwastelands.presets.title");
 
-        presetInput = new TextFieldWidget(PRESET_INPUT_BOX, this.fontRenderer, 50, 40, this.width - 100, 20);
+        presetInput = new TextFieldWidget(this.fontRenderer, 50, 40, this.width - 100, 20);
         presetInput.setMaxLength(2048);
         presetInput.setText(currentJson);
         presetInput.setChangedListener(this::setEntryValue);
@@ -184,27 +189,25 @@ public class WastelandPresets extends Screen {
         drawBackground();
         listGUI.draw(mouseX, mouseY, partialTicks);
         drawStringCentered(fontRenderer, title, width / 2, 8, 0xffffff);
-        presetInput.render(mouseX, mouseY, partialTicks);
+        presetInput.draw(mouseX, mouseY, partialTicks);
         super.draw(mouseX, mouseY, partialTicks);
     }
 
-    protected void actionPerformed(ButtonWidget button){
-        if (button.id == SELECT_BTN_ID) {
+    protected void actionPerformed(SimpleButton button){
+        if (button.getId() == SELECT_BTN_ID) {
             parent.updateFromJson(currentJson);
             this.client.openScreen(parent);
-        } else if (button.id == CANCEL_BTN_ID) {
+        } else if (button.getId() == CANCEL_BTN_ID) {
             this.client.openScreen(parent);
         }
     }
 
-    public void setEntryValue(int id, String value) {
-        if (id == PRESET_INPUT_BOX) {
-            //the input text box has been modified
-            currentJson = value;
-            if (!listGUI.selectedJson.equals(value)) {
-                listGUI.selected = -1;
-                listGUI.selectedJson = "";
-            }
+    public void setEntryValue(String value) {
+        //the input text box has been modified
+        currentJson = value;
+        if (!listGUI.selectedJson.equals(value)) {
+            listGUI.selected = -1;
+            listGUI.selectedJson = "";
         }
     }
 

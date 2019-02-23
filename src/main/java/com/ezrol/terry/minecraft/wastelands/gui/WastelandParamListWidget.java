@@ -38,34 +38,31 @@ import net.minecraft.client.resource.language.I18n;
 import java.util.List;
 
 public class WastelandParamListWidget extends EntryListWidget<WastelandParamListWidget.Entry> {
-
     public WastelandParamListWidget(MinecraftClient client, int int_1, int int_2, int int_3, int int_4, int int_5) {
         super(client, int_1, int_2, int_3, int_4, int_5);
     }
 
-    private ButtonWidget nextWidget(int id, String type, int x, int y, int w, int h, Param p){
+    private HoverableWidget nextWidget(String type, int x, int y, int w, int h, Param p){
         switch (p.getType()){
             case BOOLEAN:
-                return( new BooleanParamButton(id, type, x, y, w, h, (Param.BooleanParam)p));
+                return( new BooleanParamButton(type, x, y, w, h, (Param.BooleanParam)p));
             case INTEGER:
-                return( new IntParamButton(id, type, x, y, w, h, (Param.IntegerParam)p));
+                return( new IntParamButton(type, x, y, w, h, (Param.IntegerParam)p));
             case FLOAT:
-                return( new FloatParamButton(id, type, x, y, w, h, (Param.FloatParam)p));
+                return( new FloatParamButton(type, x, y, w, h, (Param.FloatParam)p));
             case STRING:
-                return( new StringParamButton(id, type, x, y, w, h, (Param.StringParam)p));
+                return( new StringParamButton(type, x, y, w, h, (Param.StringParam)p));
             default:
                 throw(new IllegalArgumentException("Unsupported Parameter Type"));
         }
     }
     /** Add a group of parameters with a title to the list widget
      *
-     * @param startId first ID to add to the screen
      * @param title title of the seciton
      * @param sectionParams the parameters in the section to create widgets for
      * @return the last id used +1
      */
-    public int addGroup(int startId, String title, List<Param> sectionParams){
-        int curid = startId;
+    public void addGroup(String title, List<Param> sectionParams){
         ButtonWidget a = null;
         ButtonWidget b = null;
         int xoff = (width - getEntryWidth())/2;
@@ -75,12 +72,11 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         for(Param p : sectionParams){
             {
                 if(a==null){
-                    a= nextWidget(curid,title,xoff,0,(getEntryWidth()/2)-5,20,p);
+                    a= nextWidget(title,xoff,0,(getEntryWidth()/2)-5,20,p);
                 }
                 else{
-                    b= nextWidget(curid,title,(width/2)+5,0,(getEntryWidth()/2)-5,20,p);
+                    b= nextWidget(title,(width/2)+5,0,(getEntryWidth()/2)-5,20,p);
                 }
-                curid++;
             }
             if(a != null && b != null) {
                 addEntry(new Entry(a, b));
@@ -91,7 +87,6 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         if(a != null){
             addEntry(new Entry(a, null));
         }
-        return curid;
     }
 
     /** Hoverably button **/
@@ -99,11 +94,12 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         long hoverStart = -1;
         int lastX, lastY;
 
-        HoverableWidget(int id, int x, int y, int w, int h, String t){
-            super(id,x,y,w,h,t);
+        HoverableWidget(int x, int y, int w, int h, String t){
+            super(x,y,w,h,t);
             lastX = -1;
             lastY = -1;
         }
+
         @Override
         public void draw(int mouseX, int mouseY, float partialTicks) {
             super.draw(mouseX, mouseY, partialTicks);
@@ -121,15 +117,20 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             else if(hovered && (System.currentTimeMillis() - hoverStart) > 1800){
                 //draw hover text
                 String text = getHoverText();
-                int w = client.fontRenderer.getStringWidth(text);
+                int w = client.textRenderer.getStringWidth(text);
 
                 drawRect(x+6,y-3,x+6+w+6,y-3+13,0xFF0000CC);
                 drawRect(x+7,y-2,x+7+w+4,y-2+11,0xFF000000);
-                drawString(client.fontRenderer, text, x+8, y-1,0xCCFFCC);
+                drawString(client.textRenderer, text, x+8, y-1,0xCCFFCC);
             }
             if(!hovered){
                 hoverStart = -1;
             }
+        }
+
+        @Override
+        public boolean mouseDragged(double mx1, double my1, int mb, double mx2, double my2) {
+            return false;
         }
 
         @Override
@@ -144,8 +145,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         private Param.BooleanParam param;
         private final String type;
 
-        BooleanParamButton(int id, String type, int x, int y, int width, int height, Param.BooleanParam p){
-            super(id,x,y,width,height,"");
+        BooleanParamButton(String type, int x, int y, int width, int height, Param.BooleanParam p){
+            super(x,y,width,height,"");
             this.type = type;
             param = p;
             setBtnText();
@@ -158,7 +159,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
 
             //set text
-            method_2060(name + ": " + value);
+            setText(name + ": " + value);
         }
 
         @Override
@@ -181,8 +182,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         String type;
         boolean isPressed=false;
 
-        IntParamButton(int id, String type, int x, int y, int width, int height, Param.IntegerParam p){
-            super(id,x,y,width,height,"");
+        IntParamButton(String type, int x, int y, int width, int height, Param.IntegerParam p){
+            super(x,y,width,height,"");
             this.type = type;
             param = p;
             setBtnText();
@@ -262,7 +263,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
 
             //set text
-            method_2060(name + ": " + param.get());
+            setText(name + ": " + param.get());
         }
     }
 
@@ -272,8 +273,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         String type;
         boolean isPressed=false;
 
-        FloatParamButton(int id, String type, int x, int y, int width, int height, Param.FloatParam p){
-            super(id,x,y,width,height,"");
+        FloatParamButton(String type, int x, int y, int width, int height, Param.FloatParam p){
+            super(x,y,width,height,"");
             this.type = type;
             param = p;
             setBtnText();
@@ -352,7 +353,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         private void setBtnText(){
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
             //set text
-            method_2060(name + ": " + param.get());
+            setText(name + ": " + param.get());
         }
     }
 
@@ -363,12 +364,12 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         private int yloc=-1;
         private boolean focused = false;
 
-        StringParamButton(int id, String type, int x, int y, int width, int height, Param.StringParam p){
-            super(id,x,y,width,height,"");
+        StringParamButton(String type, int x, int y, int width, int height, Param.StringParam p){
+            super(x,y,width,height,"");
             this.type = type;
             param = p;
             //set text
-            method_2060(param.get());
+            setText(param.get());
         }
 
         @Override
@@ -378,12 +379,12 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
                 String value = param.get();
                 if(textfield!=null)
                     value = textfield.getText();
-                textfield = new TextFieldWidget(this.id, client.fontRenderer,x,y,width,height);
+                textfield = new TextFieldWidget(client.textRenderer,x,y,width,height);
                 textfield.setText(value);
                 textfield.setHasFocus(focused);
                 param.set(value);
             }
-            textfield.render(mouseX,mouseY,partialTicks);
+            textfield.draw(mouseX,mouseY,partialTicks);
 
             //hover logic?
             //method_18326(mouseX, mouseY,partialTicks);
@@ -537,6 +538,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
                 }
             }
             if(!r){
+                selected=null;
                 r=super.mouseClicked(x,y,i);
             }
             return r;
@@ -599,6 +601,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
 
         @Override
         public void setHasFocus(boolean focus) {
+
             if(selected != null){
                 selected.setHasFocus(focus);
             }
@@ -620,7 +623,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             int widgety = this.getY();
             if(widget1 == null && inputbox == null){
                 //Full width title
-                drawStringCentered(client.fontRenderer, I18n.translate(title), width /2, widgety + 4, 0xFFFFFF);
+                drawStringCentered(client.textRenderer, I18n.translate(title), width /2, widgety + 4, 0xFFFFFF);
             }
             if(widget1 != null){
                 //one or two widgets

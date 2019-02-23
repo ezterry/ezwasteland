@@ -88,7 +88,7 @@ public class EzwastelandsFabric implements ModInitializer {
             @Override
             public void onStartServer(MinecraftServer server) {
                 //debug, print all generator types
-                for(Identifier id : Registry.CHUNK_GENERATOR_TYPE.keys()){
+                for(Identifier id : Registry.CHUNK_GENERATOR_TYPE.getIds()){
                     System.out.println(id);
                 }
                 //add wasteland block to all shovels
