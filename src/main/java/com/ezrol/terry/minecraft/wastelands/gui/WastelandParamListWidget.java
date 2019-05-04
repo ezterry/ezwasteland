@@ -34,6 +34,8 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resource.language.I18n;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -221,6 +223,11 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         @Override
         public void widgetPress() {}
 
+        @Override
+        protected int getYImage(boolean boolean_1) {
+            return 0;
+        }
+
         /** Draw the custom background for the slider **/
         @Override
         protected void renderBg(MinecraftClient mc, int mouseX, int mouseY) {
@@ -309,6 +316,11 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
 
         @Override
         public void widgetPress() {}
+
+        @Override
+        protected int getYImage(boolean boolean_1) {
+            return 0;
+        }
 
         /** Draw the custom background for the slider **/
         @Override
@@ -483,8 +495,13 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         }
     }
 
+    @Override
+    public int getRowWidth() {
+        return getOurWidth();
+    }
+
     /** width of the entry list **/
-    public int getOurWidth() {
+    private int getOurWidth() {
         if(width < 422){
             return width - 12;
         }
@@ -504,11 +521,15 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         private ButtonWidget inputbox=null;
         private ButtonWidget selected=null;
 
+        private Logger log;
+
         public Entry(String title){
             //a simple title widget
+            log = LogManager.getLogger("WastelandScrollOptions");
             this.title = title;
         }
         public Entry(ButtonWidget a, ButtonWidget b){
+            log = LogManager.getLogger("WastelandScrollOptions");
             this.widget1 = a;
             this.widget2 = b;
         }
@@ -516,6 +537,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         @Override
         public void mouseMoved(double x, double y) {
             super.mouseMoved(x,y);
+            log.info("Mouse Moved (" + x + "," + y + ") width = " + width + " left = " + left + " right = " + right);
             if(x < width / 2 && widget1 != null){
                 widget1.mouseMoved(x,y);
             }
@@ -528,6 +550,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         public boolean mouseClicked(double x, double y, int i) {
             boolean r=false;
             selected = null;
+
+            log.info("Mouse Clicked (" + x + "," + y + ") width = " + width + " left = " + left + " right = " + right);
             if(x < width / 2 && widget1 != null){
                 r=widget1.mouseClicked(x,y,i);
                 if(r){
@@ -550,6 +574,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         @Override
         public boolean mouseReleased(double x, double y, int i) {
             boolean r=false;
+
+            log.info("Mouse Released (" + x + "," + y + ") width = " + width + " left = " + left + " right = " + right);
             if(x < width / 2 && widget1 != null){
                 r=widget1.mouseReleased(x,y,i);
             }
@@ -565,6 +591,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         @Override
         public boolean mouseDragged(double x, double y, int i, double x2, double y2) {
             boolean r=false;
+
+            log.info("Mouse Dragged (" + x + "," + y + ") width = " + width + " left = " + left + " right = " + right);
             if(x < width / 2 && widget1 != null){
                 r=widget1.mouseDragged(x,y,i,x2,y2);
             }
@@ -619,13 +647,14 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             }
             if(widget1 != null){
                 //one or two widgets
-                widget1.y = widgety;
-                widget1.render(mouseX, mouseY, subticks);
 
                 if(widget2 != null){
                     widget2.y = widgety;
                     widget2.render(mouseX,mouseY,subticks);
                 }
+
+                widget1.y = widgety;
+                widget1.render(mouseX, mouseY, subticks);
             }
         }
     }

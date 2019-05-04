@@ -104,6 +104,8 @@ public class WastelandCustomization extends Screen {
         if(list != null){
             oldscroll = list.getScrollAmount();
         }
+
+        children.remove(list);
         list = new WastelandParamListWidget(minecraft, width, height, 32, height-32, 25);
         Map<String, List<Param>> pmap = core.getCurrentParamMap();
         for(String entry : pmap.keySet()){
@@ -111,14 +113,7 @@ public class WastelandCustomization extends Screen {
             list.addGroup(entry, paramlst);
         }
         list.setScrollAmount(oldscroll);
-        this.focusOn(list);
-    }
-
-    @Override
-    public boolean mouseReleased(double double_1, double double_2, int int_1) {
-        boolean b = super.mouseReleased(double_1, double_2, int_1);
-        this.focusOn(list);
-        return b;
+        children.add(list);
     }
 
     protected void actionPerformed(SimpleButton button){

@@ -73,11 +73,14 @@ public class WastelandPresets extends Screen {
 
         SimpleButton(int id, int x, int y, int width, int height, String text){
             super(x,y,width,height,text, (btn) -> {
-                actionPerformed((SimpleButton)btn);
+                ((SimpleButton)btn).action();
             });
             btnId = id;
         }
 
+        private void action(){
+            actionPerformed(this);
+        }
         public int getId(){
             return btnId;
         }
@@ -155,6 +158,8 @@ public class WastelandPresets extends Screen {
     @Override
     public void init() {
         this.buttons.clear();
+        this.children.clear();
+
         this.minecraft.keyboard.enableRepeatEvents(true);
 
         title = getTitle().getString();
@@ -174,6 +179,7 @@ public class WastelandPresets extends Screen {
         this.addButton(new SimpleButton(CANCEL_BTN_ID, this.width / 2 + 5, this.height - 28, 150, 20, I18n.translate("config.ezwastelands.BTNCancel")));
 
         this.focusOn(listGUI);
+        this.children.add(listGUI);
     }
 
     @Override
