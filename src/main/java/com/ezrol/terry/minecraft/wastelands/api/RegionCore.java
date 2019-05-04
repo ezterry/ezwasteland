@@ -317,7 +317,7 @@ public class RegionCore {
                 return pos;
             }
             else{
-                if(curPos.squaredDistanceTo(p)>curPos.squaredDistanceTo(pos)){
+                if(curPos.getSquaredDistance(p)>curPos.getSquaredDistance(pos)){
                     return pos;
                 }
                 return p;

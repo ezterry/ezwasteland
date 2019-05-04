@@ -37,6 +37,7 @@ public class EzWastelandBlock extends Block {
         FabricBlockSettings settings = FabricBlockSettings.of(Material.EARTH);
         settings.hardness((float) 0.7);
         settings.sounds(BlockSoundGroup.SAND);
+        settings.breakByHand(true);
 
         return(settings.build());
     }

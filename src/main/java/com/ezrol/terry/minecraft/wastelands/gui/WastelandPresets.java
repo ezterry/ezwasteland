@@ -31,8 +31,8 @@ import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Screen;
-import net.minecraft.client.gui.widget.AbstractListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ListWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
@@ -40,6 +40,7 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.text.TranslatableTextComponent;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,7 +72,9 @@ public class WastelandPresets extends Screen {
         private int btnId;
 
         SimpleButton(int id, int x, int y, int width, int height, String text){
-            super(x,y,width,height,text);
+            super(x,y,width,height,text, (btn) -> {
+                actionPerformed((SimpleButton)btn);
+            });
             btnId = id;
         }
 
@@ -79,14 +82,10 @@ public class WastelandPresets extends Screen {
             return btnId;
         }
 
-        @Override
-        public void onPressed(double double_1, double double_2) {
-            super.onPressed(double_1, double_2);
-            actionPerformed(this);
-        }
     }
 
     public WastelandPresets(WastelandCustomization par, String json) {
+        super(new TranslatableTextComponent("config.ezwastelands.presets.title"));
         this.parent = par;
         this.currentJson = json;
     }
@@ -114,7 +113,7 @@ public class WastelandPresets extends Screen {
     }
 
     private void insertPresets(Identifier r) {
-        ResourceManager resourceManager = client.getResourceManager();
+        ResourceManager resourceManager = minecraft.getResourceManager();
         BufferedReader presetdata;
 
         try {
@@ -154,20 +153,18 @@ public class WastelandPresets extends Screen {
     }
 
     @Override
-    public void onInitialized() {
+    public void init() {
         this.buttons.clear();
-        this.client.keyboard.enableRepeatEvents(true);
+        this.minecraft.keyboard.enableRepeatEvents(true);
 
-        title = I18n.translate("config.ezwastelands.presets.title");
+        title = getTitle().getString();
 
-        presetInput = new TextFieldWidget(this.fontRenderer, 50, 40, this.width - 100, 20);
+        presetInput = new TextFieldWidget(this.font, 50, 40, this.width - 100, 20, "");
         presetInput.setMaxLength(2048);
         presetInput.setText(currentJson);
         presetInput.setChangedListener(this::setEntryValue);
-        this.listeners.add(presetInput);
 
-        listGUI = new PresetSlotList(this.client, this.width, this.height, 80, this.height - 32, 36);
-        this.listeners.add(listGUI);
+        listGUI = new PresetSlotList(this.minecraft, this.width, this.height, 80, this.height - 32, 36);
 
         for(Identifier p : RegionCore.getPresetLocations()) {
             insertPresets(p);
@@ -180,25 +177,25 @@ public class WastelandPresets extends Screen {
     }
 
     @Override
-    public boolean doesEscapeKeyClose(){
+    public boolean shouldCloseOnEsc(){
         return false;
     }
 
     @Override
-    public void draw(int mouseX, int mouseY, float partialTicks) {
-        drawBackground();
-        listGUI.draw(mouseX, mouseY, partialTicks);
-        drawStringCentered(fontRenderer, title, width / 2, 8, 0xffffff);
-        presetInput.draw(mouseX, mouseY, partialTicks);
-        super.draw(mouseX, mouseY, partialTicks);
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        renderBackground();
+        listGUI.render(mouseX, mouseY, partialTicks);
+        drawCenteredString(font, title, width / 2, 8, 0xffffff);
+        presetInput.render(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 
     protected void actionPerformed(SimpleButton button){
         if (button.getId() == SELECT_BTN_ID) {
             parent.updateFromJson(currentJson);
-            this.client.openScreen(parent);
+            this.minecraft.openScreen(parent);
         } else if (button.getId() == CANCEL_BTN_ID) {
-            this.client.openScreen(parent);
+            this.minecraft.openScreen(parent);
         }
     }
 
@@ -223,7 +220,7 @@ public class WastelandPresets extends Screen {
         }
     }
 
-    private class PresetSlotList extends AbstractListWidget {
+    private class PresetSlotList extends ListWidget {
         private int selected;
         private List<WastelandPresetEntry> selectionList;
         private String selectedJson;
@@ -237,7 +234,7 @@ public class WastelandPresets extends Screen {
         }
 
         @Override
-        protected int getEntryCount() {
+        protected int getItemCount() {
             return selectionList.size();
         }
 
@@ -251,13 +248,13 @@ public class WastelandPresets extends Screen {
         }
 
         @Override
-        protected boolean selectEntry(int entry, int unk1, double unk2, double unk3){
+        protected boolean selectItem(int entry, int btn, double xpos, double ypos){
             WastelandPresets.this.focusOn(listGUI);
             if(entry < 0 || entry == selected){
                 return false;
             }
             selected = entry;
-            if (selected < getEntryCount()) {
+            if (selected < getItemCount()) {
                 selectedJson = selectionList.get(selected).json;
                 currentJson = selectedJson;
                 presetInput.setText(currentJson);
@@ -266,26 +263,28 @@ public class WastelandPresets extends Screen {
             return false;
         }
 
+
         @Override
-        protected boolean isSelectedEntry(int slotIndex) {
+        protected boolean isSelectedItem(int slotIndex) {
             return (slotIndex == selected);
         }
 
         @Override
-        protected void drawBackground() {
+        protected void renderBackground() {
 
         }
 
         @SuppressWarnings("PointlessArithmeticExpression")
         private void blitIcon(int xPos, int yPos, Identifier icon) {
             xPos = xPos + 5;
-            drawHorizontalLine(xPos - 1, xPos + 32, yPos - 1, 0xffe0e0e0);
-            drawHorizontalLine(xPos - 1, xPos + 32, yPos + 32, 0xffa0a0a0);
-            drawVerticalLine(xPos - 1, yPos - 1, yPos + 32, 0xffe0e0e0);
-            drawVerticalLine(xPos + 32, yPos - 1, yPos + 32, 0xffa0a0a0);
+            hLine(xPos - 1, xPos + 32, yPos - 1, 0xffe0e0e0);
+            hLine(xPos - 1, xPos + 32, yPos + 32, 0xffa0a0a0);
+            vLine(xPos - 1, yPos - 1, yPos + 32, 0xffe0e0e0);
+            vLine(xPos + 32, yPos - 1, yPos + 32, 0xffa0a0a0);
+
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-            client.getTextureManager().bindTexture(icon);
+            minecraft.getTextureManager().bindTexture(icon);
 
             try {
                 Tessellator tessellator = Tessellator.getInstance();
@@ -303,7 +302,7 @@ public class WastelandPresets extends Screen {
 
 
         @Override
-        protected void drawEntry(int entryID, int insideLeft, int yPos, int insideSlotHeight, int mouseXIn, int mouseYIn, float partialTicks) {
+        protected void renderItem(int entryID, int insideLeft, int yPos, int insideSlotHeight, int mouseXIn, int mouseYIn, float partialTicks) {
             drawSlot(entryID,insideLeft,yPos,insideSlotHeight);
         }
 
@@ -315,7 +314,7 @@ public class WastelandPresets extends Screen {
             if (selected == entryID) {
                 fontcolor = 0xFFFFCC;
             }
-            fontRenderer.draw(entry.title, insideLeft + 33 + 10, yPos + ((insideSlotHeight / 2) - 4), fontcolor);
+            font.draw(entry.title, insideLeft + 33 + 10, yPos + ((insideSlotHeight / 2) - 4), fontcolor);
         }
     }
 }

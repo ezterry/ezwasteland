@@ -35,6 +35,7 @@ import net.minecraft.client.gui.menu.NewLevelScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.text.TranslatableTextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,7 +53,7 @@ public class WastelandCustomization extends Screen {
     private WastelandParamListWidget list=null;
 
     public WastelandCustomization(NewLevelScreen p, CompoundTag tags) {
-        super();
+        super(new TranslatableTextComponent("config.ezwastelands.WorldConfigGUI"));
         this.parent = p;
         core = new RegionCore(WastelandChunkGeneratorConfig.CompoundToJson(tags),null, null);
     }
@@ -60,30 +61,25 @@ public class WastelandCustomization extends Screen {
     private class SimpleButton extends ButtonWidget{
         private int  btnId;
         public SimpleButton(int id, int x, int y, int width, int height, String text){
-            super(x,y,width,height,text);
+            super(x,y,width,height,text,(btn) -> {
+                actionPerformed((SimpleButton)btn);
+            });
             btnId=id;
         }
 
         public int getId(){
             return btnId;
         }
-
-        @Override
-        public void onPressed(double double_1, double double_2) {
-            super.onPressed(double_1, double_2);
-            actionPerformed(this);
-
-        }
     }
 
     @Override
-    public boolean doesEscapeKeyClose(){
+    public boolean shouldCloseOnEsc(){
         return false;
     }
 
     @Override
-    public void onInitialized() {
-        this.client.keyboard.enableRepeatEvents(true);
+    public void init() {
+        this.minecraft.keyboard.enableRepeatEvents(true);
 
         this.addButton(new SimpleButton(DONE_ID, this.width / 2 + 98, this.height - 27, 90, 20,
                 I18n.translate("gui.done")));
@@ -97,24 +93,22 @@ public class WastelandCustomization extends Screen {
         reloadList();
         //this.list.setActive(true);
         //this.list.setPage(0);
-        this.list.scroll(0);
+        this.list.setScrollAmount(0.0);
         //this.list.setEnabled(true);
     }
 
     private void reloadList() {
-        int oldscroll = 0;
+        double oldscroll = 0;
         if(list != null){
-            oldscroll = list.getScrollY();
-            listeners.remove(list);
+            oldscroll = list.getScrollAmount();
         }
-        list = new WastelandParamListWidget(client, width, height, 32, height-32, 25);
+        list = new WastelandParamListWidget(minecraft, width, height, 32, height-32, 25);
         Map<String, List<Param>> pmap = core.getCurrentParamMap();
         for(String entry : pmap.keySet()){
             List<Param> paramlst = pmap.get(entry);
             list.addGroup(entry, paramlst);
         }
-        this.listeners.add(list);
-        list.scroll(oldscroll);
+        list.setScrollAmount(oldscroll);
         this.focusOn(list);
     }
 
@@ -126,24 +120,24 @@ public class WastelandCustomization extends Screen {
     }
 
     protected void actionPerformed(SimpleButton button){
-        if (button.enabled) {
+        if (button.visible) {
             switch (button.getId()) {
                 case DONE_ID:
                     String json = core.getJson();
                     log.info("Wasteland Settings: " + json);
-                    parent.field_3200 = WastelandChunkGeneratorConfig.CoreConfigToCompound(core);
-                    this.client.openScreen(this.parent);
+                    parent.generatorOptionsTag = WastelandChunkGeneratorConfig.CoreConfigToCompound(core);
+                    this.minecraft.openScreen(this.parent);
                     break;
                 case DEFAULTS_ID:
                     updateFromJson("");
                     break;
                 case CANCEL_ID:
                     log.info("Cancel Customization, using previous settings.");
-                    this.client.openScreen(this.parent);
+                    this.minecraft.openScreen(this.parent);
                     break;
                 case PRESETS_ID:
                     log.info("Opening Presets");
-                    this.client.openScreen(new WastelandPresets(this, core.getJson()));
+                    this.minecraft.openScreen(new WastelandPresets(this, core.getJson()));
                     //MinecraftClient.getInstance().openGui(new WastelandPresets(this, core.getJson()));
             }
         }
@@ -155,10 +149,10 @@ public class WastelandCustomization extends Screen {
     }
 
     @Override
-    public void draw(int mouseX, int mouseY, float partialTicks) {
-        this.drawBackground();
-        this.list.draw(mouseX, mouseY, partialTicks);
-        this.drawStringCentered(this.fontRenderer, I18n.translate("config.ezwastelands.WorldConfigGUI"), this.width / 2, 2, 0xFFFFFF);
-        super.draw(mouseX, mouseY, partialTicks);
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground();
+        this.list.render(mouseX, mouseY, partialTicks);
+        this.drawCenteredString(this.font, this.getTitle().getString(), this.width / 2, 2, 0xFFFFFF);
+        super.render(mouseX, mouseY, partialTicks);
     }
 }

@@ -31,6 +31,7 @@ import com.ezrol.terry.minecraft.wastelands.gui.OverrideCustomizeButton;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.menu.NewLevelScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
@@ -48,18 +49,21 @@ public abstract class ClientMixinNewWorldGui extends Screen implements OverrideC
     @Shadow
     private boolean field_3202;
 
+    protected ClientMixinNewWorldGui(){
+        super(null);
+    }
+
     @Shadow
     abstract void method_2710(boolean arg);
 
     private static final Logger LOGGER = LogManager.getLogger("NewGiuMixin");
 
-    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/client/gui/menu/NewLevelScreen;onInitialized()V", cancellable = false)
+    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/client/gui/menu/NewLevelScreen;init()V", cancellable = false)
     public void onInitialized(CallbackInfo info) {
         LOGGER.info("Updating Button");
 
         //remove original config button
         buttons.remove(buttonCustomizeType);
-        listeners.remove(buttonCustomizeType);
 
         ButtonWidget original = buttonCustomizeType;
 

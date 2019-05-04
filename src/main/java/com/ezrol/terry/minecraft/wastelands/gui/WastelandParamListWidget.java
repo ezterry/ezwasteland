@@ -65,17 +65,17 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
     public void addGroup(String title, List<Param> sectionParams){
         ButtonWidget a = null;
         ButtonWidget b = null;
-        int xoff = (width - getEntryWidth())/2;
+        int xoff = (width - getOurWidth())/2;
 
         addEntry(new Entry("ezwastelands.config." + title + ".title"));
 
         for(Param p : sectionParams){
             {
                 if(a==null){
-                    a= nextWidget(title,xoff,0,(getEntryWidth()/2)-5,20,p);
+                    a= nextWidget(title,xoff,0,(getOurWidth()/2)-5,20,p);
                 }
                 else{
-                    b= nextWidget(title,(width/2)+5,0,(getEntryWidth()/2)-5,20,p);
+                    b= nextWidget(title,(width/2)+5,0,(getOurWidth()/2)-5,20,p);
                 }
             }
             if(a != null && b != null) {
@@ -95,18 +95,20 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         int lastX, lastY;
 
         HoverableWidget(int x, int y, int w, int h, String t){
-            super(x,y,w,h,t);
+            super(x,y,w,h,t,(btn)->{
+                ((HoverableWidget)btn).widgetPress();
+            });
             lastX = -1;
             lastY = -1;
         }
 
         @Override
-        public void draw(int mouseX, int mouseY, float partialTicks) {
-            super.draw(mouseX, mouseY, partialTicks);
-            this.drawHover(mouseX, mouseY);
+        public void render(int mouseX, int mouseY, float partialTicks) {
+            super.render(mouseX, mouseY, partialTicks);
+            this.renderHover(mouseX, mouseY);
         }
 
-        protected void drawHover(int mouseX, int mouseY) {
+        protected void renderHover(int mouseX, int mouseY) {
             boolean hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
             if(hovered && (hoverStart == -1 || lastX != mouseX || lastY != mouseY)){
@@ -117,11 +119,11 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             else if(hovered && (System.currentTimeMillis() - hoverStart) > 1800){
                 //draw hover text
                 String text = getHoverText();
-                int w = client.textRenderer.getStringWidth(text);
+                int w = minecraft.textRenderer.getStringWidth(text);
 
-                drawRect(x+6,y-3,x+6+w+6,y-3+13,0xFF0000CC);
-                drawRect(x+7,y-2,x+7+w+4,y-2+11,0xFF000000);
-                drawString(client.textRenderer, text, x+8, y-1,0xCCFFCC);
+                fill(x+6,y-3,x+6+w+6,y-3+13,0xFF0000CC);
+                fill(x+7,y-2,x+7+w+4,y-2+11,0xFF000000);
+                drawString(minecraft.textRenderer, text, x+8, y-1,0xCCFFCC);
             }
             if(!hovered){
                 hoverStart = -1;
@@ -139,6 +141,8 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         }
 
         abstract public String getHoverText();
+
+        abstract public void widgetPress();
     }
     /** Simple true/false toggle **/
     private class BooleanParamButton extends HoverableWidget{
@@ -159,7 +163,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
 
             //set text
-            setText(name + ": " + value);
+            setMessage(name + ": " + value);
         }
 
         @Override
@@ -168,7 +172,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         }
 
         @Override
-        public void onPressed(double var1, double var3) {
+        public void widgetPress() {
             boolean newval = !param.get();
             param.set(newval);
             setBtnText();
@@ -201,28 +205,26 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             return val;
         }
 
-        /** Force button background style **/
         @Override
-        protected int getTextureId(boolean boolean_1) {
-            return 0;
-        }
-
-        @Override
-        public void onPressed(double double_1, double double_2) {
-            super.onPressed(double_1, double_2);
+        public boolean mouseClicked(double double_1, double double_2, int btn) {
+            boolean r = super.mouseClicked(double_1, double_2, btn);
             isPressed=true;
+            return r;
         }
 
         @Override
-        public void onReleased(double double_1, double double_2) {
+        public boolean mouseReleased(double double_1, double double_2, int btn) {
             isPressed=false;
-            super.onReleased(double_1, double_2);
+            return super.mouseReleased(double_1, double_2, btn);
         }
+
+        @Override
+        public void widgetPress() {}
 
         /** Draw the custom background for the slider **/
         @Override
-        protected void drawBackground(MinecraftClient mc, int mouseX, int mouseY) {
-            boolean interaction = (isHovered() && enabled && isPressed);
+        protected void renderBg(MinecraftClient mc, int mouseX, int mouseY) {
+            boolean interaction = (isHovered() && active && isPressed);
 
             if(mouseX < x || mouseX > (x+width)){
                 interaction = false;
@@ -253,17 +255,17 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
                 }
             }
 
-            mc.getTextureManager().bindTexture(WIDGET_TEX);
+            mc.getTextureManager().bindTexture(WIDGETS_LOCATION);
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            drawTexturedRect(x + (int)(valOffset() * (double)(width - 8)), y, 0, 66, 4, 20);
-            drawTexturedRect(x + (int)(valOffset() * (double)(width - 8)) + 4, y, 196, 66, 4, 20);
+            blit(x + (int)(valOffset() * (double)(width - 8)), y, 0, 66, 4, 20);
+            blit(x + (int)(valOffset() * (double)(width - 8)) + 4, y, 196, 66, 4, 20);
         }
 
         private void setBtnText(){
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
 
             //set text
-            setText(name + ": " + param.get());
+            setMessage(name + ": " + param.get());
         }
     }
 
@@ -292,28 +294,26 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             return val;
         }
 
-        /** Force button background style **/
         @Override
-        protected int getTextureId(boolean boolean_1) {
-            return 0;
-        }
-
-        @Override
-        public void onPressed(double double_1, double double_2) {
-            super.onPressed(double_1, double_2);
+        public boolean mouseClicked(double double_1, double double_2, int btn) {
+            boolean r = super.mouseClicked(double_1, double_2, btn);
             isPressed=true;
+            return r;
         }
 
         @Override
-        public void onReleased(double double_1, double double_2) {
+        public boolean mouseReleased(double double_1, double double_2, int btn) {
             isPressed=false;
-            super.onReleased(double_1, double_2);
+            return super.mouseReleased(double_1, double_2, btn);
         }
+
+        @Override
+        public void widgetPress() {}
 
         /** Draw the custom background for the slider **/
         @Override
-        protected void drawBackground(MinecraftClient mc, int mouseX, int mouseY) {
-            boolean interaction = (isHovered() && enabled && isPressed);
+        protected void renderBg(MinecraftClient mc, int mouseX, int mouseY) {
+            boolean interaction = (isHovered() && active && isPressed);
 
             if(mouseX < x || mouseX > (x+width)){
                 interaction = false;
@@ -344,16 +344,16 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
                 }
             }
 
-            mc.getTextureManager().bindTexture(WIDGET_TEX);
+            mc.getTextureManager().bindTexture(WIDGETS_LOCATION);
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            drawTexturedRect(x + (int)(valOffset() * (double)(width - 8)), y, 0, 66, 4, 20);
-            drawTexturedRect(x + (int)(valOffset() * (double)(width - 8)) + 4, y, 196, 66, 4, 20);
+            blit(x + (int)(valOffset() * (double)(width - 8)), y, 0, 66, 4, 20);
+            blit(x + (int)(valOffset() * (double)(width - 8)) + 4, y, 196, 66, 4, 20);
         }
 
         private void setBtnText(){
             String name = I18n.translate("config.ezwastelands." + type + "." + param.getName() + ".name");
             //set text
-            setText(name + ": " + param.get());
+            setMessage(name + ": " + param.get());
         }
     }
 
@@ -369,26 +369,26 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
             this.type = type;
             param = p;
             //set text
-            setText(param.get());
+            setMessage(param.get());
         }
 
         @Override
-        public void draw(int mouseX, int mouseY, float partialTicks) {
+        public void render(int mouseX, int mouseY, float partialTicks) {
             if(textfield == null || y!=yloc){
                 yloc = y;
                 String value = param.get();
                 if(textfield!=null)
                     value = textfield.getText();
-                textfield = new TextFieldWidget(client.textRenderer,x,y,width,height);
+                textfield = new TextFieldWidget(minecraft.textRenderer,x,y,width,height, "");
                 textfield.setText(value);
-                textfield.setHasFocus(focused);
+                textfield.changeFocus(focused);
                 param.set(value);
             }
-            textfield.draw(mouseX,mouseY,partialTicks);
+            textfield.render(mouseX,mouseY,partialTicks);
 
             //hover logic?
             //method_18326(mouseX, mouseY,partialTicks);
-            drawHover(mouseX,mouseY);
+            renderHover(mouseX,mouseY);
         }
 
         @Override
@@ -423,9 +423,9 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         }
 
         @Override
-        public boolean mouseScrolled(double amount) {
+        public boolean mouseScrolled(double amount, double a, double b) {
             if(textfield != null){
-                return textfield.mouseScrolled(amount);
+                return textfield.mouseScrolled(amount, a, b);
             }
             return false;
         }
@@ -458,17 +458,21 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         }
 
         @Override
-        public void setHasFocus(boolean focus) {
+        public void widgetPress() {}
+
+        @Override
+        public boolean changeFocus(boolean focus) {
             if(textfield != null){
                 focused = focus;
-                textfield.setHasFocus(focus);
+                return textfield.changeFocus(focus);
             }
+            return super.changeFocus(focus);
         }
 
         @Override
-        public boolean hasFocus() {
+        public boolean isFocused() {
             if(textfield != null){
-                return textfield.hasFocus();
+                return textfield.isFocused();
             }
             return false;
         }
@@ -480,8 +484,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
     }
 
     /** width of the entry list **/
-    @Override
-    public int getEntryWidth() {
+    public int getOurWidth() {
         if(width < 422){
             return width - 12;
         }
@@ -491,7 +494,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
     /** Location of the scrollbar **/
     @Override
     protected int getScrollbarPosition() {
-        return (width / 2) + (getEntryWidth() / 2) + 2;
+        return (width / 2) + (getOurWidth() / 2) + 2;
     }
 
     public class Entry extends EntryListWidget.Entry<WastelandParamListWidget.Entry>{
@@ -584,7 +587,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
 
         @Override
         public boolean keyReleased(int int_1, int int_2, int int_3) {
-            if(selected != null && selected.hasFocus()){
+            if(selected != null && selected.isFocused()){
                 selected.keyReleased(int_1, int_2, int_3);
             }
             return false;
@@ -592,7 +595,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
 
         @Override
         public boolean charTyped(char char_1, int int_1) {
-            if(selected != null && selected.hasFocus()){
+            if(selected != null && selected.isFocused()){
                 selected.charTyped(char_1, int_1);
             }
             return false;
@@ -600,39 +603,28 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
 
 
         @Override
-        public void setHasFocus(boolean focus) {
+        public boolean changeFocus(boolean focus) {
 
             if(selected != null){
-                selected.setHasFocus(focus);
+                return(selected.changeFocus(focus));
             }
-            super.setHasFocus(focus);
+            return(super.changeFocus(focus));
         }
 
         @Override
-        public boolean hasFocus() {
-            if(selected != null){
-                if(selected.hasFocus()){
-                    return true;
-                }
-            }
-            return super.hasFocus();
-        }
-
-        @Override
-        public void draw(int var1, int var2, int mouseX, int mouseY, boolean var5, float subticks) {
-            int widgety = this.getY();
+        public void render(int idx, int widgety, int var3, int var4, int var5, int mouseX, int mouseY, boolean mouseOver, float subticks){
             if(widget1 == null && inputbox == null){
                 //Full width title
-                drawStringCentered(client.textRenderer, I18n.translate(title), width /2, widgety + 4, 0xFFFFFF);
+                drawCenteredString(minecraft.textRenderer, I18n.translate(title), width /2, widgety + 4, 0xFFFFFF);
             }
             if(widget1 != null){
                 //one or two widgets
                 widget1.y = widgety;
-                widget1.draw(mouseX, mouseY, subticks);
+                widget1.render(mouseX, mouseY, subticks);
 
                 if(widget2 != null){
                     widget2.y = widgety;
-                    widget2.draw(mouseX,mouseY,subticks);
+                    widget2.render(mouseX,mouseY,subticks);
                 }
             }
         }
