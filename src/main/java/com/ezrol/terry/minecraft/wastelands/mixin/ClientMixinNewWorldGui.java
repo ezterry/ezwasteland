@@ -30,7 +30,9 @@ package com.ezrol.terry.minecraft.wastelands.mixin;
 import com.ezrol.terry.minecraft.wastelands.gui.OverrideCustomizeButton;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.menu.NewLevelScreen;
+import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,6 +50,8 @@ public abstract class ClientMixinNewWorldGui extends Screen implements OverrideC
     private int generatorType;
     @Shadow
     private boolean field_3202;
+    @Shadow
+    private TextFieldWidget textFieldLevelName;
 
     protected ClientMixinNewWorldGui(){
         super(null);
@@ -56,6 +60,9 @@ public abstract class ClientMixinNewWorldGui extends Screen implements OverrideC
     @Shadow
     abstract void method_2710(boolean arg);
 
+    @Shadow
+    abstract void method_2722();
+
     private static final Logger LOGGER = LogManager.getLogger("NewGiuMixin");
 
     @Inject(at = @At("RETURN"), method = "Lnet/minecraft/client/gui/menu/NewLevelScreen;init()V", cancellable = false)
@@ -63,15 +70,29 @@ public abstract class ClientMixinNewWorldGui extends Screen implements OverrideC
         LOGGER.info("Updating Button");
 
         //remove original config button
-        buttons.remove(buttonCustomizeType);
+        while(buttons.remove(buttonCustomizeType)){
+            LOGGER.info("btn removed");
+        }
+        while(children.remove(buttonCustomizeType)){
+            LOGGER.info("child removed");
+        }
+
+        for(AbstractButtonWidget btn : buttons){
+            LOGGER.info("Button: " + btn.getMessage());
+        }
 
         ButtonWidget original = buttonCustomizeType;
 
         //create new button using our callback
-        buttonCustomizeType = this.addButton(new OverrideCustomizeButton(this.width,original,this));
-        this.buttonCustomizeType.visible = false;
+        buttonCustomizeType = new OverrideCustomizeButton(this.width, original, this);
+        this.addButton(buttonCustomizeType);
+        this.buttonCustomizeType.visible = original.visible;
 
+        LOGGER.info("Button Replaced");
         this.method_2710(this.field_3202);
+
+        this.setInitialFocus(this.textFieldLevelName);
+        this.method_2722();
     }
 
     @Override

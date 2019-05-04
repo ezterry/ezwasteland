@@ -61,10 +61,12 @@ public class WastelandCustomization extends Screen {
     private class SimpleButton extends ButtonWidget{
         private int  btnId;
         public SimpleButton(int id, int x, int y, int width, int height, String text){
-            super(x,y,width,height,text,(btn) -> {
-                actionPerformed((SimpleButton)btn);
-            });
+            super(x,y,width,height,text,(btn) -> ((SimpleButton)btn).action());
             btnId=id;
+        }
+
+        private void action(){
+            actionPerformed(this);
         }
 
         public int getId(){

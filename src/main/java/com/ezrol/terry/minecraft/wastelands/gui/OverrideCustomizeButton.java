@@ -46,14 +46,15 @@ public class OverrideCustomizeButton extends ButtonWidget {
     private static final Logger LOGGER = LogManager.getLogger("CustomizedBTN");
 
     public OverrideCustomizeButton(int width, ButtonWidget orig, getType nw) {
-        super(width / 2 + 5, 120, 150, 20, I18n.translate("selectWorld.customizeType"),null);
+        super(width / 2 + 5, 120, 150, 20, I18n.translate("selectWorld.customizeType"),
+                (btn)-> ((OverrideCustomizeButton)btn).userPress());
 
         gui = nw;
         original = orig;
     }
 
-    @Override
-    public void onPress() {
+    public void userPress() {
+        LOGGER.info("Press of Customization");
         if (LevelGeneratorType.TYPES[gui.getCurrentType()] == EzwastelandsFabric.WASTELANDS_LEVEL_TYPE) {
             LOGGER.info("Customize EzWastelands");
             NewLevelScreen nlg = gui.getGuiObject();
