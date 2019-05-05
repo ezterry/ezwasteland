@@ -1,7 +1,7 @@
 #Classic (pre mc1.10 ezWastelands generation) .. or as close as the new code can get
 presets.ezwastelands.classic.name
 ezwastelands:presets/classic.png
-{"terrainvariation":{"amplification":0,"variation":1},"randopts":{"oceans":false,"globaloffset":0,"integration":false,"villages":false,"villagechance":10.0,"strongholds":false},"domes":{"lgmincount":1,"lgmaxcount":1,"lgradius":31,"lgheight":7,"midmincount":1,"midmaxcount":1,"midradius":23,"midheight":6,"smmincount":1,"smmaxcount":1,"smradius":18,"smheight":5},"shallows":{"mincount":1,"maxcount":1,"radius":42,"depth":4},"spire":{"count":1,"size":5}}
+{"terrainvariation":{"amplification":0,"variation":1},"randopts":{"oceans":false,"globaloffset":0,"integration":false,"villages":false,"villagechance":10.0,"strongholds":false},"domes":{"lgmincount":1,"lgmaxcount":1,"lgradius":31,"lgheight":7,"midmincount":1,"midmaxcount":1,"midradius":23,"midheight":6,"smmincount":1,"smmaxcount":1,"smradius":18,"smheight":5},"shallows":{"mincount":1,"maxcount":1,"radius":42,"depth":4},"spire":{"count":1,"size":5},"smooth":{"enable":false,"gaussian":false}}
 
 #Village challange
 presets.ezwastelands.village.name
@@ -11,7 +11,7 @@ ezwastelands:presets/village.png
 #Alien Hills
 presets.ezwastelands.alien.name
 ezwastelands:presets/alien.png
-{"terrainvariation":{"amplification":14,"variation":1},"randopts":{"oceans":false,"globaloffset":-3,"integration":true,"villages":false,"villagechance":10.0,"strongholds":true},"domes":{"lgmincount":17,"lgmaxcount":24,"lgradius":37,"lgheight":10,"midmincount":5,"midmaxcount":16,"midradius":27,"midheight":8,"smmincount":6,"smmaxcount":16,"smradius":13,"smheight":6},"shallows":{"mincount":2,"maxcount":10,"radius":35,"depth":6},"spire":{"count":10,"size":7}}
+{"terrainvariation":{"amplification":14,"variation":1},"randopts":{"oceans":false,"globaloffset":-3,"integration":true,"villages":false,"villagechance":10.0,"strongholds":true},"domes":{"lgmincount":17,"lgmaxcount":24,"lgradius":37,"lgheight":10,"midmincount":5,"midmaxcount":16,"midradius":27,"midheight":8,"smmincount":6,"smmaxcount":16,"smradius":13,"smheight":6},"shallows":{"mincount":2,"maxcount":10,"radius":35,"depth":6},"spire":{"count":10,"size":7},"smooth":{"enable":false,"gaussian":false}}
 
 #Wasteland Seas
 presets.ezwastelands.atsea.name
@@ -21,4 +21,4 @@ ezwastelands:presets/atsea.png
 #Lava Lakes
 presets.ezwastelands.lavalake.name
 ezwastelands:presets/lavalake.png
-{"terrainvariation":{"amplification":14,"variation":1},"randopts":{"oceans":true,"oceanblock":"minecraft:lava","globaloffset":-3,"integration":true,"villages":false,"villagechance":10.0,"strongholds":true},"domes":{"lgmincount":3,"lgmaxcount":8,"lgradius":38,"lgheight":10,"midmincount":4,"midmaxcount":6,"midradius":25,"midheight":6,"smmincount":8,"smmaxcount":12,"smradius":14,"smheight":5},"shallows":{"mincount":3,"maxcount":10,"radius":52,"depth":6},"spire":{"count":0,"size":6}}
+{"terrainvariation":{"amplification":14,"variation":1},"randopts":{"oceans":true,"oceanblock":"minecraft:lava","globaloffset":-3,"integration":true,"villages":false,"villagechance":10.0,"strongholds":true},"domes":{"lgmincount":3,"lgmaxcount":8,"lgradius":38,"lgheight":10,"midmincount":4,"midmaxcount":6,"midradius":25,"midheight":6,"smmincount":8,"smmaxcount":12,"smradius":14,"smheight":5},"shallows":{"mincount":3,"maxcount":10,"radius":52,"depth":6},"spire":{"count":0,"size":6},"smooth":{"enable":true,"gaussian":true}}

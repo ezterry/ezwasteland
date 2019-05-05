@@ -101,7 +101,7 @@ public abstract class CommonMixinOverworldDimension extends Dimension {
             }
             if(generator.equals("ezwastelands:wastelands")){
                 //we are up use the "BUFFET" default
-                String json = "{\"terrainvariation\":{\"amplification\":30,\"variation\":1},\"randopts\":{\"oceans\":false,\"oceanblock\":\"minecraft:water\",\"globaloffset\":0,\"villages\":false,\"villagechance\":10.0,\"strongholds\":false},\"domes\":{\"lgmincount\":3,\"lgmaxcount\":4,\"lgradius\":34,\"lgheight\":7,\"midmincount\":2,\"midmaxcount\":3,\"midradius\":23,\"midheight\":8,\"smmincount\":1,\"smmaxcount\":2,\"smradius\":18,\"smheight\":9},\"shallows\":{\"mincount\":4,\"maxcount\":5,\"radius\":42,\"depth\":5},\"spire\":{\"count\":2,\"size\":6}}";
+                String json = "{\"terrainvariation\":{\"amplification\":30,\"variation\":1},\"randopts\":{\"oceans\":false,\"oceanblock\":\"minecraft:water\",\"globaloffset\":0,\"villages\":false,\"villagechance\":10.0,\"strongholds\":false},\"domes\":{\"lgmincount\":3,\"lgmaxcount\":4,\"lgradius\":34,\"lgheight\":7,\"midmincount\":2,\"midmaxcount\":3,\"midradius\":23,\"midheight\":8,\"smmincount\":1,\"smmaxcount\":2,\"smradius\":18,\"smheight\":9},\"shallows\":{\"mincount\":4,\"maxcount\":5,\"radius\":42,\"depth\":5},\"spire\":{\"count\":2,\"size\":6},\"smooth\":{\"enable\":false,\"gaussian\":false}}";
                 CompoundTag tags = WastelandChunkGeneratorConfig.CoreConfigToCompound(
                         new RegionCore(json,null,null));
                 WastelandChunkGeneratorConfig settings = new WastelandChunkGeneratorConfig(tags);

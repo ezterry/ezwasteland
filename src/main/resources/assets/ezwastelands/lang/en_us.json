@@ -79,5 +79,11 @@
   "config.ezwastelands.randopts.villagechance.name": "Frequency",
   "config.ezwastelands.randopts.villagechance.help": "Frequency of villages in world",
   "config.ezwastelands.randopts.strongholds.name": "Strongholds",
-  "config.ezwastelands.randopts.strongholds.help": "Generate strongholds when enabled"
+  "config.ezwastelands.randopts.strongholds.help": "Generate strongholds when enabled",
+
+  "ezwastelands.config.smooth.title": "Smoothing Options",
+  "config.ezwastelands.smooth.enable.name": "Enable Smoothing",
+  "config.ezwastelands.smooth.enable.help": "Smooth the generated terrain",
+  "config.ezwastelands.smooth.gaussian.name": "Gaussian Blur",
+  "config.ezwastelands.smooth.gaussian.help": "Use Gaussian [slower] rather than box blur"
 }

@@ -107,6 +107,7 @@ public class EzwastelandsFabric implements ModInitializer {
         new Shallows();
         new TerrainVariation();
         new RandomOptions();
+        new SmoothEngine();
 
         RegionCore.registerPreset(new Identifier("ezwastelands:presets/list.txt"));
     }
