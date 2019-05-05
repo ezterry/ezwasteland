@@ -1,17 +1,34 @@
 {
+  "schemaVersion": 1,
   "id": "ezwastelands",
+  "version": "${version}",
+
   "name": "EzWastelands",
   "description": "EzTerry's Wastelands terrain generator",
-  "version": "${version}",
-  "side": "universal",
-  "initializers": [
-    "com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric"
+  "authors": [
+    "EzTerry"
   ],
+  "contact": {
+    "homepage": "https://minecraft.curseforge.com/projects/ezwastelands",
+    "sources": "https://github.com/ezterry/ezwasteland"
+  },
+
+  "license": "BSD [2 Clause]",
+  "icon": "assets/ezwastelands/ezwastelands.png",
+
+  "environment": "*",
+
+  "entrypoints": {
+    "main": [
+      "com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric"
+    ]
+  },
+
   "requires": {
+    "fabricloader": ">=0.4.6",
     "fabric": "*"
   },
-  "mixins": {
-    "client": "ezwastelands.client.json",
-    "common": "ezwastelands.common.json"
-  }
+  "mixins": [
+    "ezwastelands.mixin.json"
+  ]
 }
