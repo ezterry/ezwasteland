@@ -136,10 +136,14 @@ public class RandomOptions implements IRegionElement {
             BlockState water;
             Identifier oceanBlockName = new Identifier(
                     ((Param.StringParam) core.lookupParam(this, "oceanblock")).get());
-            if(Registry.BLOCK.containsId(oceanBlockName)){
-                water=Registry.BLOCK.get(oceanBlockName).getDefaultState();
+
+            try {
+                water = Registry.BLOCK.get(oceanBlockName).getDefaultState();
+                if(water == null || water.getBlock() == Blocks.AIR){
+                    water = Blocks.WATER.getDefaultState();
+                }
             }
-            else{
+            catch (Exception e){
                 water = Blocks.WATER.getDefaultState();
             }
 
