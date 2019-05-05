@@ -62,14 +62,14 @@ public class RegionCore {
     //list of structures in the wastelands
     static private LinkedList<ConfiguredFeature> features = new LinkedList<>();
 
+    static private final int MAX_CACHED_REGION_ELEMENT_LISTS = 16; //max cached elements
+    static private final int MAX_CACHED_REFRESH_COUNT = 64*64; //frequency of forced refresh
+
     //parameter set for each region
     private Map<String, List<Param>> elementParams;
 
-    //current cached region
-    private int cachedX = 0;
-    private int cachedZ = 0;
-    //the cached reagon cached parameters
-    private Map<String, List<Object>> cachedElements = null;
+    private LinkedHashMap<RegionPos, Map<String, List<Object>>> regionCache = null;
+    private int refreshCounter = 0;
 
     //the current world (null if in config screen)
     private World ourWorld;
@@ -228,13 +228,28 @@ public class RegionCore {
         Random rand;
         List<Object> current;
         String elementName;
+        RegionPos location;
 
-
-        if (cachedElements != null && cachedX == (x >> 6) && cachedZ == (z >> 6)) {
-            return (cachedElements);
+        if(regionCache == null){
+            regionCache = new LinkedHashMap<>();
         }
 
-        cachedElements = new HashMap<>(mainFeatures.size() + overrideFeatures.size());
+        location = new RegionPos(x >> 6, z >> 6);
+        if(regionCache.containsKey(location)){
+            //log.info("Found cached elements for: " + location);
+            refreshCounter ++;
+            if(refreshCounter > MAX_CACHED_REFRESH_COUNT) {
+                refreshCounter = 0;
+                Map<String, List<Object>> found = regionCache.remove(location);
+                regionCache.put(location, found);
+                //log.info("Bumped to end of cached list: " + location);
+            }
+            return(regionCache.get(location));
+        }
+
+        //log.info("Calculate Elements for: " + location);
+
+        Map<String, List<Object>> cachedElements = new HashMap<>(mainFeatures.size() + overrideFeatures.size());
 
         for (int localX = -128; localX <= 128; localX += 64) {
             for (int localZ = -128; localZ <= 128; localZ += 64) {
@@ -255,9 +270,15 @@ public class RegionCore {
                 }
             }
         }
-        cachedX = (x >> 6);
-        cachedZ = (z >> 6);
-        return (cachedElements);
+        if(regionCache.size() >= MAX_CACHED_REGION_ELEMENT_LISTS){
+            RegionPos first = regionCache.keySet().iterator().next();
+            regionCache.remove(first);
+            //log.info("Removed stale cached element: " + first);
+        }
+
+        regionCache.put(location,cachedElements);
+        //log.info("Add cache element for: " + location + " size = " + regionCache.size());
+        return(regionCache.get(location));
     }
 
     /**
