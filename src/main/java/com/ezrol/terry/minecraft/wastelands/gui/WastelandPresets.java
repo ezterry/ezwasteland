@@ -168,6 +168,7 @@ public class WastelandPresets extends Screen {
         presetInput.setMaxLength(2048);
         presetInput.setText(currentJson);
         presetInput.setChangedListener(this::setEntryValue);
+        this.children.add(presetInput);
 
         listGUI = new PresetSlotList(this.minecraft, this.width, this.height, 80, this.height - 32, 36);
 
