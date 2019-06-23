@@ -33,10 +33,9 @@ package com.ezrol.terry.minecraft.wastelands.api;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkPos;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

@@ -29,7 +29,7 @@ package com.ezrol.terry.minecraft.wastelands.gui;
 
 import com.ezrol.terry.minecraft.wastelands.EzwastelandsFabric;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.menu.NewLevelScreen;
+import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.world.level.LevelGeneratorType;
@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
 public class OverrideCustomizeButton extends ButtonWidget {
     public static interface getType{
         int getCurrentType();
-        NewLevelScreen getGuiObject();
+        CreateWorldScreen getGuiObject();
     }
     private getType gui;
     ButtonWidget original;
@@ -57,7 +57,7 @@ public class OverrideCustomizeButton extends ButtonWidget {
         LOGGER.info("Press of Customization");
         if (LevelGeneratorType.TYPES[gui.getCurrentType()] == EzwastelandsFabric.WASTELANDS_LEVEL_TYPE) {
             LOGGER.info("Customize EzWastelands");
-            NewLevelScreen nlg = gui.getGuiObject();
+            CreateWorldScreen nlg = gui.getGuiObject();
 
             MinecraftClient.getInstance().openScreen(new WastelandCustomization(nlg, nlg.generatorOptionsTag));
         }

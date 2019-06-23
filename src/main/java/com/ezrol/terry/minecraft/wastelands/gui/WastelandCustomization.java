@@ -30,12 +30,12 @@ package com.ezrol.terry.minecraft.wastelands.gui;
 import com.ezrol.terry.minecraft.wastelands.api.Param;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.ezrol.terry.minecraft.wastelands.world.WastelandChunkGeneratorConfig;
-import net.minecraft.client.gui.Screen;
-import net.minecraft.client.gui.menu.NewLevelScreen;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.text.TranslatableTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,13 +47,13 @@ public class WastelandCustomization extends Screen {
     private static final int PRESETS_ID = 902;
     private static final int CANCEL_ID = 903;
     private static final Logger log = LogManager.getLogger("WastelandCustomization");
-    private final NewLevelScreen parent;
+    private final CreateWorldScreen parent;
     private final Map<Integer, Param> idMap = new HashMap<>();
     private RegionCore core;
     private WastelandParamListWidget list=null;
 
-    public WastelandCustomization(NewLevelScreen p, CompoundTag tags) {
-        super(new TranslatableTextComponent("config.ezwastelands.WorldConfigGUI"));
+    public WastelandCustomization(CreateWorldScreen p, CompoundTag tags) {
+        super(new TranslatableComponent("config.ezwastelands.WorldConfigGUI"));
         this.parent = p;
         core = new RegionCore(WastelandChunkGeneratorConfig.CompoundToJson(tags),null, null);
     }

@@ -78,7 +78,7 @@ public class EzwastelandsFabric implements ModInitializer {
         Registry.register(Registry.BLOCK, "ezwastelands:ezwastelandblock", WastelandsBlock);
 
         //register block item
-        BlockItem itm = new BlockItem(WastelandsBlock, new Item.Settings().itemGroup(ItemGroup.BUILDING_BLOCKS));
+        BlockItem itm = new BlockItem(WastelandsBlock, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS));
         Registry.register(Registry.ITEM, "ezwastelands:ezwastelandblock", itm);
 
 

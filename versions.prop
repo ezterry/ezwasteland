@@ -1,15 +1,15 @@
 #EzWastelands version
-mod_version=1.4.4
+mod_version=1.4.5
 
 #Following to be checked on https://fabricmc.net/use
 #Current version of Minecraft we are building against
-mc_version=1.14
+mc_version=1.14.2
 
 #the extension of the yarn mappings (mc_version + yarn_mapping)
 yarn_mapping=+build.7
 
 #Fabric Loader Version
-loader_version=0.4.6+build.141
+loader_version=0.4.8+build.155
 
-#Fabric API (see: https://maven.fabricmc.net/net/fabricmc/fabric)
-fabric_version=0.2.7+build.127
+#Fabric API (see: https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api)
+fabric_version=0.3.0+build.185

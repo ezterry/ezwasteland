@@ -69,7 +69,7 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
         ButtonWidget b = null;
         int xoff = (width - getOurWidth())/2;
 
-        addEntry(new Entry("ezwastelands.config." + title + ".title"));
+        addEntry(new com.ezrol.terry.minecraft.wastelands.gui.WastelandParamListWidget.Entry("ezwastelands.config." + title + ".title"));
 
         for(Param p : sectionParams){
             {
@@ -81,13 +81,13 @@ public class WastelandParamListWidget extends EntryListWidget<WastelandParamList
                 }
             }
             if(a != null && b != null) {
-                addEntry(new Entry(a, b));
+                addEntry(new com.ezrol.terry.minecraft.wastelands.gui.WastelandParamListWidget.Entry(a, b));
                 a = null;
                 b = null;
             }
         }
         if(a != null){
-            addEntry(new Entry(a, null));
+            addEntry(new com.ezrol.terry.minecraft.wastelands.gui.WastelandParamListWidget.Entry(a, null));
         }
     }
 

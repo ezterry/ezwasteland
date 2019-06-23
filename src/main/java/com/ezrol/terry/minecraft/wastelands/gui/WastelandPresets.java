@@ -30,7 +30,7 @@ package com.ezrol.terry.minecraft.wastelands.gui;
 import com.ezrol.terry.minecraft.wastelands.api.RegionCore;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ListWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -38,9 +38,9 @@ import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.text.TranslatableTextComponent;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -88,7 +88,7 @@ public class WastelandPresets extends Screen {
     }
 
     public WastelandPresets(WastelandCustomization par, String json) {
-        super(new TranslatableTextComponent("config.ezwastelands.presets.title"));
+        super(new TranslatableComponent("config.ezwastelands.presets.title"));
         this.parent = par;
         this.currentJson = json;
     }
