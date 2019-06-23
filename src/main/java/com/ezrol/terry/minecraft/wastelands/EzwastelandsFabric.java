@@ -38,7 +38,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ShovelItem;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -90,12 +89,6 @@ public class EzwastelandsFabric implements ModInitializer {
                 //debug, print all generator types
                 for(Identifier id : Registry.CHUNK_GENERATOR_TYPE.getIds()){
                     System.out.println(id);
-                }
-                //add wasteland block to all shovels
-                for(Item i : Registry.ITEM){
-                    if(i instanceof ShovelItem){
-                        ((SetEffectiveTool)i).ezAddToEfectiveToolList(WastelandsBlock);
-                    }
                 }
             }
         });
@@ -188,7 +181,4 @@ public class EzwastelandsFabric implements ModInitializer {
         }
     }
 
-    public interface SetEffectiveTool{
-        void ezAddToEfectiveToolList(Block block);
-    }
 }

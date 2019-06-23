@@ -28,15 +28,20 @@
 package com.ezrol.terry.minecraft.wastelands;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.tag.TagRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.tag.Tag;
+import net.minecraft.util.Identifier;
 
 public class EzWastelandBlock extends Block {
     private static Settings blockSettings(){
         FabricBlockSettings settings = FabricBlockSettings.of(Material.EARTH);
         settings.hardness((float) 0.7);
         settings.sounds(BlockSoundGroup.SAND);
+        Tag shovels = TagRegistry.item(new Identifier("fabric","shovels"));
+        settings.breakByTool(shovels);
         //settings.breakByHand(true);
 
         return(settings.build());
